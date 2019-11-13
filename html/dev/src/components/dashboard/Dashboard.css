@@ -1,0 +1,10 @@
+.CircularProgressbar{
+    width: 100%;
+    transform: rotate(27deg);
+    vertical-align: middle;
+}
+
+/* .CircularProgressbar-text{
+   
+    transform: rotate(-45deg) translate(10px,30px);
+} */
