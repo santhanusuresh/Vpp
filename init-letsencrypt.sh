@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(monitor.shinehub.com.au www.monitor.shinehub.com.au)
+domains=(monitor.shinehub.com.au)
 rsa_key_size=4096
 data_path="./data/certbot"
 email="danny.s@shinehub.com.au" # Adding a valid address is strongly recommended
