@@ -16,7 +16,10 @@ import moment from "moment";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import InputAdornment from "@material-ui/core/InputAdornment";
-
+import {Base64} from "js-base64";
+const username = localStorage.getItem('username');
+const password = localStorage.getItem('password');
+const userID = localStorage.getItem('userID');
 class EditEvent extends Component {
   state = {
     completed: false,
@@ -38,19 +41,14 @@ class EditEvent extends Component {
     console.log("user", user);
     if (state !== undefined) {
       fetch(
-        "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupPowerline.php",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            d: JSON.stringify({
-              cvs: {
-                u: user,
-                a: user.includes("admin") ? state.event.sysReDGroupID : 0,
-                d: state.event.sysReDDate
+        "http://54.206.87.91:8080/backend-service/dashboard/data/",
+          {
+              method: "GET",
+              headers: {
+                  "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                  "Content-Type": "application/json"
               }
-            })
-          })
-        }
+          }
       )
         .then(res => res.json())
         .then(res => {
@@ -63,7 +61,7 @@ class EditEvent extends Component {
             startTime: moment(state.event.sysReDStartTime,"HH:mm"),
             endTime: moment(state.event.sysReDEndTime,"HH:mm"),
             power: parseInt(state.event.sysReDEstGen),
-            chartData: res.d.powerData,
+            chartData: res.data?res.data:{},
             completed: state.event.sysReDIsComplete === "0" ? false : true
           });
         });
@@ -283,7 +281,7 @@ class EditEvent extends Component {
               </div>
               <ChartJS
                 time={chartData.Time}
-                charge={chartData.GridCharge}
+                charge={chartData.NetToGrid}
                 availablePower={chartData.AvailablePower}
                 netInGrid={chartData.NetToGrid}
               />

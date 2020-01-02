@@ -49,8 +49,8 @@ const md5 = require("md5");
 
 const customStyles = {
     control: (base, state) => {
-        console.log('state', state);
-        console.log('base', base);
+        // console.log('state', state);
+        // console.log('base', base);
         return {
             ...base,
             // borderColor: state.isFocused?'red':'blue',
@@ -62,8 +62,8 @@ const customStyles = {
     },
     input: (base, state) => {
 
-        console.log('dropdownIndicator base', base);
-        console.log('dropdownIndicator state', state);
+        // console.log('dropdownIndicator base', base);
+        // console.log('dropdownIndicator state', state);
         return {
             ...base,
             // color:"blue"
@@ -242,34 +242,9 @@ class Events extends Component {
             .then(res => res.map(value => value.json()))
             .then(res => {
                 let eventsRes, locationsRes;
+
                 Promise.all([res[0], res[1]]).then(res => {
                     // console.log("reses", res);
-                    res[0].data.availablepower = res[0].data.power
-                    res[0].data.groupname = res[0].data.groupId
-                    res[0].data.sysReDCompVal = 0
-                    res[0].data.sysReDControlMode = ''
-                    res[0].data.sysReDCreatTime = res[0].data.createdTime
-                    res[0].data.sysReDDaily = ''
-                    res[0].data.sysReDDate = res[0].data.date
-                    res[0].data.sysReDEndCap = res[0].data.endCap
-                    res[0].data.sysReDEstGen = 0
-                    res[0].data.sysReDEventStatus = 0
-                    res[0].data.sysReDGroupID = res[0].data.groupId
-                    res[0].data.sysReDId = res[0].data.groupId
-                    res[0].data.sysReDIsComplete = res[0].data.isComplete
-                    res[0].data.sysReDIsEmail = res[0].data.isComplete
-                    res[0].data.sysReDIsPrice = res[0].data.isComplete
-                    res[0].data.sysReDIsStart = res[0].data.isStart
-                    res[0].data.sysReDIsValid = res[0].data.isComplete
-                    res[0].data.sysReDMode = ''
-                    res[0].data.sysReDNeedCharge = res[0].data.isComplete
-                    res[0].data.sysReDPower = res[0].data.power
-                    res[0].data.sysReDPrice = 0
-                    res[0].data.sysReDSOC = 10
-                    res[0].data.sysReDStartCap = res[0].data.startTime
-                    res[0].data.sysReDStartTime = res[0].data.endTime
-                    res[0].data.sysReDStatus = 1
-                    res[0].data.sysReDTargetCap = res[0].data.targetCap
                     return this.setState({
                         loading: false,
                         showEvents: res[0].data,
@@ -398,34 +373,10 @@ class Events extends Component {
                     .then(res => res.map(value => value.json()))
                     .then(res => {
                         let eventsRes, locationsRes;
+
                         Promise.all([res[0], res[1]]).then(res => {
                             // console.log("reses", res);
-                            res[0].data.availablepower = res[0].data.power
-                            res[0].data.groupname = res[0].data.groupId
-                            res[0].data.sysReDCompVal = 0
-                            res[0].data.sysReDControlMode = ''
-                            res[0].data.sysReDCreatTime = res[0].data.createdTime
-                            res[0].data.sysReDDaily = ''
-                            res[0].data.sysReDDate = res[0].data.date
-                            res[0].data.sysReDEndCap = res[0].data.endCap
-                            res[0].data.sysReDEstGen = 0
-                            res[0].data.sysReDEventStatus = 0
-                            res[0].data.sysReDGroupID = res[0].data.groupId
-                            res[0].data.sysReDId = res[0].data.groupId
-                            res[0].data.sysReDIsComplete = res[0].data.isComplete
-                            res[0].data.sysReDIsEmail = res[0].data.isComplete
-                            res[0].data.sysReDIsPrice = res[0].data.isComplete
-                            res[0].data.sysReDIsStart = res[0].data.isStart
-                            res[0].data.sysReDIsValid = res[0].data.isComplete
-                            res[0].data.sysReDMode = ''
-                            res[0].data.sysReDNeedCharge = res[0].data.isComplete
-                            res[0].data.sysReDPower = res[0].data.power
-                            res[0].data.sysReDPrice = 0
-                            res[0].data.sysReDSOC = 10
-                            res[0].data.sysReDStartCap = res[0].data.startTime
-                            res[0].data.sysReDStartTime = res[0].data.endTime
-                            res[0].data.sysReDStatus = 1
-                            res[0].data.sysReDTargetCap = res[0].data.targetCap
+
                             return this.setState({
                                 loading: false,
                                 openAddEvent: false,
@@ -484,34 +435,10 @@ class Events extends Component {
                     .then(res => res.map(value => value.json()))
                     .then(res => {
                         let eventsRes, locationsRes;
+
                         Promise.all([res[0], res[1]]).then(res => {
                             // console.log("reses", res);
-                            res[0].data.availablepower = res[0].data.power
-                            res[0].data.groupname = res[0].data.groupId
-                            res[0].data.sysReDCompVal = 0
-                            res[0].data.sysReDControlMode = ''
-                            res[0].data.sysReDCreatTime = res[0].data.createdTime
-                            res[0].data.sysReDDaily = ''
-                            res[0].data.sysReDDate = res[0].data.date
-                            res[0].data.sysReDEndCap = res[0].data.endCap
-                            res[0].data.sysReDEstGen = 0
-                            res[0].data.sysReDEventStatus = 0
-                            res[0].data.sysReDGroupID = res[0].data.groupId
-                            res[0].data.sysReDId = res[0].data.groupId
-                            res[0].data.sysReDIsComplete = res[0].data.isComplete
-                            res[0].data.sysReDIsEmail = res[0].data.isComplete
-                            res[0].data.sysReDIsPrice = res[0].data.isComplete
-                            res[0].data.sysReDIsStart = res[0].data.isStart
-                            res[0].data.sysReDIsValid = res[0].data.isComplete
-                            res[0].data.sysReDMode = ''
-                            res[0].data.sysReDNeedCharge = res[0].data.isComplete
-                            res[0].data.sysReDPower = res[0].data.power
-                            res[0].data.sysReDPrice = 0
-                            res[0].data.sysReDSOC = 10
-                            res[0].data.sysReDStartCap = res[0].data.startTime
-                            res[0].data.sysReDStartTime = res[0].data.endTime
-                            res[0].data.sysReDStatus = 1
-                            res[0].data.sysReDTargetCap = res[0].data.targetCap
+
                             return this.setState({
                                 loading: false,
                                 openPriceDialog: false,
@@ -573,32 +500,7 @@ class Events extends Component {
                             let eventsRes, locationsRes;
                             Promise.all([res[0], res[1]]).then(res => {
                                 // console.log("reses", res);
-                                res[0].data.availablepower = res[0].data.power
-                                res[0].data.groupname = res[0].data.groupId
-                                res[0].data.sysReDCompVal = 0
-                                res[0].data.sysReDControlMode = ''
-                                res[0].data.sysReDCreatTime = res[0].data.createdTime
-                                res[0].data.sysReDDaily = ''
-                                res[0].data.sysReDDate = res[0].data.date
-                                res[0].data.sysReDEndCap = res[0].data.endCap
-                                res[0].data.sysReDEstGen = 0
-                                res[0].data.sysReDEventStatus = 0
-                                res[0].data.sysReDGroupID = res[0].data.groupId
-                                res[0].data.sysReDId = res[0].data.groupId
-                                res[0].data.sysReDIsComplete = res[0].data.isComplete
-                                res[0].data.sysReDIsEmail = res[0].data.isComplete
-                                res[0].data.sysReDIsPrice = res[0].data.isComplete
-                                res[0].data.sysReDIsStart = res[0].data.isStart
-                                res[0].data.sysReDIsValid = res[0].data.isComplete
-                                res[0].data.sysReDMode = ''
-                                res[0].data.sysReDNeedCharge = res[0].data.isComplete
-                                res[0].data.sysReDPower = res[0].data.power
-                                res[0].data.sysReDPrice = 0
-                                res[0].data.sysReDSOC = 10
-                                res[0].data.sysReDStartCap = res[0].data.startTime
-                                res[0].data.sysReDStartTime = res[0].data.endTime
-                                res[0].data.sysReDStatus = 1
-                                res[0].data.sysReDTargetCap = res[0].data.targetCap
+
                                 return this.setState({
                                     loading: false,
                                     openPriceDialog: false,
@@ -789,7 +691,33 @@ class Events extends Component {
             //   return event.groupname===filterLocation.value
             // }
 
-
+            event.availablepower = event.power
+            event.groupname = 'groupname'
+            event.sysReDCompVal = 0
+            event.sysReDControlMode = ''
+            event.sysReDCreatTime = event.createdTime
+            event.sysReDDaily = ''
+            event.sysReDDate = event.date
+            event.sysReDEndCap = event.endCap
+            event.sysReDEstGen = 0
+            event.sysReDEventStatus = "0"
+            event.sysReDGroupID = event.groupId
+            event.sysReDId = 'eventId'
+            event.sysReDIsComplete = event.isComplete
+            event.sysReDIsEmail = event.isComplete
+            event.sysReDIsPrice = event.isComplete
+            event.sysReDIsStart = event.isStart
+            event.sysReDIsValid = event.isComplete
+            event.sysReDMode = ''
+            event.sysReDNeedCharge = event.isComplete
+            event.sysReDPower = event.power
+            event.sysReDPrice = 0
+            event.sysReDSOC = 10
+            event.sysReDStartCap = event.startTime
+            event.sysReDStartTime = event.endTime
+            event.sysReDEndTime = event.endTime
+            event.sysReDStatus = "1"
+            event.sysReDTargetCap = event.targetCap
             if (filterLocation) {
                 if (filterDate) {
                     if (touchedPower) {
@@ -1091,6 +1019,34 @@ class Events extends Component {
                                         <TableBody>
                                             {Array.isArray(showEvents)
                                                 ? showEvents.map(row => {
+                                                    row.availablepower = row.power
+                                                    row.groupname = 'groupName'
+                                                    row.sysReDCompVal = 0
+                                                    row.sysReDControlMode = ''
+                                                    row.sysReDCreatTime = row.createdTime
+                                                    row.sysReDDaily = ''
+                                                    row.sysReDDate = row.date
+                                                    row.sysReDEndCap = row.endCap
+                                                    row.sysReDEstGen = 0
+                                                    row.sysReDEventStatus = "0"
+                                                    row.sysReDGroupID = row.groupId
+                                                    row.sysReDId = 'eventID'
+                                                    row.sysReDIsComplete = row.isComplete
+                                                    row.sysReDIsEmail = row.isComplete
+                                                    row.sysReDIsPrice = row.isComplete
+                                                    row.sysReDIsStart = row.isStart
+                                                    row.sysReDIsValid = row.isComplete
+                                                    row.sysReDMode = ''
+                                                    row.sysReDNeedCharge = row.isComplete
+                                                    row.sysReDPower = row.power
+                                                    row.sysReDPrice = 0
+                                                    row.sysReDSOC = 10
+                                                    row.sysReDStartCap = row.startCap
+                                                    row.sysReDStartTime = row.startTime
+                                                    row.sysReDEndTime = row.endTime
+                                                    row.sysReDStatus = "1"
+                                                    row.sysReDTargetCap = row.targetCap
+                                                    console.log(row)
                                                     return (
                                                         <TableRow
                                                             style={{
@@ -1098,6 +1054,7 @@ class Events extends Component {
                                                                 border: "15px solid #FBFBFB"
                                                             }}
                                                         >
+
                                                             <TableCell style={{whiteSpace: "nowrap"}}>
                                                                 <div
                                                                     style={{
@@ -1424,10 +1381,11 @@ class Events extends Component {
                                                         options={
                                                             locations
                                                                 ? locations.map(location => {
+                                                                    console.log(location)
                                                                     return {
-                                                                        value: location.DisGroupName,
-                                                                        label: location.DisGroupName,
-                                                                        id: location.DisGroupID
+                                                                        value: location.name,
+                                                                        label: location.name,
+                                                                        id: location.id
                                                                     };
                                                                 })
                                                                 : []
@@ -1711,10 +1669,10 @@ class Events extends Component {
                                                     ? locations.map(location => {
                                                         // console.log("location", location.DisGroupName);
                                                         return {
-                                                            value: location.DisGroupName,
-                                                            label: location.DisGroupName,
-                                                            id: location.DisGroupID,
-                                                            maxPower: location.MaxPower
+                                                            value: location.name,
+                                                            label: location.name,
+                                                            id: location.id,
+                                                            maxPower: location.maxPower
                                                         };
                                                     })
                                                     : []
