@@ -317,28 +317,29 @@ class Events extends Component {
         // console.log("typeof date", typeof power);
 
         fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleAddRelationDispatch.php",
+            "http://54.206.87.91:8080/backend-service/event/group/",
             {
                 method: "POST",
+                headers: {
+                    "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
-                    d: JSON.stringify({
-                        cvs: {
-                            a: parseInt(location.id),
-                            st: moment(from, "HH:mm:ss").format("HH:mm"),
-                            et: moment(to, "HH:mm:ss").format("HH:mm"),
-                            d: moment(date._d).format("YYYY-MM-DD"),
-                            p: power,
-                            i: 0
-                        }
-                    })
+                    groupId: location.id,
+                    starttime: moment(from, "HH:mm:ss").format("HH:mm"),
+                    endtime: moment(to, "HH:mm:ss").format("HH:mm"),
+                    date: moment(date).format("YYYY-MM-DD"),
+                    power: power *1000,
+                    i: 0
                 })
+
             }
         )
             .then(res => res.text())
             .then(res => {
                 // console.log("save", res);
 
-                if (JSON.parse(res).r === 2) {
+                if (JSON.parse(res).r !== 1) {
                     return store.dispatch({
                         type: LOGIN_ERROR,
                         payload: {
@@ -350,7 +351,7 @@ class Events extends Component {
 
                 Promise.all([
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2020-01-02",
                         {
                             method: "GET",
                             headers: {
