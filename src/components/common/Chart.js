@@ -54,6 +54,9 @@ class Chart extends Component {
           format: "{value}"
         }
       }],
+      credits: {
+          enabled: false
+      },
       series: [
       //   {
       //   data:newTime,

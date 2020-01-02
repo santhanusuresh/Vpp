@@ -1,1401 +1,1491 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import {
-  Typography,
-  Table,
-  withStyles,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Card,
-  CardContent,
-  Slider,
-  Fab,
-  Dialog,
-  DialogContent,
-  Button,
-  DialogTitle,
-  TextField,
-  DialogActions,
-  OutlinedInput
+    Typography,
+    Table,
+    withStyles,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Card,
+    CardContent,
+    Slider,
+    Fab,
+    Dialog,
+    DialogContent,
+    Button,
+    DialogTitle,
+    TextField,
+    DialogActions,
+    OutlinedInput
 } from "@material-ui/core";
 import {
-  Add,
-  Money,
-  MoneyOff,
-  AttachMoney,
-  AttachMoneyOutlined
+    Add,
+    Money,
+    MoneyOff,
+    AttachMoney,
+    AttachMoneyOutlined
 } from "@material-ui/icons";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import Select from "react-select";
 import SelectPlus from "react-select";
 import "./reactSelectFix.css";
 import Spinner from "../common/Spinner";
 import moment from "moment";
 import {
-  MuiPickersUtilsProvider,
-  DatePicker,
-  TimePicker
+    MuiPickersUtilsProvider,
+    DatePicker,
+    TimePicker
 } from "@material-ui/pickers";
-import { createMuiTheme } from "@material-ui/core";
+import {createMuiTheme} from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MomentUtils from "@date-io/moment";
 import store from "../../store/store";
-import { LOGIN_ERROR } from "../../actions/types";
-import { ThemeProvider } from "@material-ui/styles";
+import {LOGIN_ERROR} from "../../actions/types";
+import {ThemeProvider} from "@material-ui/styles";
+import {Base64} from "js-base64";
+
 const md5 = require("md5");
 
 const customStyles = {
-  control: (base, state) => {
-    console.log('state',state);
-    console.log('base',base);
-    return {
-    ...base,
-    // borderColor: state.isFocused?'red':'blue',
-    "&:hover":{
-      borderColor: state.isFocused ? "#00008b" :base.borderColor
+    control: (base, state) => {
+        console.log('state', state);
+        console.log('base', base);
+        return {
+            ...base,
+            // borderColor: state.isFocused?'red':'blue',
+            "&:hover": {
+                borderColor: state.isFocused ? "#00008b" : base.borderColor
+            }
+            // You can also use state.isFocused to conditionally style based on the focus state
+        }
+    },
+    input: (base, state) => {
+
+        console.log('dropdownIndicator base', base);
+        console.log('dropdownIndicator state', state);
+        return {
+            ...base,
+            // color:"blue"
+            // "&:hover":{
+            //   // border:'0.2rem solid green'
+            // },
+            // "&:visited":{
+            //   border:'0.2rem solid black'
+            // }
+
+        }
+
     }
-    // You can also use state.isFocused to conditionally style based on the focus state
-  }
-},
-input:(base,state)=>{
-
-  console.log('dropdownIndicator base',base);
-  console.log('dropdownIndicator state',state);
-  return {
-    ...base,
-    // color:"blue"
-    // "&:hover":{
-    //   // border:'0.2rem solid green'
-    // },
-    // "&:visited":{
-    //   border:'0.2rem solid black'
-    // }
-
-  }
-
-}
 };
 
+const username = localStorage.getItem('username');
+const password = localStorage.getItem('password');
+const userID = localStorage.getItem('userID');
+
 const muiTheme = createMuiTheme({
-  overrides: {
-    MuiPickersToolbar: {
-      toolbar: {
-        backgroundColor: "#25A8A8"
-        // backgroundColor: "red"
-      }
-    },
-    MuiPickersCalendarHeader: {
-      switchHeader: {
-        // backgroundColor: lightBlue.A200,
-        // color: "white",
-      }
-    },
-    MuiPickersDay: {
-      day: {
-        color: "#25A8A8"
-      },
-      daySelected: {
-        backgroundColor: "#25A8A8"
-      },
-      dayDisabled: {
-        color: "#25A8A8"
-      },
-      current: {
-        color: "#25A8A8"
-      }
-    },
-    MuiOutlinedInput:{
-      // input:{
-      //     border:'0.2rem solid black',
-      //     borderRadius:'2px',
-      //     '&$focused':{
-      //       border:'0.2rem solid red',
-      //       borderRadius:'100px'
-      //     }
-      // },
-      // focused:{}
-      root: {
-        position: 'relative',
-        '& $notchedOutline': {
-            borderColor: 'rgba(0, 0, 0, 0.23)',
+    overrides: {
+        MuiPickersToolbar: {
+            toolbar: {
+                backgroundColor: "#25A8A8"
+                // backgroundColor: "red"
+            }
         },
-        '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
-            borderColor: '#00008b',
-            // Reset on touch devices, it doesn't add specificity
-            '@media (hover: none)': {
-                borderColor: 'rgba(0, 0, 0, 0.23)',
+        MuiPickersCalendarHeader: {
+            switchHeader: {
+                // backgroundColor: lightBlue.A200,
+                // color: "white",
+            }
+        },
+        MuiPickersDay: {
+            day: {
+                color: "#25A8A8"
+            },
+            daySelected: {
+                backgroundColor: "#25A8A8"
+            },
+            dayDisabled: {
+                color: "#25A8A8"
+            },
+            current: {
+                color: "#25A8A8"
+            }
+        },
+        MuiOutlinedInput: {
+            // input:{
+            //     border:'0.2rem solid black',
+            //     borderRadius:'2px',
+            //     '&$focused':{
+            //       border:'0.2rem solid red',
+            //       borderRadius:'100px'
+            //     }
+            // },
+            // focused:{}
+            root: {
+                position: 'relative',
+                '& $notchedOutline': {
+                    borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
+                    borderColor: '#00008b',
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                },
+                '&$focused $notchedOutline': {
+                    borderColor: '#4A90E2',
+                    borderWidth: 2,
+                },
             },
         },
-        '&$focused $notchedOutline': {
-            borderColor: '#4A90E2',
-            borderWidth: 2,
-        },
-    },
-},
 
-    MuiInputBase:focus=>{
-      console.log('focus',focus);
-      return {
-        formControl:{
-      //   border:"0.1px solid green",
-      //   borderRadius:'4px',
-      //   // console.log('focus',focus);
-      //   "&$focused":{
-      //     border:'0.2rem solid red'
-      //   },
-      //   "&:active":{
-      //     border:'0.2rem solid orange'
-      //   }
-      },
-      focused:{}
+        MuiInputBase: focus => {
+            console.log('focus', focus);
+            return {
+                formControl: {
+                    //   border:"0.1px solid green",
+                    //   borderRadius:'4px',
+                    //   // console.log('focus',focus);
+                    //   "&$focused":{
+                    //     border:'0.2rem solid red'
+                    //   },
+                    //   "&:active":{
+                    //     border:'0.2rem solid orange'
+                    //   }
+                },
+                focused: {}
+            }
+
+        },
+        //  MuiPickersCalendarHeader: {
+        //   switchHeader: {
+        //     backgroundColor: 'red',
+        //     color: "red",
+        //   }
+        // },
+        datePicker: {
+            selectColor: 'red',
+            borderColor: 'red',
+            backgroundColor: 'red'
+        },
+        palette: {
+            backgroundColor: 'red'
+        },
+        MuiPickersModal: {
+            dialogAction: {
+                color: "red",
+                selectColor: 'red',
+                backgroundColor: 'red'
+            }
+        }
     }
-      
-    },
-    //  MuiPickersCalendarHeader: {
-    //   switchHeader: {
-    //     backgroundColor: 'red',
-    //     color: "red",
-    //   }
-    // },
-    datePicker:{
-      selectColor:'red',
-      borderColor:'red',
-      backgroundColor:'red'
-    },
-    palette:{
-      backgroundColor:'red'
-    },
-    MuiPickersModal: {
-      dialogAction: {
-        color: "red",
-        selectColor:'red',
-        backgroundColor:'red'
-      }
-    }
-  }
 });
 
 class Events extends Component {
-  state = {
-    openAddEvent: false,
-    filterLocation: null,
-    filterDate: null,
-    filterStartPower: 15,
-    filterEndPower: 30,
-    filterStatus: "",
-    events: [],
-    showEvents: [],
-    power: 45,
-    locations: [],
-    location: null,
-    date: null,
-    from: null,
+    state = {
+        openAddEvent: false,
+        filterLocation: null,
+        filterDate: null,
+        filterStartPower: 15,
+        filterEndPower: 30,
+        filterStatus: "",
+        events: [],
+        showEvents: [],
+        power: 45,
+        locations: [],
+        location: null,
+        date: null,
+        from: null,
 
-    to: null,
-    status: null,
-    loading: true,
-    openPriceDialog: false,
-    price: "",
-    touchedPower: false,
-    idPrice: "",
-    namePrice: "",
-    datePrice: "",
-    startTimePrice: "",
-    endTimePrice: "",
-    hasCompletedPrice: "",
-    isEmail: "",
-    validationText: ""
-  };
+        to: null,
+        status: null,
+        loading: true,
+        openPriceDialog: false,
+        price: "",
+        touchedPower: false,
+        idPrice: "",
+        namePrice: "",
+        datePrice: "",
+        startTimePrice: "",
+        endTimePrice: "",
+        hasCompletedPrice: "",
+        isEmail: "",
+        validationText: ""
+    };
 
-  componentDidMount() {
-    const { isAuthenticated, user } = this.props.auth;
-    // console.log("user", user);
-    Promise.all([
-      fetch(
-        "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupAllDischarge.php",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            d: JSON.stringify({
-              cvs: {
-                u: user
-              }
-            })
-          })
-        }
-      ),
-      fetch(
-        "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupList.php",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            d: JSON.stringify({
-              cvs: {
-                u: user
-              }
-            })
-          })
-        }
-      )
-    ])
-      .then(res => res.map(value => value.json()))
-      .then(res => {
-        let eventsRes, locationsRes;
-        Promise.all([res[0], res[1]]).then(res => {
-          // console.log("reses", res);
-          return this.setState({
-            loading: false,
-            showEvents: res[0].d,
-            events: res[0].d,
-            locations: res[1].d
-          });
-        });
-      });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log("nextProps", nextProps);
-  }
-  onChange = (e, name, filter) => {
-    console.log("e", e);
-
-    switch (name) {
-      case "location":
-        return this.setState({ location: e, power: e.maxPower }, () => {
-          if (filter) {
-            console.log("running callback");
-            this.onFilterEvents();
-          }
-        });
-      case "price":
-        return this.setState({ price: e.target.value }, () => {
-          if (filter) {
-            console.log("running callback");
-            this.onFilterEvents();
-          }
-        });
-
-      default:
-        return this.setState({ [name]: e }, () => {
-          if (filter) {
-            console.log("running callback");
-            this.onFilterEvents();
-          }
-        });
-    }
-  };
-
-  onClickSave = () => {
-    const { isAuthenticated, user } = this.props.auth;
-    const { power, location, date, from, to } = this.state;
-
-    if (location === null) {
-      return this.setState({ validationText: "Please enter all details" });
-    }
-
-    if (date === null) {
-      return this.setState({ validationText: "Please enter all details" });
-    }
-
-    if (from === null) {
-      return this.setState({ validationText: "Please enter all details" });
-    }
-
-    if (to === null) {
-      return this.setState({ validationText: "Please enter all details" });
-    }
-
-    console.log("typeof from", typeof parseInt(location.id));
-    console.log("typeof from", typeof parseInt(from));
-    console.log(" from", from);
-    console.log("typeof to", typeof parseInt(to));
-    console.log("typeof date", typeof date);
-    console.log("date", date);
-    console.log("typeof date", typeof power);
-
-    fetch(
-      "https://monitoring.shinehub.com.au/handler/web/Group/handleAddRelationDispatch.php",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          d: JSON.stringify({
-            cvs: {
-              a: parseInt(location.id),
-              st: moment(from, "HH:mm:ss").format("HH:mm"),
-              et: moment(to, "HH:mm:ss").format("HH:mm"),
-              d: moment(date._d).format("YYYY-MM-DD"),
-              p: power,
-              i: 0
-            }
-          })
-        })
-      }
-    )
-      .then(res => res.text())
-      .then(res => {
-        console.log("save", res);
-
-        if (JSON.parse(res).r === 2) {
-          return store.dispatch({
-            type: LOGIN_ERROR,
-            payload: {
-              value:
-                "Cannot add this event. Please correct your details and try again!"
-            }
-          });
-        }
-
+    componentDidMount() {
+        const {isAuthenticated, user} = this.props.auth;
+        // console.log("user", user);
         Promise.all([
-          fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupAllDischarge.php",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                d: JSON.stringify({
-                  cvs: {
-                    u: user
-                  }
-                })
-              })
-            }
-          ),
-          fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupList.php",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                d: JSON.stringify({
-                  cvs: {
-                    u: user
-                  }
-                })
-              })
-            }
-          )
-        ])
-          .then(res => res.map(value => value.json()))
-          .then(res => {
-            let eventsRes, locationsRes;
-            Promise.all([res[0], res[1]]).then(res => {
-              console.log("reses", res);
-              return this.setState({
-                loading: false,
-                openAddEvent: false,
-                showEvents: res[0].d,
-                events: res[0].d,
-                locations: res[1].d
-              });
-            });
-          });
-      });
-  };
-
-  onClickSavePrice = (id, price) => {
-    const { isAuthenticated, user } = this.props.auth;
-    const { power, location, date, from, to } = this.state;
-
-    fetch(
-      "https://monitoring.shinehub.com.au/handler/web/Group/handleEditGroupDischargePrice.php",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          d: JSON.stringify({
-            cvs: {
-              a: id,
-              p: price
-            }
-          })
-        })
-      }
-    )
-      .then(res => res.text())
-      .then(res => {
-        console.log("save", res);
-        Promise.all([
-          fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupAllDischarge.php",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                d: JSON.stringify({
-                  cvs: {
-                    u: user
-                  }
-                })
-              })
-            }
-          ),
-          fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupList.php",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                d: JSON.stringify({
-                  cvs: {
-                    u: user
-                  }
-                })
-              })
-            }
-          )
-        ])
-          .then(res => res.map(value => value.json()))
-          .then(res => {
-            let eventsRes, locationsRes;
-            Promise.all([res[0], res[1]]).then(res => {
-              console.log("reses", res);
-              return this.setState({
-                loading: false,
-                openPriceDialog: false,
-                showEvents: res[0].d,
-                events: res[0].d,
-                locations: res[1].d
-              });
-            });
-          });
-      });
-  };
-
-  onClickSaveAndSendPrice = (id, price) => {
-    const { isAuthenticated, user } = this.props.auth;
-    const { power, location, date, from, to } = this.state;
-
-    if (window.confirm("Are you sure? This cannot be undone!")) {
-      fetch(
-        "https://monitoring.shinehub.com.au/handler/web/Group/handleEditPriceSendEmail.php",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            d: JSON.stringify({
-              cvs: {
-                a: id,
-                p: price
-              }
-            })
-          })
-        }
-      )
-        .then(res => res.text())
-        .then(res => {
-          console.log("save", res);
-          Promise.all([
             fetch(
-              "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupAllDischarge.php",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  d: JSON.stringify({
-                    cvs: {
-                      u: user
-                    }
-                  })
-                })
-              }
+                "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                        "Content-Type": "application/json"
+                    },
+                }
             ),
             fetch(
-              "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupList.php",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  d: JSON.stringify({
-                    cvs: {
-                      u: user
-                    }
-                  })
-                })
-              }
+                "http://54.206.87.91:8080/backend-service/group/",
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                        "Content-Type": "application/json"
+                    },
+                }
             )
-          ])
+        ])
             .then(res => res.map(value => value.json()))
             .then(res => {
-              let eventsRes, locationsRes;
-              Promise.all([res[0], res[1]]).then(res => {
-                console.log("reses", res);
-                return this.setState({
-                  loading: false,
-                  openPriceDialog: false,
-                  showEvents: res[0].d,
-                  events: res[0].d,
-                  locations: res[1].d
+                let eventsRes, locationsRes;
+                Promise.all([res[0], res[1]]).then(res => {
+                    // console.log("reses", res);
+                    res[0].data.availablepower = res[0].data.power
+                    res[0].data.groupname = res[0].data.groupId
+                    res[0].data.sysReDCompVal = 0
+                    res[0].data.sysReDControlMode = ''
+                    res[0].data.sysReDCreatTime = res[0].data.createdTime
+                    res[0].data.sysReDDaily = ''
+                    res[0].data.sysReDDate = res[0].data.date
+                    res[0].data.sysReDEndCap = res[0].data.endCap
+                    res[0].data.sysReDEstGen = 0
+                    res[0].data.sysReDEventStatus = 0
+                    res[0].data.sysReDGroupID = res[0].data.groupId
+                    res[0].data.sysReDId = res[0].data.groupId
+                    res[0].data.sysReDIsComplete = res[0].data.isComplete
+                    res[0].data.sysReDIsEmail = res[0].data.isComplete
+                    res[0].data.sysReDIsPrice = res[0].data.isComplete
+                    res[0].data.sysReDIsStart = res[0].data.isStart
+                    res[0].data.sysReDIsValid = res[0].data.isComplete
+                    res[0].data.sysReDMode = ''
+                    res[0].data.sysReDNeedCharge = res[0].data.isComplete
+                    res[0].data.sysReDPower = res[0].data.power
+                    res[0].data.sysReDPrice = 0
+                    res[0].data.sysReDSOC = 10
+                    res[0].data.sysReDStartCap = res[0].data.startTime
+                    res[0].data.sysReDStartTime = res[0].data.endTime
+                    res[0].data.sysReDStatus = 1
+                    res[0].data.sysReDTargetCap = res[0].data.targetCap
+                    return this.setState({
+                        loading: false,
+                        showEvents: res[0].data,
+                        events: res[0].data,
+                        locations: res[1].data
+                    });
                 });
-              });
             });
-        });
     }
 
-    return;
-  };
+    componentWillReceiveProps(nextProps) {
+        // console.log("nextProps", nextProps);
+    }
 
-  onClickEvent = event => {
-    this.props.history.push({
-      pathname: "/edit-event",
-      state: {
-        event
-      }
-    });
-  };
+    onChange = (e, name, filter) => {
+        console.log("e", e);
 
-  onFilterEvents = () => {
-    const {
-      filterLocation,
-      filterDate,
-      filterStartPower,
-      filterEndPower,
-      filterStatus,
-      events,
-      touchedPower
-    } = this.state;
-    // console.log("bahar hai");
-    // console.log("filterLocation", filterLocation);
-    // console.log("filterStatus", filterStatus);
-    // console.log("filterDate", filterDate);
-    // console.log("filterStartPower", filterStartPower);
-    // console.log("filterEndPower", filterEndPower);
-    // console.log('bahar hai');
+        switch (name) {
+            case "location":
+                return this.setState({location: e, power: e.maxPower}, () => {
+                    if (filter) {
+                        console.log("running callback");
+                        this.onFilterEvents();
+                    }
+                });
+            case "price":
+                return this.setState({price: e.target.value}, () => {
+                    if (filter) {
+                        console.log("running callback");
+                        this.onFilterEvents();
+                    }
+                });
 
-    const newEvents = events.filter(event => {
-      // console.log('andar hai')
-      // console.log('event',event);
-      // console.log('typeof sysPower',typeof event.sysReDPower);
-      // console.log('sysPower',parseInt(event.sysReDPower)/1000);
-      // console.log('filterStartPower',filterStartPower);
-      // console.log('filterEndPower',filterEndPower);
-      // console.log('filterStatus.value',filterStatus.value);
-      // console.log('date',new Date(event.sysReDDate).getDate()===new Date(filterDate ).getDate())
-      // console.log(
-      //   "filterEvents",
-      //   event.groupname === filterLocation.value ||
-      //     new Date(event.sysReDDate).getDate() ===
-      //       new Date(filterDate).getDate() ||
-      //     (parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
-      //       parseInt(event.sysReDPower) / 1000 <= filterEndPower) ||
-      //     event.sysReDIsComplete === filterStatus.value
-      // );
-      // console.log("1", event.groupname === filterLocation.value);
-      // console.log(
-      //   "2",
-      //   new Date(event.sysReDDate).getDate() === new Date(filterDate).getDate()
-      // );
-      // console.log(
-      //   "3",
-      //   parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
-      //     parseInt(event.sysReDPower) / 1000 <= filterEndPower
-      // );
-      // console.log("4", event.sysReDIsComplete === filterStatus.value);
-
-      // console.log('filterDate.value',new Date(filterDate));
-      // console.log('event.sysReDDate',new Date(event.sysReDDate));
-      // return (
-      //   event.groupname === filterLocation.value ||
-      //   new Date(event.sysReDDate).getDate() ===
-      //     new Date(filterDate).getDate() ||
-      //   (parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
-      //     parseInt(event.sysReDPower) / 1000 <= filterEndPower) ||
-      //   event.sysReDIsComplete === filterStatus.value
-      // );
-
-      // if (filterLocation && event.groupname === filterLocation.value) {
-      //   console.log("loc");
-      //   if (
-      //     filterDate &&
-      //     new Date(event.sysReDDate).getDate() ===
-      //       new Date(filterDate._d).getDate()
-      //   ) {
-      //     console.log("date");
-      //     console.log(
-      //       "date",
-      //       filterDate._d &&
-      //         new Date(event.sysReDDate).getDate() ===
-      //           new Date(filterDate._d).getDate()
-      //     );
-      //     console.log("filterDate", filterDate._d);
-      //     console.log(
-      //       `${new Date(event.sysReDDate).getDate()} ===${new Date(
-      //         filterDate._d
-      //       ).getDate()}`,
-      //       new Date(event.sysReDDate).getDate() ===
-      //         new Date(filterDate._d).getDate()
-      //     );
-
-      //     if (
-      //       filterStartPower &&
-      //       parseInt(event.sysReDPower) / 1000 >= filterStartPower
-      //     ) {
-      //       console.log("power");
-      //       if (
-      //         filterEndPower &&
-      //         parseInt(event.sysReDPower) / 1000 <= filterEndPower
-      //       ) {
-      //         console.log("end pow");
-      //         if (
-      //           filterStatus &&
-      //           event.sysReDIsComplete === filterStatus.value
-      //         ) {
-      //           console.log("status");
-
-      //           return (
-      //             new Date(event.sysReDDate).getDate() ===
-      //               new Date(filterDate._d).getDate() &&
-      //             event.groupname === filterLocation.value &&
-      //             filterStartPower &&
-      //             parseInt(event.sysReDPower) / 1000 >= filterStartPower &&
-      //             parseInt(event.sysReDPower) / 1000 <= filterEndPower &&
-      //             event.sysReDIsComplete === filterStatus.value
-      //           );
-      //         }
-
-      //         return (
-      //           new Date(event.sysReDDate).getDate() ===
-      //             new Date(filterDate._d).getDate() &&
-      //           event.groupname === filterLocation.value &&
-      //           filterStartPower &&
-      //           parseInt(event.sysReDPower) / 1000 >= filterStartPower &&
-      //           parseInt(event.sysReDPower) / 1000 <= filterEndPower
-      //         );
-      //       }
-
-      //       return (
-      //         new Date(event.sysReDDate).getDate() ===
-      //           new Date(filterDate._d).getDate() &&
-      //         event.groupname === filterLocation.value &&
-      //         filterStartPower &&
-      //         parseInt(event.sysReDPower) / 1000 >= filterStartPower
-      //       );
-      //     }
-
-      //     return (
-      //       new Date(event.sysReDDate).getDate() ===
-      //         new Date(filterDate._d).getDate() &&
-      //       event.groupname === filterLocation.value
-      //     );
-      //   }
-
-      //   // console.log('event.groupname',event.groupname);
-      //   // console.log('filterLocation.value',filterLocation.value);
-
-      //   return event.groupname === filterLocation.value;
-      // }
-      console.log("filterDate", new Date(event.sysReDDate).getDate());
-      //Daniel changed 07/10
-      // if(filterLocation){
-      //   if(filterDate){
-      //
-      //     if(touchedPower){
-      //       // console.log('powerTime',powerTime)
-      //       console.log('event.sysReDPower',event.sysReDPower);
-      //       console.log('filterStartPower',filterStartPower);
-      //
-      //       if(filterStatus){
-      //         console.log('filterStatus',typeof filterStatus.value);
-      //         console.log('sysReDIsComplete',typeof event.sysReDIsComplete);
-      //         return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate() && filterStartPower<=(parseInt(event.sysReDPower)/1000) && filterEndPower>=(parseInt(event.sysReDPower)/1000) &&  filterStatus.value===event.sysReDIsComplete;
-      //       }
-      //
-      //       return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate() && filterStartPower<=(parseInt(event.sysReDPower)/1000) && filterEndPower>=(parseInt(event.sysReDPower)/1000);
-      //     }
-      //
-      //
-      //     return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate()
-      //
-      //   }
-      //   return event.groupname===filterLocation.value
-      // }
-
-      if (filterLocation) {
-        if (filterDate) {
-          if (touchedPower) {
-            if (filterStatus) {
-              return (
-                filterLocation.value === event.groupname &&
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                filterLocation.value === event.groupname &&
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000
-              );
-            }
-          } else {
-            if (filterStatus) {
-              return (
-                filterLocation.value === event.groupname &&
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                filterLocation.value === event.groupname &&
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate()
-              );
-            }
-          }
-        } else {
-          if (touchedPower) {
-            if (filterStatus) {
-              return (
-                filterLocation.value === event.groupname &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                filterLocation.value === event.groupname &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000
-              );
-            }
-          } else {
-            if (filterStatus) {
-              return (
-                filterLocation.value === event.groupname &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return filterLocation.value === event.groupname;
-            }
-          }
+            default:
+                return this.setState({[name]: e}, () => {
+                    if (filter) {
+                        console.log("running callback");
+                        this.onFilterEvents();
+                    }
+                });
         }
-      } else {
-        if (filterDate) {
-          if (touchedPower) {
-            if (filterStatus) {
-              return (
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000
-              );
-            }
-          } else {
-            if (filterStatus) {
-              return (
-                new Date(filterDate._d).getDate() ===
-                  new Date(event.sysReDDate).getDate() &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                new Date(filterDate._d).getDate() ===
-                new Date(event.sysReDDate).getDate()
-              );
-            }
-          }
-        } else {
-          if (touchedPower) {
-            if (filterStatus) {
-              return (
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
-                filterStatus.value === event.sysReDIsComplete
-              );
-            } else {
-              return (
-                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
-                filterEndPower >= parseInt(event.sysReDPower) / 1000
-              );
-            }
-          } else {
-            if (filterStatus) {
-              return filterStatus.value === event.sysReDIsComplete;
-            } else {
-              console.log("no");
-              return null;
-            }
-          }
+    };
+
+    onClickSave = () => {
+        const {isAuthenticated, user} = this.props.auth;
+        const {power, location, date, from, to} = this.state;
+
+        if (location === null) {
+            return this.setState({validationText: "Please enter all details"});
         }
-      }
-    });
-    console.log("newEvents", newEvents);
-    this.setState({ showEvents: newEvents });
-  };
 
-  onClickPriceDialog = (e, name, date, startTime, endTime, hasCompleted) => {
-    const { price, openPriceDialog } = this.state;
+        if (date === null) {
+            return this.setState({validationText: "Please enter all details"});
+        }
 
-    return;
-  };
+        if (from === null) {
+            return this.setState({validationText: "Please enter all details"});
+        }
 
-  render() {
-    const { classes } = this.props;
-    const {
-      status,
-      validationText,
-      filterLocation,
-      filterDate,
-      filterStatus,
-      openAddEvent,
-      events,
-      power,
-      location,
-      loading,
-      date,
-      editClicked,
-      from,
-      to,
-      filterStartPower,
-      filterEndPower,
-      locations,
-      showEvents,
-      namePrice,
-      datePrice,
-      startTimePrice,
-      endTimePrice,
-      hasCompletedPrice,
-      openPriceDialog,
-      price,
-      isEmail,
-      idPrice
-    } = this.state;
+        if (to === null) {
+            return this.setState({validationText: "Please enter all details"});
+        }
 
-    const { isAuthenticated, user, error } = this.props.auth;
+        // console.log("typeof from", typeof parseInt(location.id));
+        // console.log("typeof from", typeof parseInt(from));
+        // console.log(" from", from);
+        // console.log("typeof to", typeof parseInt(to));
+        // console.log("typeof date", typeof date);
+        // console.log("date", date);
+        // console.log("typeof date", typeof power);
 
-    return (
-      <div
-        style={{
-          position: "relative",
-          backgroundColor: "#FBFBFB",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-          alignItems: loading ? "center" : "flex-start",
-          padding: "5vw 0 0 5vw"
-        }}
-      >
-        {loading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Spinner />
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "space-around",
-              alignItems: "center",
-              flexDirection: "column"
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                width: "100%"
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  width: "65vw",
-                  flexDirection: "column",
-                  alignItems: "flex-start"
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center"
-                  }}
-                >
-                  <Typography
-                    style={{
-                      fontSize: "2.2vw",
-                      paddingRight: "20px",
-                      fontWeight: "bolder",
-                      fontFamily: "Gotham Rounded Bold"
-                    }}
-                  >
-                    Events
-                  </Typography>
-                  <Typography
-                    style={{
-                      color: "#BDBDBD",
-                      fontFamily: "Gotham Rounded Bold",
-                      paddingTop: "1%",
-                      fontSize: "1.3vw"
-                    }}
-                  >{`${Array.isArray(showEvents) ? showEvents.length : ""} ${
-                    Array.isArray(showEvents)
-                      ? showEvents.length === 1
-                        ? "result"
-                        : "results"
-                      : ""
-                  }`}</Typography>
-                </div>
-                <div style={{ width: "100%" }}>
-                  <Table>
-                    <TableHead style={{ backgroundColor: "#FBFBFB" }}>
-                      <TableCell
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "Gotham Rounded Bold",
-                          fontSize: "1.3vw"
-                        }}
-                      >
-                        Location
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "Gotham Rounded Bold",
-                          fontSize: "1.3vw"
-                        }}
-                      >
-                        Date
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "Gotham Rounded Bold",
-                          fontSize: "1.3vw"
-                        }}
-                      >
-                        Time
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "Gotham Rounded Bold",
-                          fontSize: "1.3vw"
-                        }}
-                      >
-                        Power
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "Gotham Rounded Bold",
-                          fontSize: "1.3vw"
-                        }}
-                      >
-                        Status
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                    </TableHead>
-                    <TableBody>
-                      {Array.isArray(showEvents)
-                        ? showEvents.map(row => {
+        fetch(
+            "https://monitoring.shinehub.com.au/handler/web/Group/handleAddRelationDispatch.php",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    d: JSON.stringify({
+                        cvs: {
+                            a: parseInt(location.id),
+                            st: moment(from, "HH:mm:ss").format("HH:mm"),
+                            et: moment(to, "HH:mm:ss").format("HH:mm"),
+                            d: moment(date._d).format("YYYY-MM-DD"),
+                            p: power,
+                            i: 0
+                        }
+                    })
+                })
+            }
+        )
+            .then(res => res.text())
+            .then(res => {
+                // console.log("save", res);
+
+                if (JSON.parse(res).r === 2) {
+                    return store.dispatch({
+                        type: LOGIN_ERROR,
+                        payload: {
+                            value:
+                                "Cannot add this event. Please correct your details and try again!"
+                        }
+                    });
+                }
+
+                Promise.all([
+                    fetch(
+                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                "Content-Type": "application/json"
+                            },
+                        }
+                    ),
+                    fetch(
+                        "http://54.206.87.91:8080/backend-service/group/",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                "Content-Type": "application/json"
+                            },
+                        }
+                    )
+                ])
+                    .then(res => res.map(value => value.json()))
+                    .then(res => {
+                        let eventsRes, locationsRes;
+                        Promise.all([res[0], res[1]]).then(res => {
+                            // console.log("reses", res);
+                            res[0].data.availablepower = res[0].data.power
+                            res[0].data.groupname = res[0].data.groupId
+                            res[0].data.sysReDCompVal = 0
+                            res[0].data.sysReDControlMode = ''
+                            res[0].data.sysReDCreatTime = res[0].data.createdTime
+                            res[0].data.sysReDDaily = ''
+                            res[0].data.sysReDDate = res[0].data.date
+                            res[0].data.sysReDEndCap = res[0].data.endCap
+                            res[0].data.sysReDEstGen = 0
+                            res[0].data.sysReDEventStatus = 0
+                            res[0].data.sysReDGroupID = res[0].data.groupId
+                            res[0].data.sysReDId = res[0].data.groupId
+                            res[0].data.sysReDIsComplete = res[0].data.isComplete
+                            res[0].data.sysReDIsEmail = res[0].data.isComplete
+                            res[0].data.sysReDIsPrice = res[0].data.isComplete
+                            res[0].data.sysReDIsStart = res[0].data.isStart
+                            res[0].data.sysReDIsValid = res[0].data.isComplete
+                            res[0].data.sysReDMode = ''
+                            res[0].data.sysReDNeedCharge = res[0].data.isComplete
+                            res[0].data.sysReDPower = res[0].data.power
+                            res[0].data.sysReDPrice = 0
+                            res[0].data.sysReDSOC = 10
+                            res[0].data.sysReDStartCap = res[0].data.startTime
+                            res[0].data.sysReDStartTime = res[0].data.endTime
+                            res[0].data.sysReDStatus = 1
+                            res[0].data.sysReDTargetCap = res[0].data.targetCap
+                            return this.setState({
+                                loading: false,
+                                openAddEvent: false,
+                                showEvents: res[0].data,
+                                events: res[0].data,
+                                locations: res[1].data
+                            });
+                        });
+                    });
+            });
+    };
+
+    onClickSavePrice = (id, price) => {
+        const {isAuthenticated, user} = this.props.auth;
+        const {power, location, date, from, to} = this.state;
+
+        fetch(
+            "https://monitoring.shinehub.com.au/handler/web/Group/handleEditGroupDischargePrice.php",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    d: JSON.stringify({
+                        cvs: {
+                            a: id,
+                            p: price
+                        }
+                    })
+                })
+            }
+        )
+            .then(res => res.text())
+            .then(res => {
+                // console.log("save", res);
+                Promise.all([
+                    fetch(
+                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                "Content-Type": "application/json"
+                            },
+                        }
+                    ),
+                    fetch(
+                        "http://54.206.87.91:8080/backend-service/group/",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                "Content-Type": "application/json"
+                            },
+                        }
+                    )
+                ])
+                    .then(res => res.map(value => value.json()))
+                    .then(res => {
+                        let eventsRes, locationsRes;
+                        Promise.all([res[0], res[1]]).then(res => {
+                            // console.log("reses", res);
+                            res[0].data.availablepower = res[0].data.power
+                            res[0].data.groupname = res[0].data.groupId
+                            res[0].data.sysReDCompVal = 0
+                            res[0].data.sysReDControlMode = ''
+                            res[0].data.sysReDCreatTime = res[0].data.createdTime
+                            res[0].data.sysReDDaily = ''
+                            res[0].data.sysReDDate = res[0].data.date
+                            res[0].data.sysReDEndCap = res[0].data.endCap
+                            res[0].data.sysReDEstGen = 0
+                            res[0].data.sysReDEventStatus = 0
+                            res[0].data.sysReDGroupID = res[0].data.groupId
+                            res[0].data.sysReDId = res[0].data.groupId
+                            res[0].data.sysReDIsComplete = res[0].data.isComplete
+                            res[0].data.sysReDIsEmail = res[0].data.isComplete
+                            res[0].data.sysReDIsPrice = res[0].data.isComplete
+                            res[0].data.sysReDIsStart = res[0].data.isStart
+                            res[0].data.sysReDIsValid = res[0].data.isComplete
+                            res[0].data.sysReDMode = ''
+                            res[0].data.sysReDNeedCharge = res[0].data.isComplete
+                            res[0].data.sysReDPower = res[0].data.power
+                            res[0].data.sysReDPrice = 0
+                            res[0].data.sysReDSOC = 10
+                            res[0].data.sysReDStartCap = res[0].data.startTime
+                            res[0].data.sysReDStartTime = res[0].data.endTime
+                            res[0].data.sysReDStatus = 1
+                            res[0].data.sysReDTargetCap = res[0].data.targetCap
+                            return this.setState({
+                                loading: false,
+                                openPriceDialog: false,
+                                showEvents: res[0].data,
+                                events: res[0].data,
+                                locations: res[1].data
+                            });
+                        });
+                    });
+            });
+    };
+
+    onClickSaveAndSendPrice = (id, price) => {
+        const {isAuthenticated, user} = this.props.auth;
+        const {power, location, date, from, to} = this.state;
+
+        if (window.confirm("Are you sure? This cannot be undone!")) {
+            fetch(
+                "https://monitoring.shinehub.com.au/handler/web/Group/handleEditPriceSendEmail.php",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        d: JSON.stringify({
+                            cvs: {
+                                a: id,
+                                p: price
+                            }
+                        })
+                    })
+                }
+            )
+                .then(res => res.text())
+                .then(res => {
+                    // console.log("save", res);
+                    Promise.all([
+                        fetch(
+                            "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                            {
+                                method: "GET",
+                                headers: {
+                                    "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                    "Content-Type": "application/json"
+                                },
+                            }
+                        ),
+                        fetch(
+                            "http://54.206.87.91:8080/backend-service/group/",
+                            {
+                                method: "GET",
+                                headers: {
+                                    "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                                    "Content-Type": "application/json"
+                                },
+                            }
+                        )
+                    ])
+                        .then(res => res.map(value => value.json()))
+                        .then(res => {
+                            let eventsRes, locationsRes;
+                            Promise.all([res[0], res[1]]).then(res => {
+                                // console.log("reses", res);
+                                res[0].data.availablepower = res[0].data.power
+                                res[0].data.groupname = res[0].data.groupId
+                                res[0].data.sysReDCompVal = 0
+                                res[0].data.sysReDControlMode = ''
+                                res[0].data.sysReDCreatTime = res[0].data.createdTime
+                                res[0].data.sysReDDaily = ''
+                                res[0].data.sysReDDate = res[0].data.date
+                                res[0].data.sysReDEndCap = res[0].data.endCap
+                                res[0].data.sysReDEstGen = 0
+                                res[0].data.sysReDEventStatus = 0
+                                res[0].data.sysReDGroupID = res[0].data.groupId
+                                res[0].data.sysReDId = res[0].data.groupId
+                                res[0].data.sysReDIsComplete = res[0].data.isComplete
+                                res[0].data.sysReDIsEmail = res[0].data.isComplete
+                                res[0].data.sysReDIsPrice = res[0].data.isComplete
+                                res[0].data.sysReDIsStart = res[0].data.isStart
+                                res[0].data.sysReDIsValid = res[0].data.isComplete
+                                res[0].data.sysReDMode = ''
+                                res[0].data.sysReDNeedCharge = res[0].data.isComplete
+                                res[0].data.sysReDPower = res[0].data.power
+                                res[0].data.sysReDPrice = 0
+                                res[0].data.sysReDSOC = 10
+                                res[0].data.sysReDStartCap = res[0].data.startTime
+                                res[0].data.sysReDStartTime = res[0].data.endTime
+                                res[0].data.sysReDStatus = 1
+                                res[0].data.sysReDTargetCap = res[0].data.targetCap
+                                return this.setState({
+                                    loading: false,
+                                    openPriceDialog: false,
+                                    showEvents: res[0].data,
+                                    events: res[0].data,
+                                    locations: res[1].data
+                                });
+                            });
+                        });
+                });
+        }
+
+        return;
+    };
+
+    onClickEvent = event => {
+        this.props.history.push({
+            pathname: "/edit-event",
+            state: {
+                event
+            }
+        });
+    };
+
+    onFilterEvents = () => {
+        const {
+            filterLocation,
+            filterDate,
+            filterStartPower,
+            filterEndPower,
+            filterStatus,
+            events,
+            touchedPower
+        } = this.state;
+        // console.log("bahar hai");
+        // console.log("filterLocation", filterLocation);
+        // console.log("filterStatus", filterStatus);
+        // console.log("filterDate", filterDate);
+        // console.log("filterStartPower", filterStartPower);
+        // console.log("filterEndPower", filterEndPower);
+        // console.log('bahar hai');
+
+        const newEvents = events.filter(event => {
+            // console.log('andar hai')
+            // console.log('event',event);
+            // console.log('typeof sysPower',typeof event.sysReDPower);
+            // console.log('sysPower',parseInt(event.sysReDPower)/1000);
+            // console.log('filterStartPower',filterStartPower);
+            // console.log('filterEndPower',filterEndPower);
+            // console.log('filterStatus.value',filterStatus.value);
+            // console.log('date',new Date(event.sysReDDate).getDate()===new Date(filterDate ).getDate())
+            // console.log(
+            //   "filterEvents",
+            //   event.groupname === filterLocation.value ||
+            //     new Date(event.sysReDDate).getDate() ===
+            //       new Date(filterDate).getDate() ||
+            //     (parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
+            //       parseInt(event.sysReDPower) / 1000 <= filterEndPower) ||
+            //     event.sysReDIsComplete === filterStatus.value
+            // );
+            // console.log("1", event.groupname === filterLocation.value);
+            // console.log(
+            //   "2",
+            //   new Date(event.sysReDDate).getDate() === new Date(filterDate).getDate()
+            // );
+            // console.log(
+            //   "3",
+            //   parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
+            //     parseInt(event.sysReDPower) / 1000 <= filterEndPower
+            // );
+            // console.log("4", event.sysReDIsComplete === filterStatus.value);
+
+            // console.log('filterDate.value',new Date(filterDate));
+            // console.log('event.sysReDDate',new Date(event.sysReDDate));
+            // return (
+            //   event.groupname === filterLocation.value ||
+            //   new Date(event.sysReDDate).getDate() ===
+            //     new Date(filterDate).getDate() ||
+            //   (parseInt(event.sysReDPower) / 1000 >= filterStartPower ||
+            //     parseInt(event.sysReDPower) / 1000 <= filterEndPower) ||
+            //   event.sysReDIsComplete === filterStatus.value
+            // );
+
+            // if (filterLocation && event.groupname === filterLocation.value) {
+            //   console.log("loc");
+            //   if (
+            //     filterDate &&
+            //     new Date(event.sysReDDate).getDate() ===
+            //       new Date(filterDate._d).getDate()
+            //   ) {
+            //     console.log("date");
+            //     console.log(
+            //       "date",
+            //       filterDate._d &&
+            //         new Date(event.sysReDDate).getDate() ===
+            //           new Date(filterDate._d).getDate()
+            //     );
+            //     console.log("filterDate", filterDate._d);
+            //     console.log(
+            //       `${new Date(event.sysReDDate).getDate()} ===${new Date(
+            //         filterDate._d
+            //       ).getDate()}`,
+            //       new Date(event.sysReDDate).getDate() ===
+            //         new Date(filterDate._d).getDate()
+            //     );
+
+            //     if (
+            //       filterStartPower &&
+            //       parseInt(event.sysReDPower) / 1000 >= filterStartPower
+            //     ) {
+            //       console.log("power");
+            //       if (
+            //         filterEndPower &&
+            //         parseInt(event.sysReDPower) / 1000 <= filterEndPower
+            //       ) {
+            //         console.log("end pow");
+            //         if (
+            //           filterStatus &&
+            //           event.sysReDIsComplete === filterStatus.value
+            //         ) {
+            //           console.log("status");
+
+            //           return (
+            //             new Date(event.sysReDDate).getDate() ===
+            //               new Date(filterDate._d).getDate() &&
+            //             event.groupname === filterLocation.value &&
+            //             filterStartPower &&
+            //             parseInt(event.sysReDPower) / 1000 >= filterStartPower &&
+            //             parseInt(event.sysReDPower) / 1000 <= filterEndPower &&
+            //             event.sysReDIsComplete === filterStatus.value
+            //           );
+            //         }
+
+            //         return (
+            //           new Date(event.sysReDDate).getDate() ===
+            //             new Date(filterDate._d).getDate() &&
+            //           event.groupname === filterLocation.value &&
+            //           filterStartPower &&
+            //           parseInt(event.sysReDPower) / 1000 >= filterStartPower &&
+            //           parseInt(event.sysReDPower) / 1000 <= filterEndPower
+            //         );
+            //       }
+
+            //       return (
+            //         new Date(event.sysReDDate).getDate() ===
+            //           new Date(filterDate._d).getDate() &&
+            //         event.groupname === filterLocation.value &&
+            //         filterStartPower &&
+            //         parseInt(event.sysReDPower) / 1000 >= filterStartPower
+            //       );
+            //     }
+
+            //     return (
+            //       new Date(event.sysReDDate).getDate() ===
+            //         new Date(filterDate._d).getDate() &&
+            //       event.groupname === filterLocation.value
+            //     );
+            //   }
+
+            //   // console.log('event.groupname',event.groupname);
+            //   // console.log('filterLocation.value',filterLocation.value);
+
+            //   return event.groupname === filterLocation.value;
+            // }
+            // console.log("filterDate", new Date(event.sysReDDate).getDate());
+            //Daniel changed 07/10
+            // if(filterLocation){
+            //   if(filterDate){
+            //
+            //     if(touchedPower){
+            //       // console.log('powerTime',powerTime)
+            //       console.log('event.sysReDPower',event.sysReDPower);
+            //       console.log('filterStartPower',filterStartPower);
+            //
+            //       if(filterStatus){
+            //         console.log('filterStatus',typeof filterStatus.value);
+            //         console.log('sysReDIsComplete',typeof event.sysReDIsComplete);
+            //         return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate() && filterStartPower<=(parseInt(event.sysReDPower)/1000) && filterEndPower>=(parseInt(event.sysReDPower)/1000) &&  filterStatus.value===event.sysReDIsComplete;
+            //       }
+            //
+            //       return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate() && filterStartPower<=(parseInt(event.sysReDPower)/1000) && filterEndPower>=(parseInt(event.sysReDPower)/1000);
+            //     }
+            //
+            //
+            //     return filterLocation.value===event.groupname && new Date(filterDate._d).getDate()===new Date(event.sysReDDate).getDate()
+            //
+            //   }
+            //   return event.groupname===filterLocation.value
+            // }
+
+
+            if (filterLocation) {
+                if (filterDate) {
+                    if (touchedPower) {
+                        if (filterStatus) {
                             return (
-                              <TableRow
+                                filterLocation.value === event.groupname &&
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000
+                            );
+                        }
+                    } else {
+                        if (filterStatus) {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate()
+                            );
+                        }
+                    }
+                } else {
+                    if (touchedPower) {
+                        if (filterStatus) {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000
+                            );
+                        }
+                    } else {
+                        if (filterStatus) {
+                            return (
+                                filterLocation.value === event.groupname &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return filterLocation.value === event.groupname;
+                        }
+                    }
+                }
+            } else {
+                if (filterDate) {
+                    if (touchedPower) {
+                        if (filterStatus) {
+                            return (
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000
+                            );
+                        }
+                    } else {
+                        if (filterStatus) {
+                            return (
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate() &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                new Date(filterDate._d).getDate() ===
+                                new Date(event.sysReDDate).getDate()
+                            );
+                        }
+                    }
+                } else {
+                    if (touchedPower) {
+                        if (filterStatus) {
+                            return (
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000 &&
+                                filterStatus.value === event.sysReDIsComplete
+                            );
+                        } else {
+                            return (
+                                filterStartPower <= parseInt(event.sysReDPower) / 1000 &&
+                                filterEndPower >= parseInt(event.sysReDPower) / 1000
+                            );
+                        }
+                    } else {
+                        if (filterStatus) {
+                            return filterStatus.value === event.sysReDIsComplete;
+                        } else {
+                            // console.log("no");
+                            return null;
+                        }
+                    }
+                }
+            }
+        });
+        // console.log("newEvents", newEvents);
+        this.setState({showEvents: newEvents});
+    };
+
+    onClickPriceDialog = (e, name, date, startTime, endTime, hasCompleted) => {
+        const {price, openPriceDialog} = this.state;
+
+        return;
+    };
+
+    render() {
+        const {classes} = this.props;
+        const {
+            status,
+            validationText,
+            filterLocation,
+            filterDate,
+            filterStatus,
+            openAddEvent,
+            events,
+            power,
+            location,
+            loading,
+            date,
+            editClicked,
+            from,
+            to,
+            filterStartPower,
+            filterEndPower,
+            locations,
+            showEvents,
+            namePrice,
+            datePrice,
+            startTimePrice,
+            endTimePrice,
+            hasCompletedPrice,
+            openPriceDialog,
+            price,
+            isEmail,
+            idPrice
+        } = this.state;
+
+        const {isAuthenticated, user, error} = this.props.auth;
+
+        return (
+            <div
+                style={{
+                    position: "relative",
+                    backgroundColor: "#FBFBFB",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-around",
+                    alignItems: loading ? "center" : "flex-start",
+                    padding: "5vw 0 0 5vw"
+                }}
+            >
+                {loading ? (
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}
+                    >
+                        <Spinner/>
+                    </div>
+                ) : (
+                    <div
+                        style={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            flexDirection: "column"
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-evenly",
+                                width: "100%"
+                            }}
+                        >
+                            <div
                                 style={{
-                                  backgroundColor: "#fff",
-                                  border: "15px solid #FBFBFB"
+                                    display: "flex",
+                                    width: "65vw",
+                                    flexDirection: "column",
+                                    alignItems: "flex-start"
                                 }}
-                              >
-                                <TableCell style={{ whiteSpace: "nowrap" }}>
-                                  <div
+                            >
+                                <div
                                     style={{
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      justifyContent: "flex-end"
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center"
                                     }}
-                                  >
+                                >
                                     <Typography
-                                      style={{
-                                        padding: 0,
-                                        margin: 0,
-                                        fontFamily: "Gotham Rounded Medium",
-                                        color: "#2E384D",
-                                        fontSize: "1.2vw"
-                                      }}
+                                        style={{
+                                            fontSize: "2.2vw",
+                                            paddingRight: "20px",
+                                            fontWeight: "bolder",
+                                            fontFamily: "Gotham Rounded Bold"
+                                        }}
                                     >
-                                      {row.groupname}
+                                        Events
                                     </Typography>
                                     <Typography
-                                      style={{
-                                        padding: 0,
-                                        margin: 0,
-                                        color: "#BDBDBD",
-                                        fontFamily: "Gotham Rounded Light",
-                                        fontSize: "1.2vw"
-                                      }}
-                                    >{`#${row.sysReDId}`}</Typography>
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    fontFamily: "Gotham Rounded Light",
-                                    color: "#2E384D",
-                                    fontSize: "1.2vw"
-                                  }}
+                                        style={{
+                                            color: "#BDBDBD",
+                                            fontFamily: "Gotham Rounded Bold",
+                                            paddingTop: "1%",
+                                            fontSize: "1.3vw"
+                                        }}
+                                    >{`${Array.isArray(showEvents) ? showEvents.length : ""} ${
+                                        Array.isArray(showEvents)
+                                            ? showEvents.length === 1
+                                            ? "result"
+                                            : "results"
+                                            : ""
+                                    }`}</Typography>
+                                </div>
+                                <div style={{width: "100%"}}>
+                                    <Table>
+                                        <TableHead style={{backgroundColor: "#FBFBFB"}}>
+                                            <TableCell
+                                                style={{
+                                                    color: "#BDBDBD",
+                                                    fontFamily: "Gotham Rounded Bold",
+                                                    fontSize: "1.3vw"
+                                                }}
+                                            >
+                                                Location
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    color: "#BDBDBD",
+                                                    fontFamily: "Gotham Rounded Bold",
+                                                    fontSize: "1.3vw"
+                                                }}
+                                            >
+                                                Date
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    color: "#BDBDBD",
+                                                    fontFamily: "Gotham Rounded Bold",
+                                                    fontSize: "1.3vw"
+                                                }}
+                                            >
+                                                Time
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    color: "#BDBDBD",
+                                                    fontFamily: "Gotham Rounded Bold",
+                                                    fontSize: "1.3vw"
+                                                }}
+                                            >
+                                                Power
+                                            </TableCell>
+                                            <TableCell></TableCell>
+                                            <TableCell
+                                                style={{
+                                                    color: "#BDBDBD",
+                                                    fontFamily: "Gotham Rounded Bold",
+                                                    fontSize: "1.3vw"
+                                                }}
+                                            >
+                                                Status
+                                            </TableCell>
+                                            <TableCell></TableCell>
+                                            <TableCell></TableCell>
+                                        </TableHead>
+                                        <TableBody>
+                                            {Array.isArray(showEvents)
+                                                ? showEvents.map(row => {
+                                                    return (
+                                                        <TableRow
+                                                            style={{
+                                                                backgroundColor: "#fff",
+                                                                border: "15px solid #FBFBFB"
+                                                            }}
+                                                        >
+                                                            <TableCell style={{whiteSpace: "nowrap"}}>
+                                                                <div
+                                                                    style={{
+                                                                        display: "flex",
+                                                                        flexDirection: "column",
+                                                                        justifyContent: "flex-end"
+                                                                    }}
+                                                                >
+                                                                    <Typography
+                                                                        style={{
+                                                                            padding: 0,
+                                                                            margin: 0,
+                                                                            fontFamily: "Gotham Rounded Medium",
+                                                                            color: "#2E384D",
+                                                                            fontSize: "1.2vw"
+                                                                        }}
+                                                                    >
+                                                                        {row.groupname}
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        style={{
+                                                                            padding: 0,
+                                                                            margin: 0,
+                                                                            color: "#BDBDBD",
+                                                                            fontFamily: "Gotham Rounded Light",
+                                                                            fontSize: "1.2vw"
+                                                                        }}
+                                                                    >{`#${row.sysReDId}`}</Typography>
+                                                                </div>
+                                                            </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    fontFamily: "Gotham Rounded Light",
+                                                                    color: "#2E384D",
+                                                                    fontSize: "1.2vw"
+                                                                }}
+                                                            >
+                                                                {moment(row.sysReDDate).format(
+                                                                    "DD / MM / YY"
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    fontFamily: "Gotham Rounded Light",
+                                                                    color: "#2E384D",
+                                                                    fontSize: "1.2vw"
+                                                                }}
+                                                            >
+                                                                {`${moment(
+                                                                    row.sysReDStartTime,
+                                                                    "HH:mm"
+                                                                ).format("HH:mm")} - ${moment(
+                                                                    row.sysReDEndTime,
+                                                                    "HH:mm"
+                                                                ).format("HH:mm")}`}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    fontFamily: "Gotham Rounded Light",
+                                                                    color: "#2E384D",
+                                                                    fontSize: "1.2vw"
+                                                                }}
+                                                            >
+                                                                {`${row.sysReDPower / 1000}kW`}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    fontFamily: "Gotham Rounded Light",
+                                                                    color: "#2E384D",
+                                                                    fontSize: "1.2vw"
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={
+                                                                        row.sysReDEventStatus === "0" ||
+                                                                        row.sysReDEventStatus === "1" ||
+                                                                        row.sysReDEventStatus === "4"
+                                                                            ? {
+                                                                                backgroundColor: "#fff",
+                                                                                border: "solid",
+                                                                                borderColor: "rgb(124, 124, 124)",
+                                                                                borderWidth: 4,
+                                                                                borderRadius: 40,
+                                                                                width: "1vw",
+                                                                                height: "1vw"
+                                                                            }
+                                                                            : {
+                                                                                backgroundColor: "green",
+                                                                                borderRadius: 40,
+                                                                                width: "1vw",
+                                                                                height: "1vw"
+                                                                            }
+                                                                    }
+                                                                >
+                                                                    &nbsp;
+                                                                </div>
+                                                            </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    // whiteSpace: "nowrap",
+                                                                    fontFamily: "Gotham Rounded Light",
+                                                                    color: "#2E384D",
+                                                                    fontSize: "1.2vw"
+                                                                }}
+                                                            >
+                                                                {row.sysReDEventStatus === "0" ||
+                                                                row.sysReDEventStatus === "1"
+                                                                    ? "Scheduled"
+                                                                    : row.sysReDEventStatus === "2"
+                                                                        ? "Completed"
+                                                                        : row.sysReDEventStatus === "4"
+                                                                            ? "No Available Power\n to discharge"
+                                                                            : "Completed and\n Sent Email to Customer"}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                // onClick={() => this.onClickEvent(row)}
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    color: "#25A8A8",
+                                                                    cursor: "pointer",
+                                                                    fontSize: "1.2vw",
+                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                }}
+                                                            >
+                                                                {row.sysReDEventStatus === "0" ||
+                                                                row.sysReDEventStatus === "1" ||
+                                                                row.sysReDEventStatus === "4" ? (
+                                                                    <MoneyOff/>
+                                                                ) : (
+                                                                    <AttachMoneyOutlined
+                                                                        onClick={e =>
+                                                                            this.setState({
+                                                                                idPrice: row.sysReDId,
+                                                                                price:
+                                                                                    row.sysReDPrice === null
+                                                                                        ? ""
+                                                                                        : row.sysReDPrice,
+                                                                                isEmail: row.sysReDIsEmail,
+                                                                                openPriceDialog: true,
+                                                                                namePrice: row.groupname,
+                                                                                datePrice: row.sysReDDate,
+                                                                                startTimePrice: row.sysReDStartTime,
+                                                                                endTimePrice: row.sysReDEndTime,
+                                                                                hasCompletedPrice:
+                                                                                row.sysReDEventStatus
+                                                                            })
+                                                                        }
+                                                                    />
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell
+                                                                onClick={() => this.onClickEvent(row)}
+                                                                style={{
+                                                                    whiteSpace: "nowrap",
+                                                                    color: "#25A8A8",
+                                                                    cursor: "pointer",
+                                                                    fontSize: "1.2vw",
+                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                }}
+                                                            >
+                                                                {row.sysReDEventStatus === "0"
+                                                                    ? "Edit"
+                                                                    : "View"}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })
+                                                : ""}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                                <Dialog
+                                    fullWidth
+                                    open={openPriceDialog}
+                                    onClose={() => this.setState({openPriceDialog: false})}
                                 >
-                                  {moment(row.sysReDDate).format(
-                                    "DD / MM / YY"
-                                  )}
-                                </TableCell>
-                                <TableCell
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    fontFamily: "Gotham Rounded Light",
-                                    color: "#2E384D",
-                                    fontSize: "1.2vw"
-                                  }}
-                                >
-                                  {`${moment(
-                                    row.sysReDStartTime,
-                                    "HH:mm"
-                                  ).format("HH:mm")} - ${moment(
-                                    row.sysReDEndTime,
-                                    "HH:mm"
-                                  ).format("HH:mm")}`}
-                                </TableCell>
-                                <TableCell
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    fontFamily: "Gotham Rounded Light",
-                                    color: "#2E384D",
-                                    fontSize: "1.2vw"
-                                  }}
-                                >
-                                  {`${row.sysReDPower / 1000}kW`}
-                                </TableCell>
-                                <TableCell
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    fontFamily: "Gotham Rounded Light",
-                                    color: "#2E384D",
-                                    fontSize: "1.2vw"
-                                  }}
-                                >
-                                  <div
-                                    style={
-                                      row.sysReDEventStatus === "0" ||
-                                      row.sysReDEventStatus === "1" ||
-                                      row.sysReDEventStatus === "4"
-                                        ? {
-                                            backgroundColor: "#fff",
-                                            border: "solid",
-                                            borderColor: "rgb(124, 124, 124)",
-                                            borderWidth: 4,
-                                            borderRadius: 40,
-                                            width: "1vw",
-                                            height: "1vw"
-                                          }
-                                        : {
-                                            backgroundColor: "green",
-                                            borderRadius: 40,
-                                            width: "1vw",
-                                            height: "1vw"
-                                          }
-                                    }
-                                  >
-                                    &nbsp;
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  style={{
-                                    // whiteSpace: "nowrap",
-                                    fontFamily: "Gotham Rounded Light",
-                                    color: "#2E384D",
-                                    fontSize: "1.2vw"
-                                  }}
-                                >
-                                  {row.sysReDEventStatus === "0" ||
-                                  row.sysReDEventStatus === "1"
-                                    ? "Scheduled"
-                                    : row.sysReDEventStatus === "2"
-                                    ? "Completed"
-                                    : row.sysReDEventStatus === "4"
-                                    ? "No Available Power\n to discharge"
-                                    : "Completed and\n Sent Email to Customer"}
-                                </TableCell>
-                                <TableCell
-                                  // onClick={() => this.onClickEvent(row)}
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    color: "#25A8A8",
-                                    cursor: "pointer",
-                                    fontSize: "1.2vw",
-                                    fontFamily: "Gotham Rounded Medium"
-                                  }}
-                                >
-                                  {row.sysReDEventStatus === "0" ||
-                                  row.sysReDEventStatus === "1" ||
-                                  row.sysReDEventStatus === "4" ? (
-                                    <MoneyOff />
-                                  ) : (
-                                    <AttachMoneyOutlined
-                                      onClick={e =>
-                                        this.setState({
-                                          idPrice: row.sysReDId,
-                                          price:
-                                            row.sysReDPrice === null
-                                              ? ""
-                                              : row.sysReDPrice,
-                                          isEmail: row.sysReDIsEmail,
-                                          openPriceDialog: true,
-                                          namePrice: row.groupname,
-                                          datePrice: row.sysReDDate,
-                                          startTimePrice: row.sysReDStartTime,
-                                          endTimePrice: row.sysReDEndTime,
-                                          hasCompletedPrice:
-                                            row.sysReDEventStatus
-                                        })
-                                      }
-                                    />
-                                  )}
-                                </TableCell>
-                                <TableCell
-                                  onClick={() => this.onClickEvent(row)}
-                                  style={{
-                                    whiteSpace: "nowrap",
-                                    color: "#25A8A8",
-                                    cursor: "pointer",
-                                    fontSize: "1.2vw",
-                                    fontFamily: "Gotham Rounded Medium"
-                                  }}
-                                >
-                                  {row.sysReDEventStatus === "0"
-                                    ? "Edit"
-                                    : "View"}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
-                        : ""}
-                    </TableBody>
-                  </Table>
-                </div>
-                <Dialog
-                  fullWidth
-                  open={openPriceDialog}
-                  onClose={() => this.setState({ openPriceDialog: false })}
-                >
-                  <DialogTitle
-                    style={{
-                      whiteSpace: "nowrap",
-                      color: "#25A8A8",
-                      cursor: "pointer",
-                      fontSize: "1.2vw",
-                      fontFamily: "Gotham Rounded Medium"
-                    }}
-                  >
-                    AEMO spot price
-                  </DialogTitle>
-                  <DialogContent>
-                    <div
-                      style={{
-                        color: "#BDBDBD",
-                        fontFamily: "Gotham Rounded Medium",
-                        padding: 0,
-                        margin: 0,
-                        fontSize: "1vw"
-                      }}
-                    >{`Please enter the AEMO spot price for the completed event on ${moment(
-                      datePrice
-                    ).format("DD/MM/YYYY")} from ${moment(
-                      startTimePrice,
-                      "HH:mm"
-                    ).format("HH:mm")} to ${moment(
-                      endTimePrice,
-                      "HH:mm"
-                    ).format("HH:mm")} in ${namePrice}`}</div>
-                    <div style={{ width: "15vw", height: "1vw" }}></div>
-                    <TextField
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">$</InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">/MWh</InputAdornment>
-                        )
-                      }}
-                      inputProps={{ style: { textAlign: "right" } }}
-                      disabled={isEmail === "0" ? false : true}
-                      placeholder="Enter your price"
-                      value={price}
-                      name="price"
-                      onChange={e => this.onChange(e, "price", false)}
-                    />
-                    {hasCompletedPrice !== "3" ? (
-                      <DialogActions>
-                        <div style={{ width: "15vw", height: "5vw" }}></div>
-                        <Button
-                          style={{
-                            color: "#fff",
-                            textTransform: "none",
-                            backgroundColor: "#25A8A8",
-                            width: "30%"
-                          }}
-                          disabled={isEmail === "0" ? false : true}
-                          onClick={() => this.onClickSavePrice(idPrice, price)}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            this.onClickSaveAndSendPrice(idPrice, price)
-                          }
-                          style={{
-                            color: "#fff",
-                            textTransform: "none",
-                            backgroundColor: "#25A8A8",
-                            width: "30%"
-                          }}
-                          disabled={isEmail === "0" ? false : true}
-                        >
-                          Save &#38; Email
-                        </Button>
-                      </DialogActions>
-                    ) : (
-                      <div style={{ width: "15vw", height: "2vw" }}></div>
-                    )}
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div style={{ width: "15vw", height: "27vw" }}>
-                <Card style={{ width: "100%", height: "100%" }}>
-                  <CardContent
-                    style={{
-                      display: "flex",
-                      height: "100%",
-                      flexDirection: "column",
-                      alignItems: "center"
-                    }}
-                  >
-                    <div style={{ width: "88%", height: "100%" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          height: "100%",
-                          flexDirection: "column",
-                          justifyContent: "space-evenly",
-                          alignItems: "flex-start"
-                        }}
-                      >
-                        <Typography
-                          style={{
-                            color: "#25A8A8",
-                            fontFamily: "Gotham Rounded Light",
-                            letterSpacing: "1.2133px",
-                            paddingBottom: "3%",
-                            fontSize: "1vw",
-                            textTransform: "uppercase"
-                          }}
-                        >
-                          Filter
-                        </Typography>
-                        <Typography
-                          style={{
-                            width: "30%",
-                            paddingRight: "3%",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                          }}
-                        >
-                          Location
-                        </Typography>
-                        <div
-                          style={{
-                            width: "100%",
-                            paddingRight: "3%",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                            //  padding: "3% 0 8% 0"
-                          }}
-                        >
-                          <Select
-                            value={filterLocation}
-                            styles={customStyles}
-                            onChange={e => {
-                              // console.log("e", e);
+                                    <DialogTitle
+                                        style={{
+                                            whiteSpace: "nowrap",
+                                            color: "#25A8A8",
+                                            cursor: "pointer",
+                                            fontSize: "1.2vw",
+                                            fontFamily: "Gotham Rounded Medium"
+                                        }}
+                                    >
+                                        AEMO spot price
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <div
+                                            style={{
+                                                color: "#BDBDBD",
+                                                fontFamily: "Gotham Rounded Medium",
+                                                padding: 0,
+                                                margin: 0,
+                                                fontSize: "1vw"
+                                            }}
+                                        >{`Please enter the AEMO spot price for the completed event on ${moment(
+                                            datePrice
+                                        ).format("DD/MM/YYYY")} from ${moment(
+                                            startTimePrice,
+                                            "HH:mm"
+                                        ).format("HH:mm")} to ${moment(
+                                            endTimePrice,
+                                            "HH:mm"
+                                        ).format("HH:mm")} in ${namePrice}`}</div>
+                                        <div style={{width: "15vw", height: "1vw"}}></div>
+                                        <TextField
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">$</InputAdornment>
+                                                ),
+                                                endAdornment: (
+                                                    <InputAdornment position="end">/MWh</InputAdornment>
+                                                )
+                                            }}
+                                            inputProps={{style: {textAlign: "right"}}}
+                                            disabled={isEmail === "0" ? false : true}
+                                            placeholder="Enter your price"
+                                            value={price}
+                                            name="price"
+                                            onChange={e => this.onChange(e, "price", false)}
+                                        />
+                                        {hasCompletedPrice !== "3" ? (
+                                            <DialogActions>
+                                                <div style={{width: "15vw", height: "5vw"}}></div>
+                                                <Button
+                                                    style={{
+                                                        color: "#fff",
+                                                        textTransform: "none",
+                                                        backgroundColor: "#25A8A8",
+                                                        width: "30%"
+                                                    }}
+                                                    disabled={isEmail === "0" ? false : true}
+                                                    onClick={() => this.onClickSavePrice(idPrice, price)}
+                                                >
+                                                    Save
+                                                </Button>
+                                                <Button
+                                                    onClick={() =>
+                                                        this.onClickSaveAndSendPrice(idPrice, price)
+                                                    }
+                                                    style={{
+                                                        color: "#fff",
+                                                        textTransform: "none",
+                                                        backgroundColor: "#25A8A8",
+                                                        width: "30%"
+                                                    }}
+                                                    disabled={isEmail === "0" ? false : true}
+                                                >
+                                                    Save &#38; Email
+                                                </Button>
+                                            </DialogActions>
+                                        ) : (
+                                            <div style={{width: "15vw", height: "2vw"}}></div>
+                                        )}
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+                            <div style={{width: "15vw", height: "27vw"}}>
+                                <Card style={{width: "100%", height: "100%"}}>
+                                    <CardContent
+                                        style={{
+                                            display: "flex",
+                                            height: "100%",
+                                            flexDirection: "column",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        <div style={{width: "88%", height: "100%"}}>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    height: "100%",
+                                                    flexDirection: "column",
+                                                    justifyContent: "space-evenly",
+                                                    alignItems: "flex-start"
+                                                }}
+                                            >
+                                                <Typography
+                                                    style={{
+                                                        color: "#25A8A8",
+                                                        fontFamily: "Gotham Rounded Light",
+                                                        letterSpacing: "1.2133px",
+                                                        paddingBottom: "3%",
+                                                        fontSize: "1vw",
+                                                        textTransform: "uppercase"
+                                                    }}
+                                                >
+                                                    Filter
+                                                </Typography>
+                                                <Typography
+                                                    style={{
+                                                        width: "30%",
+                                                        paddingRight: "3%",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    Location
+                                                </Typography>
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        paddingRight: "3%",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                        //  padding: "3% 0 8% 0"
+                                                    }}
+                                                >
+                                                    <Select
+                                                        value={filterLocation}
+                                                        styles={customStyles}
+                                                        onChange={e => {
+                                                            // console.log("e", e);
 
-                              this.onChange(e, "filterLocation", true);
-                            }}
-                            options={
-                              locations
-                                ? locations.map(location => {
-                                    return {
-                                      value: location.DisGroupName,
-                                      label: location.DisGroupName,
-                                      id: location.DisGroupID
-                                    };
-                                  })
-                                : []
-                            }
-                          />
-                        </div>
-                        <Typography
-                          style={{
-                            width: "30%",
-                            paddingRight: "3%",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                          }}
-                        >
-                          Date
-                        </Typography>
-                        <div
-                          style={{
-                            width: "100%",
-                            paddingRight: "3%",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                          }}
-                        >
-                          <ThemeProvider theme={muiTheme}>
-                            <MuiPickersUtilsProvider utils={MomentUtils}>
-                              <DatePicker
-                              // TextFieldComponent={<OutlinedInput style={{backgroundColor:'red'}}/>}
-                              InputProps={{classes:{
-                                // root:classes.datePickerInput
-                              }}}
-                                // classes={{
-                                //   input:classes.input
-                                // }}
+                                                            this.onChange(e, "filterLocation", true);
+                                                        }}
+                                                        options={
+                                                            locations
+                                                                ? locations.map(location => {
+                                                                    return {
+                                                                        value: location.DisGroupName,
+                                                                        label: location.DisGroupName,
+                                                                        id: location.DisGroupID
+                                                                    };
+                                                                })
+                                                                : []
+                                                        }
+                                                    />
+                                                </div>
+                                                <Typography
+                                                    style={{
+                                                        width: "30%",
+                                                        paddingRight: "3%",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    Date
+                                                </Typography>
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        paddingRight: "3%",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    <ThemeProvider theme={muiTheme}>
+                                                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                                                            <DatePicker
+                                                                // TextFieldComponent={<OutlinedInput style={{backgroundColor:'red'}}/>}
+                                                                InputProps={{
+                                                                    classes: {
+                                                                        // root:classes.datePickerInput
+                                                                    }
+                                                                }}
+                                                                // classes={{
+                                                                //   input:classes.input
+                                                                // }}
 
-                                disableToolbar
-                                style={{
-                                  padding: 0,
-                                  fontFamily: "Gotham Rounded Medium"
-                                }}
-                                inputVariant="outlined"
-                                // minDate={new Date()}
-                                // minDateMessage="Date should not be in the past!"
-                                format="DD/MM/YY"
-                                placeholder="Date"
-                                // className="MuiOutlinedInput-input"
-                                onChange={e =>
-                                  this.onChange(e, "filterDate", true)
-                                }
-                                value={filterDate}
-                              />
-                            </MuiPickersUtilsProvider>
-                          </ThemeProvider>
-                          {/* <Select
+                                                                disableToolbar
+                                                                style={{
+                                                                    padding: 0,
+                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                }}
+                                                                inputVariant="outlined"
+                                                                // minDate={new Date()}
+                                                                // minDateMessage="Date should not be in the past!"
+                                                                format="DD/MM/YY"
+                                                                placeholder="Date"
+                                                                // className="MuiOutlinedInput-input"
+                                                                onChange={e =>
+                                                                    this.onChange(e, "filterDate", true)
+                                                                }
+                                                                value={filterDate}
+                                                            />
+                                                        </MuiPickersUtilsProvider>
+                                                    </ThemeProvider>
+                                                    {/* <Select
                           menuPortalTarget={document.body}
                           styles={{
                             menuPortal: styles => ({ ...styles, zIndex: 4 })
@@ -1423,234 +1513,234 @@ class Events extends Component {
                             { value: "2019-09-31", label: "30/09/2019" }
                           ]}
                         /> */}
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "space-between",
+                                                        alignItems: "center",
+                                                        paddingBottom: "4%"
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        style={{
+                                                            width: "30%",
+                                                            paddingRight: "3%",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        Power
+                                                    </Typography>
+                                                    <Typography
+                                                        style={{
+                                                            whiteSpace: "nowrap",
+                                                            color: "#828282",
+                                                            fontFamily: "Gotham Rounded Medium",
+                                                            fontSize: "1vw"
+                                                        }}
+                                                    >
+                                                        {`${filterStartPower}-${filterEndPower} kWh`}
+                                                    </Typography>
+                                                </div>
+                                                <Slider
+                                                    classes={{
+                                                        thumb: classes.thumb,
+                                                        track: classes.track
+                                                    }}
+                                                    value={[filterStartPower, filterEndPower]}
+                                                    onChange={(e, value) => {
+                                                        //  console.log(typeof value[0]);
+                                                        //  console.log(typeof value[1]);
+                                                        this.setState(
+                                                            {
+                                                                touchedPower: true,
+                                                                filterStartPower: value[0],
+                                                                filterEndPower: value[1]
+                                                            },
+                                                            () => {
+                                                                return this.onFilterEvents();
+                                                            }
+                                                        );
+                                                    }}
+                                                    valueLabelDisplay="auto"
+                                                    aria-labelledby="range-slider"
+                                                    // getAriaValueText={value => {
+                                                    //   return `${value}`;
+                                                    // }}
+                                                />
+                                                <Typography
+                                                    style={{
+                                                        width: "30%",
+                                                        paddingRight: "3%",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    Status
+                                                </Typography>
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        padding: "3% 0 8% 0",
+                                                        color: "#BDBDBD",
+                                                        letterSpacing: "1.5px",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    <Select
+                                                        menuPortalTarget={document.body}
+                                                        styles={{
+                                                            menuPortal: styles => ({
+                                                                ...styles,
+                                                                zIndex: 0,
+                                                                paddingRight: "3%",
+                                                                color: "#BDBDBD",
+                                                                letterSpacing: "1.5px",
+                                                                fontFamily: "Gotham Rounded Medium"
+                                                            })
+                                                        },customStyles}
+                                                        options={[
+                                                            {value: "0", label: "Scheduled"},
+                                                            {value: "1", label: "Completed"}
+                                                        ]}
+                                                        value={filterStatus}
+                                                        onChange={e => {
+                                                            this.setState({filterStatus: e}, () => {
+                                                                return this.onFilterEvents();
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
-                        <div
-                          style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingBottom: "4%"
-                          }}
-                        >
-                          <Typography
-                            style={{
-                              width: "30%",
-                              paddingRight: "3%",
-                              color: "#BDBDBD",
-                              letterSpacing: "1.5px",
-                              fontFamily: "Gotham Rounded Medium"
-                            }}
-                          >
-                            Power
-                          </Typography>
-                          <Typography
-                            style={{
-                              whiteSpace: "nowrap",
-                              color: "#828282",
-                              fontFamily: "Gotham Rounded Medium",
-                              fontSize: "1vw"
-                            }}
-                          >
-                            {`${filterStartPower}-${filterEndPower} kWh`}
-                          </Typography>
-                        </div>
-                        <Slider
-                          classes={{
-                            thumb: classes.thumb,
-                            track: classes.track
-                          }}
-                          value={[filterStartPower, filterEndPower]}
-                          onChange={(e, value) => {
-                            //  console.log(typeof value[0]);
-                            //  console.log(typeof value[1]);
-                            this.setState(
-                              {
-                                touchedPower: true,
-                                filterStartPower: value[0],
-                                filterEndPower: value[1]
-                              },
-                              () => {
-                                return this.onFilterEvents();
-                              }
-                            );
-                          }}
-                          valueLabelDisplay="auto"
-                          aria-labelledby="range-slider"
-                          // getAriaValueText={value => {
-                          //   return `${value}`;
-                          // }}
-                        />
-                        <Typography
-                          style={{
-                            width: "30%",
-                            paddingRight: "3%",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                          }}
-                        >
-                          Status
-                        </Typography>
-                        <div
-                          style={{
-                            width: "100%",
-                            padding: "3% 0 8% 0",
-                            color: "#BDBDBD",
-                            letterSpacing: "1.5px",
-                            fontFamily: "Gotham Rounded Medium"
-                          }}
-                        >
-                          <Select
-                            menuPortalTarget={document.body}
-                            styles={{
-                              menuPortal: styles => ({
-                                ...styles,
-                                zIndex: 0,
-                                paddingRight: "3%",
-                                color: "#BDBDBD",
-                                letterSpacing: "1.5px",
-                                fontFamily: "Gotham Rounded Medium"
-                              })
-                            },customStyles}
-                            options={[
-                              { value: "0", label: "Scheduled" },
-                              { value: "1", label: "Completed" }
-                            ]}
-                            value={filterStatus}
-                            onChange={e => {
-                              this.setState({ filterStatus: e }, () => {
-                                return this.onFilterEvents();
-                              });
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
 
-            {user.includes("admin") ? (
-              <div
-                style={{
-                  position: "fixed",
-                  display: "flex",
-                  alignSelf: "flex-end",
-                  padding: "0 2vw",
-                  bottom: "3%",
-                  right: "3%"
-                }}
-              >
-                <Fab
-                  style={{
-                    // position: "absolute",
-                    // bottom: "3%",
-                    // right: "3%",
-                    backgroundColor: "#25A8A8"
-                  }}
-                  onClick={() => this.setState({ openAddEvent: true })}
+                        {user.includes("admin") ? (
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    display: "flex",
+                                    alignSelf: "flex-end",
+                                    padding: "0 2vw",
+                                    bottom: "3%",
+                                    right: "3%"
+                                }}
+                            >
+                                <Fab
+                                    style={{
+                                        // position: "absolute",
+                                        // bottom: "3%",
+                                        // right: "3%",
+                                        backgroundColor: "#25A8A8"
+                                    }}
+                                    onClick={() => this.setState({openAddEvent: true})}
+                                >
+                                    <Add style={{color: "#fff"}}/>
+                                </Fab>
+                            </div>
+                        ) : (
+                            ""
+                        )}
+                    </div>
+                )}
+                <Dialog
+                    fullWidth
+                    style={{zIndex: 0}}
+                    open={openAddEvent}
+                    onClose={() => this.setState({openAddEvent: false})}
                 >
-                  <Add style={{ color: "#fff" }} />
-                </Fab>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-        )}
-        <Dialog
-          fullWidth
-          style={{ zIndex: 0 }}
-          open={openAddEvent}
-          onClose={() => this.setState({ openAddEvent: false })}
-        >
-          <DialogContent style={{ height: "28vw" }}>
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
-              <div
-                style={{
-                  width: "80%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-evenly",
-                  height: "100%"
-                }}
-              >
-                <Typography
-                  style={{
-                    color: "#25A8A8",
-                    fontFamily: "Gotham Rounded Light"
-                  }}
-                >
-                  {"Add event".toUpperCase()}
-                </Typography>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "space-between"
-                  }}
-                >
-                  <Typography
-                    style={{
-                      color: "#333",
-                      fontFamily: "Gotham Rounded Light"
-                    }}
-                  >
-                    Location
-                  </Typography>
-                  <div style={{ width: "70%" }}>
-                    <Select
-                      menuPortalTarget={document.body}
-                      styles={{
-                        menuPortal: styles => ({ ...styles, zIndex: 4 })
-                      },customStyles}
-                      onChange={e => this.onChange(e, "location", false)}
-                      options={
-                        locations
-                          ? locations.map(location => {
-                              // console.log("location", location.DisGroupName);
-                              return {
-                                value: location.DisGroupName,
-                                label: location.DisGroupName,
-                                id: location.DisGroupID,
-                                maxPower: location.MaxPower
-                              };
-                            })
-                          : []
-                      }
-                      value={location}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "space-between"
-                  }}
-                >
-                  <Typography
-                    style={{
-                      color: "#333",
-                      fontFamily: "Gotham Rounded Light"
-                    }}
-                  >
-                    Date
-                  </Typography>
-                  <div style={{ width: "70%" }}>
-                    {/* <Select
+                    <DialogContent style={{height: "28vw"}}>
+                        <div
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center"
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: "80%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-evenly",
+                                    height: "100%"
+                                }}
+                            >
+                                <Typography
+                                    style={{
+                                        color: "#25A8A8",
+                                        fontFamily: "Gotham Rounded Light"
+                                    }}
+                                >
+                                    {"Add event".toUpperCase()}
+                                </Typography>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        width: "100%",
+                                        justifyContent: "space-between"
+                                    }}
+                                >
+                                    <Typography
+                                        style={{
+                                            color: "#333",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >
+                                        Location
+                                    </Typography>
+                                    <div style={{width: "70%"}}>
+                                        <Select
+                                            menuPortalTarget={document.body}
+                                            styles={{
+                                                menuPortal: styles => ({...styles, zIndex: 4})
+                                            },customStyles}
+                                            onChange={e => this.onChange(e, "location", false)}
+                                            options={
+                                                locations
+                                                    ? locations.map(location => {
+                                                        // console.log("location", location.DisGroupName);
+                                                        return {
+                                                            value: location.DisGroupName,
+                                                            label: location.DisGroupName,
+                                                            id: location.DisGroupID,
+                                                            maxPower: location.MaxPower
+                                                        };
+                                                    })
+                                                    : []
+                                            }
+                                            value={location}
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        width: "100%",
+                                        justifyContent: "space-between"
+                                    }}
+                                >
+                                    <Typography
+                                        style={{
+                                            color: "#333",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >
+                                        Date
+                                    </Typography>
+                                    <div style={{width: "70%"}}>
+                                        {/* <Select
                       menuPortalTarget={document.body}
                       styles={{
                         menuPortal: styles => ({ ...styles, zIndex: 4 })
@@ -1681,55 +1771,55 @@ class Events extends Component {
                       onChange={e => this.onChange(e, "date",false)}
                       value={date}
                     /> */}
-                    <ThemeProvider theme={muiTheme}>
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <DatePicker
-                          disableToolbar
-                          style={{
-                            padding: 0,
-                            color: "#000",
-                            fontFamily: "Gotham Rounded Light"
-                            // border:'1px solid red',
-                            // borderRadius:'4px'
-                          }}
-                          placeholder="Date"
-                          inputVariant="outlined"
-                          // minDate={new Date()}
-                          // minDateMessage="Date should not be in the past!"
-                          format="DD/MM/YY"
-                          onChange={e => this.onChange(e, "date", false)}
-                          value={date}
-                        />
-                      </MuiPickersUtilsProvider>
-                    </ThemeProvider>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                  }}
-                >
-                  <Typography
-                    style={{
-                      color: "#333",
-                      fontFamily: "Gotham Rounded Light"
-                    }}
-                  >
-                    Time
-                  </Typography>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70%",
-                      alignItems: "center"
-                    }}
-                  >
-                    <div style={{ width: "40%" }}>
-                      {/* <Select
+                                        <ThemeProvider theme={muiTheme}>
+                                            <MuiPickersUtilsProvider utils={MomentUtils}>
+                                                <DatePicker
+                                                    disableToolbar
+                                                    style={{
+                                                        padding: 0,
+                                                        color: "#000",
+                                                        fontFamily: "Gotham Rounded Light"
+                                                        // border:'1px solid red',
+                                                        // borderRadius:'4px'
+                                                    }}
+                                                    placeholder="Date"
+                                                    inputVariant="outlined"
+                                                    // minDate={new Date()}
+                                                    // minDateMessage="Date should not be in the past!"
+                                                    format="DD/MM/YY"
+                                                    onChange={e => this.onChange(e, "date", false)}
+                                                    value={date}
+                                                />
+                                            </MuiPickersUtilsProvider>
+                                        </ThemeProvider>
+                                    </div>
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        width: "100%",
+                                        alignItems: "center",
+                                        justifyContent: "space-between"
+                                    }}
+                                >
+                                    <Typography
+                                        style={{
+                                            color: "#333",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >
+                                        Time
+                                    </Typography>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            width: "70%",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        <div style={{width: "40%"}}>
+                                            {/* <Select
                         menuPortalTarget={document.body}
                         styles={{
                           menuPortal: styles => ({ ...styles, zIndex: 4 })
@@ -1763,7 +1853,7 @@ class Events extends Component {
                           { value: "24", label: "12 pm" }
                         ]}
                       /> */}
-                      {/* <MuiPickersUtilsProvider utils={MomentUtils}>
+                                            {/* <MuiPickersUtilsProvider utils={MomentUtils}>
                         <TimePicker
                           inputVariant="outlined"
                           clearable
@@ -1773,30 +1863,30 @@ class Events extends Component {
                           onChange={e => this.onChange(e, "from", false)}
                         />
                       </MuiPickersUtilsProvider> */}
-                      <TextField
-                        type="time"
-                        inputProps={{
-                          step:'1800'
-                        }}
-                        variant="outlined"
-                        value={from===null?"02:00":from}
-                        style={{ fontFamily: "Gotham Rounded Light" }}
-                        placeholder={"02:00"}
-                        onChange={e => this.setState({ from: e.target.value })}
-                      />
-                    </div>
-                    <Typography
-                      style={{
-                        width: "20%",
-                        textAlign: "center",
-                        color: "#333",
-                        fontFamily: "Gotham Rounded Light"
-                      }}
-                    >
-                      to
-                    </Typography>
-                    <div style={{ width: "40%" }}>
-                      {/* <Select
+                                            <TextField
+                                                type="time"
+                                                inputProps={{
+                                                    step: '1800'
+                                                }}
+                                                variant="outlined"
+                                                value={from === null ? "02:00" : from}
+                                                style={{fontFamily: "Gotham Rounded Light"}}
+                                                placeholder={"02:00"}
+                                                onChange={e => this.setState({from: e.target.value})}
+                                            />
+                                        </div>
+                                        <Typography
+                                            style={{
+                                                width: "20%",
+                                                textAlign: "center",
+                                                color: "#333",
+                                                fontFamily: "Gotham Rounded Light"
+                                            }}
+                                        >
+                                            to
+                                        </Typography>
+                                        <div style={{width: "40%"}}>
+                                            {/* <Select
                         onChange={e => this.onChange(e, "to", false)}
                         menuPortalTarget={document.body}
                         styles={{
@@ -1830,18 +1920,18 @@ class Events extends Component {
                         ]}
                         value={to}
                       /> */}
-                      <TextField
-                        type="time"
-                        inputProps={{
-                          step:'1800'
-                        }}
-                        variant="outlined"
-                        value={to===null?"04:00":to}
-                        style={{ fontFamily: "Gotham Rounded Light" }}
-                        placeholder={"04:00"}
-                        onChange={e => this.setState({ to: e.target.value })}
-                      />
-                      {/* <MuiPickersUtilsProvider utils={MomentUtils}>
+                                            <TextField
+                                                type="time"
+                                                inputProps={{
+                                                    step: '1800'
+                                                }}
+                                                variant="outlined"
+                                                value={to === null ? "04:00" : to}
+                                                style={{fontFamily: "Gotham Rounded Light"}}
+                                                placeholder={"04:00"}
+                                                onChange={e => this.setState({to: e.target.value})}
+                                            />
+                                            {/* <MuiPickersUtilsProvider utils={MomentUtils}>
                         <TimePicker
                           inputVariant="outlined"
                           clearable
@@ -1851,128 +1941,128 @@ class Events extends Component {
                           onChange={e => this.onChange(e, "to", false)}
                         />
                       </MuiPickersUtilsProvider> */}
-                    </div>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "space-between"
-                  }}
-                >
-                  <Typography
-                    style={{
-                      color: "#333",
-                      fontFamily: "Gotham Rounded Light"
-                    }}
-                  >
-                    Power
-                  </Typography>
-                  <Typography
-                    style={{
-                      color: "#333",
-                      fontFamily: "Gotham Rounded Light"
-                    }}
-                  >{`${power} kW`}</Typography>
-                </div>
-                <Slider
-                  value={power}
-                  aria-label="custom thumb label"
-                  max={location ? location.maxPower : 100}
-                  onChange={(e, value) => {
-                    // console.log("e", e);
-                    // console.log("value", value);
-                    return this.setState({ power: value });
-                  }}
-                  classes={{
-                    thumb: classes.thumb,
-                    track: classes.track
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  {validationText ? (
-                    <Typography style={{ color: "red" }}>
-                      {validationText}
-                    </Typography>
-                  ) : null}
-                  {error ? (
-                    <Typography style={{ color: "red" }}>
-                      {error.value}
-                    </Typography>
-                  ) : null}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%"
-                  }}
-                >
-                  <Button
-                    onClick={this.onClickSave}
-                    variant="contained"
-                    style={{
-                      color: "#fff",
-                      textTransform: "none",
-                      backgroundColor: "#25A8A8",
-                      width: "30%"
-                    }}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        width: "100%",
+                                        justifyContent: "space-between"
+                                    }}
+                                >
+                                    <Typography
+                                        style={{
+                                            color: "#333",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >
+                                        Power
+                                    </Typography>
+                                    <Typography
+                                        style={{
+                                            color: "#333",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >{`${power} kW`}</Typography>
+                                </div>
+                                <Slider
+                                    value={power}
+                                    aria-label="custom thumb label"
+                                    max={location ? location.maxPower : 100}
+                                    onChange={(e, value) => {
+                                        // console.log("e", e);
+                                        // console.log("value", value);
+                                        return this.setState({power: value});
+                                    }}
+                                    classes={{
+                                        thumb: classes.thumb,
+                                        track: classes.track
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}
+                                >
+                                    {validationText ? (
+                                        <Typography style={{color: "red"}}>
+                                            {validationText}
+                                        </Typography>
+                                    ) : null}
+                                    {error ? (
+                                        <Typography style={{color: "red"}}>
+                                            {error.value}
+                                        </Typography>
+                                    ) : null}
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        width: "100%"
+                                    }}
+                                >
+                                    <Button
+                                        onClick={this.onClickSave}
+                                        variant="contained"
+                                        style={{
+                                            color: "#fff",
+                                            textTransform: "none",
+                                            backgroundColor: "#25A8A8",
+                                            width: "30%"
+                                        }}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
+        );
+    }
 }
 
 const styles = {
-  datePickerInput:{
-    // border:'0.2rem solid red',
-    // "&:visited":{
-    //   border:"0.2rem solid blue"
-    // },
-    // "&:focus":{
-    //   border:"0.2rem solid green"
-    // }
-  },
-  root: {
-    borderRadius: 20,
-    marginBottom: "30px",
-    display: "inline-block",
-    backgroundColor: "orange"
-  },
-  thumb: {
-    backgroundColor: "white",
-    borderStyle: "solid",
-    borderColor: "#25A8A8",
-    borderWidth: "3px"
-  },
-  track: {
-    height: "3px",
-    backgroundColor: "#25A8A8"
-  },
-  dialogContainer: {
-    width: "55vw"
-  }
+    datePickerInput: {
+        // border:'0.2rem solid red',
+        // "&:visited":{
+        //   border:"0.2rem solid blue"
+        // },
+        // "&:focus":{
+        //   border:"0.2rem solid green"
+        // }
+    },
+    root: {
+        borderRadius: 20,
+        marginBottom: "30px",
+        display: "inline-block",
+        backgroundColor: "orange"
+    },
+    thumb: {
+        backgroundColor: "white",
+        borderStyle: "solid",
+        borderColor: "#25A8A8",
+        borderWidth: "3px"
+    },
+    track: {
+        height: "3px",
+        backgroundColor: "#25A8A8"
+    },
+    dialogContainer: {
+        width: "55vw"
+    }
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+    auth: state.auth
 });
 
 export default withStyles(styles)(connect(mapStateToProps)(Events));

@@ -1,50 +1,49 @@
 import {LOGIN,LOGIN_ERROR,SESSION_USER} from './types';
+import { Base64 } from 'js-base64';
 
 export const login=(email,password,history,md5)=>dispatch=>{
 
 
-    fetch("https://monitoring.shinehub.com.au/handler/login/handleLogin.php", {
-        method: "POST",
+    fetch("http://54.206.87.91:8080/backend-service/user/name/"+email, {
+        method: "GET",
         mode:'cors',
-        body: JSON.stringify({
-            d:JSON.stringify({
-                cvs: {
-                    a: email,
-                    p: md5(`${email}${md5(password)}f4225962934c5452hun3o`)
-                }
-            })
-        })
+        headers:{
+            "Authorization":"Basic "+Base64.encode(`${email}:${password}`),
+            "Content-Type": "application/json"
+        },
     })
         .then(res => res.json())
         .then(res => {
-            console.log("res",res.r);
-            console.log("typeof res",typeof res.r);
-            if(typeof res.r==='number'){
+            // console.log("res",res);
+            // console.log("typeof res",typeof res.r);
+            if(typeof res.success==="undefined"){
 
                 throw res;
             }
 
-            fetch('https://monitoring.shinehub.com.au/handler/web/User/handleQueryUserDetail.php',{
-                method:"POST",
-                body:JSON.stringify({
-                    d:JSON.stringify({
-                        cvs:{
-
-                        }
-                    })
-                })
+            fetch("http://54.206.87.91:8080/backend-service/user/name/"+email, {
+                method: "GET",
+                mode:'cors',
+                headers:{
+                    "Authorization":"Basic "+Base64.encode(`${email}:${password}`),
+                    "Content-Type": "application/json"
+                },
             })
                 .then(res=>res.json())
                 .then(userDetails=>{
-                    console.log('userDetails',userDetails);
-                    localStorage.setItem('user',res.r);
-                    localStorage.setItem('exp',userDetails.d.expiretime);
+                    // console.log('userDetails',userDetails);
+                    localStorage.setItem('user',res.data);
+                    localStorage.setItem('userID',res.data.id);
+                    localStorage.setItem('exp',1000);
+                    localStorage.setItem('username',email);
+                    localStorage.setItem('password',password);
 
                     dispatch({
                         type:LOGIN,
                         payload:{
-                            isAuthenticated:typeof res.r==='string',
-                            user:typeof res.r==='string'?res.r:''
+                            isAuthenticated: res.success===1,
+                            user:res.success===1?'admin':'',
+                            // userID:res.success===1?res.data.id:''
                         }
                     });
                     history.push('/');
@@ -62,31 +61,29 @@ export const login=(email,password,history,md5)=>dispatch=>{
 }
 
 export const getSessionUser=()=>dispatch=>{
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
+    const userID = localStorage.getItem('userID');
 
-    fetch('https://monitoring.shinehub.com.au/handler/web/User/handleQueryUserDetail.php',{
-        method:"POST",
-        body:JSON.stringify({
-            d:JSON.stringify({
-                cvs:{
-
-                }
-            })
-        })
+    fetch("http://54.206.87.91:8080/backend-service/user/name/"+username, {
+        method: "GET",
+        mode:'cors',
+        headers:{
+            "Authorization":"Basic "+Base64.encode(`${username}:${password}`),
+            "Content-Type": "application/json"
+        },
     }) .then(res=>res.json())
         .then(userDetails=>{
-            console.log('userDetails',userDetails);
-            localStorage.setItem('exp',userDetails.d.expiretime);
+            // console.log('userDetails',userDetails);
+            localStorage.setItem('exp',1000);
         })
 
-    return fetch('https://monitoring.shinehub.com.au/handler/web/User/handleQueryUserDetail.php',{
-        method:"POST",
-        body:JSON.stringify({
-            d:JSON.stringify({
-                cvs:{
-
-                }
-            })
-        })
+    return fetch("http://54.206.87.91:8080/backend-service/user/name/"+username,{
+        method: "GET",
+        headers:{
+            "Authorization":"Basic "+Base64.encode(`${username}:${password}`),
+            "Content-Type": "application/json"
+        },
     })
 }
 
@@ -98,7 +95,8 @@ export const logout=(history)=>dispatch=>{
         type:LOGIN,
         payload:{
             isAuthenticated:false,
-            user:''
+            user:'',
+            // userID:''
         }
     })
 
