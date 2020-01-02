@@ -26,7 +26,8 @@
     "react-select-plus": "^1.0.0-rc.3.patch12",
     "react-times": "^3.1.12",
     "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "js-base64": "^2.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
