@@ -86,6 +86,7 @@ const customStyles = {
 const username = localStorage.getItem('username');
 const password = localStorage.getItem('password');
 const userID = localStorage.getItem('userID');
+console.log("username",username)
 
 const muiTheme = createMuiTheme({
     overrides: {
