@@ -64,7 +64,7 @@ class EditEvent extends Component {
                         endTime: moment(state.event.sysReDEndTime, "HH:mm"),
                         power: parseInt(state.event.sysReDEstGen),
                         chartData: res.data ? res.data : {},
-                        completed: state.event.sysReDEventStatus === "0" ? false : state.event.sysReDEventStatus === "1" ? false : true
+                        completed: state.event.sysReDEventStatus === 0 ? false : state.event.sysReDEventStatus === 1 ? false : true
 
                     });
                 });
@@ -87,9 +87,19 @@ class EditEvent extends Component {
     };
 
     onExportEvent = () => {
-        window.open(
-            "backend-service/system/export"
-        );
+
+        window.open("http://54.206.87.91:8080/backend-service/system/export/")
+
+        // fetch(
+        //     "http://54.206.87.91:8080/backend-service/system/export/" ,
+        //     {
+        //         method: "GET",
+        //         headers: {
+        //             "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+        //             "Content-Type": "application/json"
+        //         }
+        //     }
+        // )
     };
 
     onEditEvent = event => {

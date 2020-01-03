@@ -189,7 +189,7 @@ class Dashboard extends Component {
         )
             .then(chartData => chartData.json())
             .then(chartData => {
-                console.log("isAuthenticated", isAuthenticated);
+                // console.log("isAuthenticated", isAuthenticated);
 
                 return fetch(
                     "http://54.206.87.91:8080/backend-service/group/",
@@ -204,7 +204,7 @@ class Dashboard extends Component {
                     .then(res => res.json())
                     .then(locations => {
                         fetch(
-                            "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                            "http://54.206.87.91:8080/backend-service/event/upcoming/",
                             {
                                 method: "GET",
                                 headers: {
@@ -384,7 +384,7 @@ class Dashboard extends Component {
                     endtime: moment(to, "HH:mm:ss").format("HH:mm"),
                     date: moment(date).format("YYYY-MM-DD"),
                     power: power*1000,
-                    i: 0
+                    eventStatus : 0
                 })
 
             }
@@ -405,7 +405,7 @@ class Dashboard extends Component {
                 }
                 Promise.all([
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2020-01-02",
+                        "http://54.206.87.91:8080/backend-service/event/upcoming/",
                         {
                             method: "GET",
                             headers: {
@@ -476,7 +476,7 @@ class Dashboard extends Component {
         this.setState({[name]: e, loading: true}, () => {
             console.log("e.id", e.id);
             fetch(
-                "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                "http://54.206.87.91:8080/backend-service/event/upcoming/",
                 {
                     method: "GET",
                     headers: {

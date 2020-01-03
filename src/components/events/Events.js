@@ -219,7 +219,7 @@ class Events extends Component {
         // console.log("user", user);
         Promise.all([
             fetch(
-                "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                "http://54.206.87.91:8080/backend-service/event/all/",
                 {
                     method: "GET",
                     headers: {
@@ -330,7 +330,8 @@ class Events extends Component {
                     endtime: moment(to, "HH:mm:ss").format("HH:mm"),
                     date: moment(date).format("YYYY-MM-DD"),
                     power: power *1000,
-                    i: 0
+                    eventStatus : 0,
+
                 })
 
             }
@@ -351,7 +352,7 @@ class Events extends Component {
 
                 Promise.all([
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2020-01-02",
+                        "http://54.206.87.91:8080/backend-service/event/all/",
                         {
                             method: "GET",
                             headers: {
@@ -413,7 +414,7 @@ class Events extends Component {
                 // console.log("save", res);
                 Promise.all([
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                        "http://54.206.87.91:8080/backend-service/event/all/",
                         {
                             method: "GET",
                             headers: {
@@ -476,7 +477,7 @@ class Events extends Component {
                     // console.log("save", res);
                     Promise.all([
                         fetch(
-                            "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                            "http://54.206.87.91:8080/backend-service/event/group/all/",
                             {
                                 method: "GET",
                                 headers: {
@@ -693,32 +694,32 @@ class Events extends Component {
             // }
 
             event.availablepower = event.power
-            event.groupname = 'groupname'
-            event.sysReDCompVal = 0
+            event.groupname = event.groupname
+            event.sysReDCompVal = event.compval
             event.sysReDControlMode = ''
             event.sysReDCreatTime = event.createdTime
             event.sysReDDaily = ''
             event.sysReDDate = event.date
             event.sysReDEndCap = event.endCap
-            event.sysReDEstGen = 0
-            event.sysReDEventStatus = "0"
+            event.sysReDEstGen = event.estgen
+            event.sysReDEventStatus = event.eventstatus
             event.sysReDGroupID = event.groupId
             event.sysReDId = 'eventId'
             event.sysReDIsComplete = event.isComplete
-            event.sysReDIsEmail = event.isComplete
-            event.sysReDIsPrice = event.isComplete
+            event.sysReDIsEmail = event.isemail
+            event.sysReDIsPrice = event.isprice
             event.sysReDIsStart = event.isStart
-            event.sysReDIsValid = event.isComplete
+            event.sysReDIsValid = 1
             event.sysReDMode = ''
-            event.sysReDNeedCharge = event.isComplete
+            event.sysReDNeedCharge = 0
             event.sysReDPower = event.power
-            event.sysReDPrice = 0
+            event.sysReDPrice = event.power.price
             event.sysReDSOC = 10
-            event.sysReDStartCap = event.startTime
-            event.sysReDStartTime = event.endTime
+            event.sysReDStartCap = event.startBattery
+            event.sysReDStartTime = event.startTime
             event.sysReDEndTime = event.endTime
             event.sysReDStatus = "1"
-            event.sysReDTargetCap = event.targetCap
+            event.sysReDTargetCap = event.finalBattery
             if (filterLocation) {
                 if (filterDate) {
                     if (touchedPower) {
@@ -1021,33 +1022,32 @@ class Events extends Component {
                                             {Array.isArray(showEvents)
                                                 ? showEvents.map(row => {
                                                     row.availablepower = row.power
-                                                    row.groupname = 'groupName'
-                                                    row.sysReDCompVal = 0
+                                                    row.groupname = row.groupname
+                                                    row.sysReDCompVal = row.compval
                                                     row.sysReDControlMode = ''
                                                     row.sysReDCreatTime = row.createdTime
                                                     row.sysReDDaily = ''
                                                     row.sysReDDate = row.date
                                                     row.sysReDEndCap = row.endCap
-                                                    row.sysReDEstGen = 0
-                                                    row.sysReDEventStatus = "0"
+                                                    row.sysReDEstGen = row.estgen
+                                                    row.sysReDEventStatus = row.eventstatus
                                                     row.sysReDGroupID = row.groupId
-                                                    row.sysReDId = 'eventID'
+                                                    row.sysReDId = 'eventId'
                                                     row.sysReDIsComplete = row.isComplete
-                                                    row.sysReDIsEmail = row.isComplete
-                                                    row.sysReDIsPrice = row.isComplete
+                                                    row.sysReDIsEmail = row.isemail
+                                                    row.sysReDIsPrice = row.isprice
                                                     row.sysReDIsStart = row.isStart
-                                                    row.sysReDIsValid = row.isComplete
+                                                    row.sysReDIsValid = 1
                                                     row.sysReDMode = ''
-                                                    row.sysReDNeedCharge = row.isComplete
+                                                    row.sysReDNeedCharge = 0
                                                     row.sysReDPower = row.power
-                                                    row.sysReDPrice = 0
+                                                    row.sysReDPrice = row.power.price
                                                     row.sysReDSOC = 10
-                                                    row.sysReDStartCap = row.startCap
+                                                    row.sysReDStartCap = row.startBattery
                                                     row.sysReDStartTime = row.startTime
                                                     row.sysReDEndTime = row.endTime
                                                     row.sysReDStatus = "1"
-                                                    row.sysReDTargetCap = row.targetCap
-                                                    console.log(row)
+                                                    row.sysReDTargetCap = row.finalBattery
                                                     return (
                                                         <TableRow
                                                             style={{
@@ -1134,9 +1134,9 @@ class Events extends Component {
                                                             >
                                                                 <div
                                                                     style={
-                                                                        row.sysReDEventStatus === "0" ||
-                                                                        row.sysReDEventStatus === "1" ||
-                                                                        row.sysReDEventStatus === "4"
+                                                                        row.sysReDEventStatus === 0 ||
+                                                                        row.sysReDEventStatus === 1 ||
+                                                                        row.sysReDEventStatus === 4
                                                                             ? {
                                                                                 backgroundColor: "#fff",
                                                                                 border: "solid",
@@ -1165,12 +1165,12 @@ class Events extends Component {
                                                                     fontSize: "1.2vw"
                                                                 }}
                                                             >
-                                                                {row.sysReDEventStatus === "0" ||
-                                                                row.sysReDEventStatus === "1"
+                                                                {row.sysReDEventStatus === 0 ||
+                                                                row.sysReDEventStatus === 1
                                                                     ? "Scheduled"
-                                                                    : row.sysReDEventStatus === "2"
+                                                                    : row.sysReDEventStatus === 2
                                                                         ? "Completed"
-                                                                        : row.sysReDEventStatus === "4"
+                                                                        : row.sysReDEventStatus === 4
                                                                             ? "No Available Power\n to discharge"
                                                                             : "Completed and\n Sent Email to Customer"}
                                                             </TableCell>
@@ -1184,9 +1184,9 @@ class Events extends Component {
                                                                     fontFamily: "Gotham Rounded Medium"
                                                                 }}
                                                             >
-                                                                {row.sysReDEventStatus === "0" ||
-                                                                row.sysReDEventStatus === "1" ||
-                                                                row.sysReDEventStatus === "4" ? (
+                                                                {row.sysReDEventStatus === 0 ||
+                                                                row.sysReDEventStatus === 1 ||
+                                                                row.sysReDEventStatus === 4 ? (
                                                                     <MoneyOff/>
                                                                 ) : (
                                                                     <AttachMoneyOutlined
@@ -1673,7 +1673,7 @@ class Events extends Component {
                                                             value: location.name,
                                                             label: location.name,
                                                             id: location.id,
-                                                            maxPower: location.maxPower
+                                                            maxPower: location.maxPower / 1000
                                                         };
                                                     })
                                                     : []
