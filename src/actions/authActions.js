@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 export const login=(email,password,history,md5)=>dispatch=>{
 
 
-    fetch("http://54.206.87.91:8080/backend-service/user/name/"+email, {
+    fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+email, {
         method: "GET",
         mode:'cors',
         headers:{
@@ -21,7 +21,7 @@ export const login=(email,password,history,md5)=>dispatch=>{
                 throw res;
             }
 
-            fetch("http://54.206.87.91:8080/backend-service/user/name/"+email, {
+            fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+email, {
                 method: "GET",
                 mode:'cors',
                 headers:{
@@ -65,7 +65,7 @@ export const getSessionUser=()=>dispatch=>{
     const password = localStorage.getItem('password');
     const userID = localStorage.getItem('userID');
 
-    fetch("http://54.206.87.91:8080/backend-service/user/name/"+username, {
+    fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+username, {
         method: "GET",
         mode:'cors',
         headers:{
@@ -78,7 +78,7 @@ export const getSessionUser=()=>dispatch=>{
             localStorage.setItem('exp',1000);
         })
 
-    return fetch("http://54.206.87.91:8080/backend-service/user/name/"+username,{
+    return fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+username,{
         method: "GET",
         headers:{
             "Authorization":"Basic "+Base64.encode(`${username}:${password}`),
