@@ -43,7 +43,7 @@ class EditEvent extends Component {
         console.log("user", user);
         if (state !== undefined) {
             fetch(
-                "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,
+                "http://54.206.87.91:8080/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,
                 {
                     method: "GET",
                     headers: {
@@ -88,7 +88,7 @@ class EditEvent extends Component {
 
     onExportEvent = () => {
 
-        window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
+        window.open("http://54.206.87.91:8080/backend-service/system/export/")
 
         // fetch(
         //     "http://54.206.87.91:8080/backend-service/system/export/" ,
@@ -130,7 +130,7 @@ class EditEvent extends Component {
             .then(res => {
                 // console.log("handleEditRelationDispatch res", res);
                 fetch(
-                    "https://vppspark.shinehub.com.au:8443/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                    "http://54.206.87.91:8080/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
                     {
                         method: "GET",
                         headers: {
