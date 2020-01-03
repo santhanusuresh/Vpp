@@ -86,7 +86,6 @@ const customStyles = {
 const username = localStorage.getItem('username');
 const password = localStorage.getItem('password');
 const userID = localStorage.getItem('userID');
-console.log("username",username)
 
 const muiTheme = createMuiTheme({
     overrides: {
@@ -179,7 +178,7 @@ class Dashboard extends Component {
         window.addEventListener("resize", this.onResizeWindow);
 
         fetch(
-            "http://54.206.87.91:8080/backend-service/dashboard/data/",
+            "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/",
             {
                 method: "GET",
                 headers: {
@@ -193,7 +192,7 @@ class Dashboard extends Component {
                 // console.log("isAuthenticated", isAuthenticated);
 
                 return fetch(
-                    "http://54.206.87.91:8080/backend-service/group/",
+                    "https://vppspark.shinehub.com.au:8443/backend-service/group/",
                     {
                         method: "GET",
                         headers: {
@@ -205,7 +204,7 @@ class Dashboard extends Component {
                     .then(res => res.json())
                     .then(locations => {
                         fetch(
-                            "http://54.206.87.91:8080/backend-service/event/upcoming/",
+                            "https://vppspark.shinehub.com.au:8443/backend-service/event/upcoming/",
                             {
                                 method: "GET",
                                 headers: {
@@ -372,7 +371,7 @@ class Dashboard extends Component {
         // console.log("typeof date", typeof power);
 
         fetch(
-            "http://54.206.87.91:8080/backend-service/event/group/",
+            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/",
             {
                 method: "POST",
                 headers: {
@@ -406,7 +405,7 @@ class Dashboard extends Component {
                 }
                 Promise.all([
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/event/upcoming/",
+                        "https://vppspark.shinehub.com.au:8443/backend-service/event/upcoming/",
                         {
                             method: "GET",
                             headers: {
@@ -416,7 +415,7 @@ class Dashboard extends Component {
                         }
                     ),
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/group/",
+                        "https://vppspark.shinehub.com.au:8443/backend-service/group/",
                         {
                             method: "GET",
                             headers: {
@@ -477,7 +476,7 @@ class Dashboard extends Component {
         this.setState({[name]: e, loading: true}, () => {
             console.log("e.id", e.id);
             fetch(
-                "http://54.206.87.91:8080/backend-service/event/upcoming/",
+                "https://vppspark.shinehub.com.au:8443/backend-service/event/upcoming/",
                 {
                     method: "GET",
                     headers: {
@@ -489,7 +488,7 @@ class Dashboard extends Component {
                 .then(res => res.json())
                 .then(events => {
                     fetch(
-                        "http://54.206.87.91:8080/backend-service/dashboard/data/group/" + e.id,
+                        "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + e.id,
                         {
                             method: "GET",
                             headers: {

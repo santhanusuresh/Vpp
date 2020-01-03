@@ -155,7 +155,7 @@ const Layout = props => {
     const username = localStorage.getItem('username');
     const userID = localStorage.getItem('userID');
     fetch(
-        "http://54.206.87.91:8080/backend-service/user/"+userID,
+        "https://vppspark.shinehub.com.au:8443/backend-service/user/"+userID,
         {
           method: "PATCH",
           headers:{
