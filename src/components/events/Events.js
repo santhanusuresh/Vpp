@@ -210,6 +210,7 @@ class Events extends Component {
         startTimePrice: "",
         endTimePrice: "",
         hasCompletedPrice: "",
+        createtime: "",
         isEmail: "",
         validationText: ""
     };
@@ -395,23 +396,24 @@ class Events extends Component {
             });
     };
 
-    onClickSavePrice = (id, price) => {
+    onClickSavePrice = (id, price,dateprice,createtime) => {
         const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
         const password = userpassword;
         const userID = userid;
         const {power, location, date, from, to} = this.state;
 
         fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleEditGroupDischargePrice.php",
+            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/price/"+id,
             {
-                method: "POST",
+                method: "Patch",
+                headers: {
+                    "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
-                    d: JSON.stringify({
-                        cvs: {
-                            a: id,
-                            p: price
-                        }
-                    })
+                    createTime:  moment(createtime).format("YYYY-MM-DDTHH:mm"),
+                    date: dateprice,
+                    price: price,
                 })
             }
         )
@@ -886,6 +888,7 @@ class Events extends Component {
             startTimePrice,
             endTimePrice,
             hasCompletedPrice,
+            createtime,
             openPriceDialog,
             price,
             isEmail,
@@ -1200,7 +1203,7 @@ class Events extends Component {
                                                                     <AttachMoneyOutlined
                                                                         onClick={e =>
                                                                             this.setState({
-                                                                                idPrice: row.sysReDId,
+                                                                                idPrice: row.sysReDGroupID,
                                                                                 price:
                                                                                     row.sysReDPrice === null
                                                                                         ? ""
@@ -1212,7 +1215,8 @@ class Events extends Component {
                                                                                 startTimePrice: row.sysReDStartTime,
                                                                                 endTimePrice: row.sysReDEndTime,
                                                                                 hasCompletedPrice:
-                                                                                row.sysReDEventStatus
+                                                                                row.sysReDEventStatus,
+                                                                                createtime:row.sysReDCreatTime,
                                                                             })
                                                                         }
                                                                     />
@@ -1284,13 +1288,13 @@ class Events extends Component {
                                                 )
                                             }}
                                             inputProps={{style: {textAlign: "right"}}}
-                                            disabled={isEmail === "0" ? false : true}
+                                            disabled={isEmail === 0 ? false : true}
                                             placeholder="Enter your price"
                                             value={price}
                                             name="price"
                                             onChange={e => this.onChange(e, "price", false)}
                                         />
-                                        {hasCompletedPrice !== "3" ? (
+                                        {hasCompletedPrice !== 3 ? (
                                             <DialogActions>
                                                 <div style={{width: "15vw", height: "5vw"}}></div>
                                                 <Button
@@ -1300,8 +1304,8 @@ class Events extends Component {
                                                         backgroundColor: "#25A8A8",
                                                         width: "30%"
                                                     }}
-                                                    disabled={isEmail === "0" ? false : true}
-                                                    onClick={() => this.onClickSavePrice(idPrice, price)}
+                                                    disabled={isEmail === 0 ? false : true}
+                                                    onClick={() => this.onClickSavePrice(idPrice, price,datePrice,createtime)}
                                                 >
                                                     Save
                                                 </Button>
@@ -1315,7 +1319,7 @@ class Events extends Component {
                                                         backgroundColor: "#25A8A8",
                                                         width: "30%"
                                                     }}
-                                                    disabled={isEmail === "0" ? false : true}
+                                                    disabled={isEmail === 0 ? false : true}
                                                 >
                                                     Save &#38; Email
                                                 </Button>
