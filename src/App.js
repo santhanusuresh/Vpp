@@ -28,6 +28,9 @@ import moment from 'moment';
 
 if( localStorage.getItem('user')!==null){
   const user=localStorage.getItem('user');
+  const userid=localStorage.getItem('userID');
+  const username=localStorage.getItem('username');
+  const userpassword=localStorage.getItem('password');
   const expiretime=JSON.parse(localStorage.getItem('exp'));
 
   console.log('time',new Date().getTime());
@@ -51,7 +54,10 @@ if( localStorage.getItem('user')!==null){
         type:LOGIN,
         payload:{
           isAuthenticated:user.length>0,
-          user
+          user,
+          userid,
+          username,
+          userpassword
         }
       })
     }

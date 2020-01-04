@@ -151,12 +151,12 @@ const Layout = props => {
 
   const onProfileSave = () => {
     const { email, phone } = profileDetails;
-    // const password = localStorage.getItem('password');
-    // const username = localStorage.getItem('username');
-    // const userID = localStorage.getItem('userID');
-    const username = 'saraswata';
-    const password = '#abcd123';
-    const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
+    const {isAuthenticated,user, userid,username,userpassword} = props.auth;
+    const password = userpassword;
+    const userID = userid;
+    // const username = 'saraswata';
+    // const password = '#abcd123';
+    // const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
     fetch(
         "https://vppspark.shinehub.com.au:8443/backend-service/user/"+userID,
         {
@@ -174,7 +174,7 @@ const Layout = props => {
     )
         .then(res => res.json())
         .then(res => {
-          props.getSessionUser()
+          props.getSessionUser(username,password)
               .then(res=>res.json())
               .then(res=>{
 
@@ -210,9 +210,10 @@ const Layout = props => {
 
   useEffect(() => {
     // console.log("layout");
-
+    const {username,userpassword} = props.auth;
+    const password = userpassword;
     props
-        .getSessionUser()
+        .getSessionUser(username,password)
         .then(res => res.json())
         .then(res => {
           // console.log('session expiretime',typeof res.success);

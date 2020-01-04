@@ -83,12 +83,9 @@ const customStyles = {
     }
 };
 
-// const username = localStorage.getItem('username');
-// const password = localStorage.getItem('password');
-// const userID = localStorage.getItem('userID');
-const username = 'saraswata';
-const password = '#abcd123';
-const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
+// const username = 'saraswata';
+// const password = '#abcd123';
+// const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
 
 const muiTheme = createMuiTheme({
     overrides: {
@@ -173,10 +170,15 @@ class Dashboard extends Component {
 
 
     componentDidMount() {
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated, user,userid} = this.props.auth;
+        const {username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
 
         console.log("isAuthenticated", isAuthenticated);
-        console.log("this.props", this.props);
+        console.log("userid", userid);
+        console.log("username", username);
+        console.log("password", password);
 
         window.addEventListener("resize", this.onResizeWindow);
 
@@ -347,6 +349,9 @@ class Dashboard extends Component {
 
     onClickSave = () => {
         const {isAuthenticated, user} = this.props.auth;
+        const {userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         const {power, location, date, from, to} = this.state;
 
         if (location === null) {
@@ -476,6 +481,9 @@ class Dashboard extends Component {
     };
 
     onChangeLocation = (e, name) => {
+        const {userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         this.setState({[name]: e, loading: true}, () => {
             console.log("e.id", e.id);
             fetch(

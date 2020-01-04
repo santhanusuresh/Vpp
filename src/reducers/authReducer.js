@@ -5,6 +5,9 @@ const initialState={
     isAuthenticated:false,
     loading:false,
     user:'',
+    userid:'',
+    username:'',
+    userpassword:'',
     sessionUser:{},
     error:{}
 
@@ -17,7 +20,10 @@ const reducer=(state=initialState,action)=>{
             return {
                 ...state,
                 isAuthenticated:action.payload.isAuthenticated,
-                user:action.payload.user
+                user:action.payload.user,
+                userid:action.payload.userid,
+                username:action.payload.username,
+                userpassword:action.payload.userpassword
             }
         case LOGIN_ERROR:
             return {

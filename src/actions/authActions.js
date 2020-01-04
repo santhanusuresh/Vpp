@@ -1,6 +1,7 @@
 import {LOGIN,LOGIN_ERROR,SESSION_USER} from './types';
 import { Base64 } from 'js-base64';
 
+
 export const login=(email,password,history,md5)=>dispatch=>{
 
 
@@ -38,11 +39,16 @@ export const login=(email,password,history,md5)=>dispatch=>{
                     localStorage.setItem('username',email);
                     localStorage.setItem('password',password);
 
+                    console.log(res.data.id)
+
                     dispatch({
                         type:LOGIN,
                         payload:{
                             isAuthenticated: res.success===1,
                             user:res.success===1?'admin':'',
+                            userid:res.data.id,
+                            username:email,
+                            userpassword:password,
                             // userID:res.success===1?res.data.id:''
                         }
                     });
@@ -60,12 +66,9 @@ export const login=(email,password,history,md5)=>dispatch=>{
 
 }
 
-export const getSessionUser=()=>dispatch=>{
-    // const username = localStorage.getItem('username');
-    // const password = localStorage.getItem('password');
-    // const userID = localStorage.getItem('userID');
-    const username = 'saraswata';
-    const password = '#abcd123';
+export const getSessionUser=(username,password)=>dispatch=>{
+    // const username = 'saraswata';
+    // const password = '#abcd123';
 
     fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+username, {
         method: "GET",
@@ -98,7 +101,9 @@ export const logout=(history)=>dispatch=>{
         payload:{
             isAuthenticated:false,
             user:'',
-            // userID:''
+            userid:'',
+            username:'',
+            userpassword:''
         }
     })
 

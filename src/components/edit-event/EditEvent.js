@@ -18,10 +18,10 @@ import MomentUtils from "@date-io/moment";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import {Base64} from "js-base64";
 
-// const username = localStorage.getItem('username');
-// const password = localStorage.getItem('password');
-const username = 'saraswata';
-const password = '#abcd123';
+const username = localStorage.getItem('username');
+const password = localStorage.getItem('password');
+// const username = 'saraswata';
+// const password = '#abcd123';
 const userID = localStorage.getItem('userID');
 
 class EditEvent extends Component {

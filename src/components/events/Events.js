@@ -79,12 +79,10 @@ const customStyles = {
     }
 };
 
-// const username = localStorage.getItem('username');
-// const password = localStorage.getItem('password');
-// const userID = localStorage.getItem('userID');
 
-const username = 'saraswata';
-const password = '#abcd123';
+
+// const username = 'saraswata';
+// const password = '#abcd123';
 const muiTheme = createMuiTheme({
     overrides: {
         MuiPickersToolbar: {
@@ -217,7 +215,9 @@ class Events extends Component {
     };
 
     componentDidMount() {
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         // console.log("user", user);
         Promise.all([
             fetch(
@@ -291,7 +291,9 @@ class Events extends Component {
     };
 
     onClickSave = () => {
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         const {power, location, date, from, to} = this.state;
 
         if (location === null) {
@@ -394,7 +396,9 @@ class Events extends Component {
     };
 
     onClickSavePrice = (id, price) => {
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         const {power, location, date, from, to} = this.state;
 
         fetch(
@@ -456,7 +460,9 @@ class Events extends Component {
     };
 
     onClickSaveAndSendPrice = (id, price) => {
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const password = userpassword;
+        const userID = userid;
         const {power, location, date, from, to} = this.state;
 
         if (window.confirm("Are you sure? This cannot be undone!")) {
