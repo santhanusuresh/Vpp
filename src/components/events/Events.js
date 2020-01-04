@@ -79,10 +79,12 @@ const customStyles = {
     }
 };
 
-const username = localStorage.getItem('username');
-const password = localStorage.getItem('password');
-const userID = localStorage.getItem('userID');
+// const username = localStorage.getItem('username');
+// const password = localStorage.getItem('password');
+// const userID = localStorage.getItem('userID');
 
+const username = 'saraswata';
+const password = '#abcd123';
 const muiTheme = createMuiTheme({
     overrides: {
         MuiPickersToolbar: {

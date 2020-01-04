@@ -151,9 +151,12 @@ const Layout = props => {
 
   const onProfileSave = () => {
     const { email, phone } = profileDetails;
-    const password = localStorage.getItem('password');
-    const username = localStorage.getItem('username');
-    const userID = localStorage.getItem('userID');
+    // const password = localStorage.getItem('password');
+    // const username = localStorage.getItem('username');
+    // const userID = localStorage.getItem('userID');
+    const username = 'saraswata';
+    const password = '#abcd123';
+    const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
     fetch(
         "https://vppspark.shinehub.com.au:8443/backend-service/user/"+userID,
         {

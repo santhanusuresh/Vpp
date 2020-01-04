@@ -61,9 +61,11 @@ export const login=(email,password,history,md5)=>dispatch=>{
 }
 
 export const getSessionUser=()=>dispatch=>{
-    const username = localStorage.getItem('username');
-    const password = localStorage.getItem('password');
-    const userID = localStorage.getItem('userID');
+    // const username = localStorage.getItem('username');
+    // const password = localStorage.getItem('password');
+    // const userID = localStorage.getItem('userID');
+    const username = 'saraswata';
+    const password = '#abcd123';
 
     fetch("https://vppspark.shinehub.com.au:8443/backend-service/user/name/"+username, {
         method: "GET",
