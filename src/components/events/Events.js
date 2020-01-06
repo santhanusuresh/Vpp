@@ -345,7 +345,7 @@ class Events extends Component {
             .then(res => {
                 // console.log("save", res);
 
-                if (JSON.parse(res).r !== 1) {
+                if (JSON.parse(res).success !== 1) {
                     return store.dispatch({
                         type: LOGIN_ERROR,
                         payload: {
@@ -402,16 +402,20 @@ class Events extends Component {
         const userID = userid;
         const {power, location, date, from, to} = this.state;
 
+        console.log("createtime", createtime);
+        console.log("date", dateprice);
+        console.log("price", price);
         fetch(
             "https://vppspark.shinehub.com.au:8443/backend-service/event/group/price/"+id,
             {
                 method: "Patch",
+                mode:'cors',
                 headers: {
                     "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    createTime:  moment(createtime).format("YYYY-MM-DDTHH:mm"),
+                    createTime:  createtime,
                     date: dateprice,
                     price: price,
                 })
@@ -461,24 +465,27 @@ class Events extends Component {
             });
     };
 
-    onClickSaveAndSendPrice = (id, price) => {
+    onClickSaveAndSendPrice = (id, price,dateprice,createtime) => {
         const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
         const password = userpassword;
         const userID = userid;
         const {power, location, date, from, to} = this.state;
 
+
         if (window.confirm("Are you sure? This cannot be undone!")) {
             fetch(
-                "https://monitoring.shinehub.com.au/handler/web/Group/handleEditPriceSendEmail.php",
+                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/email/"+id,
                 {
-                    method: "POST",
+                    method: "Patch",
+                    mode:'cors',
+                    headers: {
+                        "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        d: JSON.stringify({
-                            cvs: {
-                                a: id,
-                                p: price
-                            }
-                        })
+                        createTime:  createtime,
+                        date: dateprice,
+                        price: price,
                     })
                 }
             )
@@ -714,7 +721,7 @@ class Events extends Component {
             event.sysReDEstGen = event.estgen
             event.sysReDEventStatus = event.eventstatus
             event.sysReDGroupID = event.groupId
-            event.sysReDId = 'eventId'
+            event.sysReDId = ''
             event.sysReDIsComplete = event.isComplete
             event.sysReDIsEmail = event.isemail
             event.sysReDIsPrice = event.isprice
@@ -1043,7 +1050,7 @@ class Events extends Component {
                                                     row.sysReDEstGen = row.estgen
                                                     row.sysReDEventStatus = row.eventstatus
                                                     row.sysReDGroupID = row.groupId
-                                                    row.sysReDId = 'eventId'
+                                                    row.sysReDId = ''
                                                     row.sysReDIsComplete = row.isComplete
                                                     row.sysReDIsEmail = row.isemail
                                                     row.sysReDIsPrice = row.isprice
@@ -1094,7 +1101,7 @@ class Events extends Component {
                                                                             fontFamily: "Gotham Rounded Light",
                                                                             fontSize: "1.2vw"
                                                                         }}
-                                                                    >{`#${row.sysReDId}`}</Typography>
+                                                                    >{`${row.sysReDId}`}</Typography>
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell
@@ -1311,7 +1318,7 @@ class Events extends Component {
                                                 </Button>
                                                 <Button
                                                     onClick={() =>
-                                                        this.onClickSaveAndSendPrice(idPrice, price)
+                                                        this.onClickSaveAndSendPrice(idPrice, price,datePrice,createtime)
                                                     }
                                                     style={{
                                                         color: "#fff",

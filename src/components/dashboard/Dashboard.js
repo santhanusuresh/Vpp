@@ -900,7 +900,7 @@ class Dashboard extends Component {
                                             fontSize: "1.3vw"
                                         }}
                                     >
-                                        {event.groupId}
+                                        {event.groupname}
                                     </Typography>
                                     <div style={{display: "flex"}}>
                                         <Typography

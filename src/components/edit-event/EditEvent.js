@@ -88,9 +88,10 @@ class EditEvent extends Component {
         }
     };
 
-    onExportEvent = () => {
+    onExportEvent = event => {
 
-        window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
+        // window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
+        window.open("http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/")
 
         // fetch(
         //     "http://54.206.87.91:8080/backend-service/system/export/" ,
@@ -359,7 +360,7 @@ class EditEvent extends Component {
                                         }}
                                     >
                                         <Button
-                                            onClick={this.onExportEvent}
+                                            onClick={()=>this.onExportEvent(event)}
                                             variant="contained"
                                             style={{
                                                 color: "#fff",
@@ -612,7 +613,7 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${event.sysReDTargetCap / 1000} kWh out of ${event.sysReDEstGen} kWh`}
+                                                        {`${event.sysReDTargetCap } kWh out of ${event.sysReDEstGen /1000} kWh`}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -642,9 +643,9 @@ class EditEvent extends Component {
                                                             fontFamily: "Gotham Rounded Medium"
                                                         }}
                                                     >
-                                                        {(event.sysReDEventStatus === "0" || event.sysReDEventStatus === "1")
+                                                        {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
                                                             ? "Scheduled"
-                                                            : (event.sysReDEventStatus === '2' ? "Completed" : event.sysReDEventStatus === '4' ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
+                                                            : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
                                                     </Typography>
                                                 ) : (
                                                     <Typography
@@ -654,9 +655,9 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {(event.sysReDEventStatus === "0" || event.sysReDEventStatus === "1")
+                                                        {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
                                                             ? "Scheduled"
-                                                            : (event.sysReDEventStatus === '2' ? "Completed" : event.sysReDEventStatus === '4' ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
+                                                            : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -687,7 +688,7 @@ class EditEvent extends Component {
                                                     fontFamily: "Gotham Rounded Medium"
                                                 }}
                                             >
-                                                {event.sysReDEstGen ? event.sysReDEstGen : "N/A"}
+                                                {event.sysReDEstGen ? event.sysReDEstGen/1000 : "N/A"}
                                             </Typography>
                                             <Typography
                                                 style={{
