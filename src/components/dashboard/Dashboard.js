@@ -488,8 +488,8 @@ class Dashboard extends Component {
         this.setState({[name]: e, loading: true}, () => {
             console.log("e.id", e.id);
             fetch(
-                // "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/"+location.id,
-                "http://localhost:9081/event/group/upcoming/"+e.id,
+                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/"+e.id,
+                // "http://localhost:9081/event/group/upcoming/"+e.id,
                 {
                     method: "GET",
                     headers: {
