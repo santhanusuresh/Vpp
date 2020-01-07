@@ -157,6 +157,7 @@ const Layout = props => {
     // const username = 'saraswata';
     // const password = '#abcd123';
     // const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
+    console.log("isAuthenticated",isAuthenticated);
     fetch(
         "https://vppspark.shinehub.com.au:8443/backend-service/user/"+userID,
         {

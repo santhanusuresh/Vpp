@@ -219,7 +219,7 @@ class Events extends Component {
         const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        // console.log("user", user);
+        console.log("isAuthenticated", isAuthenticated);
         Promise.all([
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/event/all/",
@@ -408,7 +408,7 @@ class Events extends Component {
         fetch(
             "https://vppspark.shinehub.com.au:8443/backend-service/event/group/price/"+id,
             {
-                method: "Patch",
+                method: "PATCH",
                 mode:'cors',
                 headers: {
                     "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
@@ -476,7 +476,7 @@ class Events extends Component {
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/event/group/email/"+id,
                 {
-                    method: "Patch",
+                    method: "PATCH",
                     mode:'cors',
                     headers: {
                         "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
@@ -494,7 +494,7 @@ class Events extends Component {
                     // console.log("save", res);
                     Promise.all([
                         fetch(
-                            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/all/",
+                            "https://vppspark.shinehub.com.au:8443/backend-service/event/all/",
                             {
                                 method: "GET",
                                 headers: {
@@ -721,7 +721,7 @@ class Events extends Component {
             event.sysReDEstGen = event.estgen
             event.sysReDEventStatus = event.eventstatus
             event.sysReDGroupID = event.groupId
-            event.sysReDId = ''
+            event.sysReDId = event.eventId
             event.sysReDIsComplete = event.isComplete
             event.sysReDIsEmail = event.isemail
             event.sysReDIsPrice = event.isprice
@@ -730,7 +730,7 @@ class Events extends Component {
             event.sysReDMode = ''
             event.sysReDNeedCharge = 0
             event.sysReDPower = event.power
-            event.sysReDPrice = event.power.price
+            event.sysReDPrice = event.price
             event.sysReDSOC = 10
             event.sysReDStartCap = event.startBattery
             event.sysReDStartTime = event.startTime
@@ -1050,7 +1050,7 @@ class Events extends Component {
                                                     row.sysReDEstGen = row.estgen
                                                     row.sysReDEventStatus = row.eventstatus
                                                     row.sysReDGroupID = row.groupId
-                                                    row.sysReDId = ''
+                                                    row.sysReDId = row.eventId
                                                     row.sysReDIsComplete = row.isComplete
                                                     row.sysReDIsEmail = row.isemail
                                                     row.sysReDIsPrice = row.isprice
@@ -1059,7 +1059,7 @@ class Events extends Component {
                                                     row.sysReDMode = ''
                                                     row.sysReDNeedCharge = 0
                                                     row.sysReDPower = row.power
-                                                    row.sysReDPrice = row.power.price
+                                                    row.sysReDPrice = row.price
                                                     row.sysReDSOC = 10
                                                     row.sysReDStartCap = row.startBattery
                                                     row.sysReDStartTime = row.startTime
@@ -1101,7 +1101,7 @@ class Events extends Component {
                                                                             fontFamily: "Gotham Rounded Light",
                                                                             fontSize: "1.2vw"
                                                                         }}
-                                                                    >{`${row.sysReDId}`}</Typography>
+                                                                    >{`#${row.sysReDId.split(/-/)[0]}`}</Typography>
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell
@@ -1297,7 +1297,7 @@ class Events extends Component {
                                             inputProps={{style: {textAlign: "right"}}}
                                             disabled={isEmail === 0 ? false : true}
                                             placeholder="Enter your price"
-                                            value={price}
+                                            value={price === 0 ?'':price}
                                             name="price"
                                             onChange={e => this.onChange(e, "price", false)}
                                         />
@@ -1582,8 +1582,8 @@ class Events extends Component {
                                                             })
                                                         },customStyles}
                                                         options={[
-                                                            {value: "0", label: "Scheduled"},
-                                                            {value: "1", label: "Completed"}
+                                                            {value: false, label: "Scheduled"},
+                                                            {value: true, label: "Completed"}
                                                         ]}
                                                         value={filterStatus}
                                                         onChange={e => {

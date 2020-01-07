@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import Layout from '../layout/Layout';
 
 const PrivateRoute=({component:Component,auth:auth,...rest})=>{
-
+console.log("auth",auth)
     return (
         <Route
             {...rest}

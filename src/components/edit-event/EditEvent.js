@@ -43,6 +43,7 @@ class EditEvent extends Component {
         const {isAuthenticated, user} = this.props.auth;
 
         console.log("user", user);
+        console.log("isAuthenticated", isAuthenticated);
         if (state !== undefined) {
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,
@@ -64,7 +65,7 @@ class EditEvent extends Component {
                         date: state.event.sysReDDate,
                         startTime: moment(state.event.sysReDStartTime, "HH:mm"),
                         endTime: moment(state.event.sysReDEndTime, "HH:mm"),
-                        power: parseInt(state.event.sysReDEstGen),
+                        power: parseInt(state.event.availablepower/1000),
                         chartData: res.data ? res.data : {},
                         completed: state.event.sysReDEventStatus === 0 ? false : state.event.sysReDEventStatus === 1 ? false : true
 
@@ -89,16 +90,18 @@ class EditEvent extends Component {
     };
 
     onExportEvent = event => {
+        // const {isAuthenticated, user,userid,username,userpassword} = this.props.auth;
 
         // window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
-        window.open("http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/")
+        window.open("https://vppspark.shinehub.com.au:8443//backend-service/system/export/" + event.sysReDGroupID + "/" + event.sysReDDate + "/" + event.sysReDCreatTime + "/" + "filename/")
+        // window.open("http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/" +"filename/")
 
         // fetch(
-        //     "http://54.206.87.91:8080/backend-service/system/export/" ,
+        //     "http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/" +"whatname/",
         //     {
         //         method: "GET",
         //         headers: {
-        //             "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
+        //             "Authorization": "Basic " + Base64.encode(`${username}:${userpassword}`),
         //             "Content-Type": "application/json"
         //         }
         //     }
@@ -108,24 +111,24 @@ class EditEvent extends Component {
     onEditEvent = event => {
         console.log("edit event");
         const {state} = this.props.location;
-        const {isAuthenticated, user} = this.props.auth;
+        const {isAuthenticated, user, userid, username, userpassword} = this.props.auth;
         const {date, startTime, endTime, power} = this.state;
         this.setState({loading: true});
         fetch(
-            "https://monitoring.shinehub.com.au/handler/web/Group/handleEditRelationDispatch.php",
+            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/" + event.sysReDGroupID,
             {
-                method: "POST",
+                method: "PATCH",
+                mode: 'cors',
+                headers: {
+                    "Authorization": "Basic " + Base64.encode(`${username}:${userpassword}`),
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
-                    d: JSON.stringify({
-                        cvs: {
-                            a: event.sysReDId,
-                            st: moment(startTime, "HH:mm").format("HH:mm"),
-                            et: moment(endTime, "HH:mm").format("HH:mm"),
-                            d: date,
-                            p: power,
-                            i: 0
-                        }
-                    })
+                    createTime: event.sysReDCreatTime,
+                    date: date,
+                    power: power*1000,
+                    starttime: moment(startTime, "HH:mm").format("HH:mm"),
+                    endtime: moment(endTime, "HH:mm").format("HH:mm")
                 })
             }
         )
@@ -133,7 +136,7 @@ class EditEvent extends Component {
             .then(res => {
                 // console.log("handleEditRelationDispatch res", res);
                 fetch(
-                    "https://vppspark.shinehub.com.au:8443/backend-service/event/group/a3eee230-1ced-11ea-8009-4b84bd592adf/date/2019-12-26",
+                    "https://vppspark.shinehub.com.au:8443/backend-service/event/all/",
                     {
                         method: "GET",
                         headers: {
@@ -144,14 +147,43 @@ class EditEvent extends Component {
                 )
                     .then(res => res.json())
                     .then(res => {
-
-                        const updatedEvent = res.dara.filter(
-                            event => event.groupId === state.event.sysReDId
+                        // console.log("event", event);
+                        // console.log("state.event", state.event);
+                        // console.log("event.eventId", typeof event.eventId);
+                        // console.log("state.event.sysReDId", typeof state.event.sysReDId);
+                        const updatedEvent = res.data.filter(
+                            event => event.eventId === state.event.sysReDId
                         );
                         // console.log("updatedEvent", updatedEvent);
                         // console.log("power", typeof updatedEvent.sysReDPower);
                         // console.log("power", typeof parseInt(updatedEvent.sysReDPower));
-
+                        updatedEvent[0].availablepower = updatedEvent[0].power/1000
+                        updatedEvent[0].groupname = updatedEvent[0].groupname
+                        updatedEvent[0].sysReDCompVal = updatedEvent[0].compval
+                        updatedEvent[0].sysReDControlMode = ''
+                        updatedEvent[0].sysReDCreatTime = updatedEvent[0].createdTime
+                        updatedEvent[0].sysReDDaily = ''
+                        updatedEvent[0].sysReDDate = updatedEvent[0].date
+                        updatedEvent[0].sysReDEndCap = updatedEvent[0].endCap
+                        updatedEvent[0].sysReDEstGen = updatedEvent[0].estgen
+                        updatedEvent[0].sysReDEventStatus = updatedEvent[0].eventstatus
+                        updatedEvent[0].sysReDGroupID = updatedEvent[0].groupId
+                        updatedEvent[0].sysReDId = updatedEvent[0].eventId
+                        updatedEvent[0].sysReDIsComplete = updatedEvent[0].isComplete
+                        updatedEvent[0].sysReDIsEmail = updatedEvent[0].isemail
+                        updatedEvent[0].sysReDIsPrice = updatedEvent[0].isprice
+                        updatedEvent[0].sysReDIsStart = updatedEvent[0].isStart
+                        updatedEvent[0].sysReDIsValid = 1
+                        updatedEvent[0].sysReDMode = ''
+                        updatedEvent[0].sysReDNeedCharge = 0
+                        updatedEvent[0].sysReDPower = updatedEvent[0].power
+                        updatedEvent[0].sysReDPrice = updatedEvent[0].price
+                        updatedEvent[0].sysReDSOC = 10
+                        updatedEvent[0].sysReDStartCap = updatedEvent[0].startBattery
+                        updatedEvent[0].sysReDStartTime = updatedEvent[0].startTime
+                        updatedEvent[0].sysReDEndTime = updatedEvent[0].endTime
+                        updatedEvent[0].sysReDStatus = "1"
+                        updatedEvent[0].sysReDTargetCap = updatedEvent[0].finalBattery
                         return this.setState({
                             loading: false,
                             editClicked: false,
@@ -159,8 +191,8 @@ class EditEvent extends Component {
                             date: updatedEvent[0].sysReDDate,
                             startTime: moment(updatedEvent[0].sysReDStartTime, "HH:mm").format("HH:mm"),
                             endTime: moment(updatedEvent[0].sysReDEndTime, "HH:mm").format("HH:mm"),
-                            power: parseInt(updatedEvent[0].sysReDEstGen),
-                            completed: updatedEvent[0].sysReDEventStatus === "0" ? false : updatedEvent[0].sysReDEventStatus === "1" ? false : true
+                            power: parseInt(updatedEvent[0].availablepower),
+                            completed: updatedEvent[0].sysReDEventStatus === 0 ? false : updatedEvent[0].sysReDEventStatus === 1 ? false : true
                         });
                     });
             });
@@ -360,7 +392,7 @@ class EditEvent extends Component {
                                         }}
                                     >
                                         <Button
-                                            onClick={()=>this.onExportEvent(event)}
+                                            onClick={() => this.onExportEvent(event)}
                                             variant="contained"
                                             style={{
                                                 color: "#fff",
@@ -613,7 +645,7 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${event.sysReDTargetCap } kWh out of ${event.sysReDEstGen /1000} kWh`}
+                                                        {`${event.sysReDTargetCap} kWh out of ${event.sysReDEstGen / 1000} kWh`}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -688,7 +720,7 @@ class EditEvent extends Component {
                                                     fontFamily: "Gotham Rounded Medium"
                                                 }}
                                             >
-                                                {event.sysReDEstGen ? event.sysReDEstGen/1000 : "N/A"}
+                                                {event.sysReDEstGen ? event.sysReDEstGen / 1000 : "N/A"}
                                             </Typography>
                                             <Typography
                                                 style={{
@@ -763,7 +795,7 @@ class EditEvent extends Component {
                                                                     fontWeight: "500"
                                                                 }}
                                                             >
-                                                                {`${event.sysReDCompVal}%`}
+                                                                {`${event.sysReDCompVal*100}%`}
                                                             </Typography>
                                                         </div>
                                                         :
