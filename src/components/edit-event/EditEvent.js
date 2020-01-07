@@ -379,7 +379,7 @@ class EditEvent extends Component {
                                         fontFamily: "Gotham Rounded Light"
                                     }}
                                 >
-                                    {`#${event.sysReDId}`}
+                                    {`#${event.sysReDId.split(/-/)[0]}`}
                                 </Typography>
                             </div>
                             {user.includes("admin") ? (
