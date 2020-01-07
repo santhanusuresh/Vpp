@@ -827,7 +827,7 @@ class EditEvent extends Component {
                                                                     fontWeight: "500"
                                                                 }}
                                                             >
-                                                                {`${event.sysReDCompVal*1000}%`}
+                                                                {`${event.sysReDCompVal*100}%`}
                                                             </Typography>
                                                         </div>
 
