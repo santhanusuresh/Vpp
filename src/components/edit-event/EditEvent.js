@@ -645,7 +645,7 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${event.sysReDTargetCap} kWh out of ${event.sysReDEstGen / 1000} kWh`}
+                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${event.sysReDEstGen / 1000} kWh`}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -795,7 +795,7 @@ class EditEvent extends Component {
                                                                     fontWeight: "500"
                                                                 }}
                                                             >
-                                                                {`${event.sysReDCompVal*100}%`}
+                                                                {`${parseInt(event.sysReDCompVal*100)}%`}
                                                             </Typography>
                                                         </div>
                                                         :
@@ -827,7 +827,7 @@ class EditEvent extends Component {
                                                                     fontWeight: "500"
                                                                 }}
                                                             >
-                                                                {`${event.sysReDCompVal*100}%`}
+                                                                {`${parseInt(event.sysReDCompVal*100)}%`}
                                                             </Typography>
                                                         </div>
 
