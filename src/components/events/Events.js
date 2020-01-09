@@ -987,6 +987,7 @@ class Events extends Component {
                                 <div style={{width: "100%"}}>
                                     <Table>
                                         <TableHead style={{backgroundColor: "#FBFBFB"}}>
+                                          <TableRow>
                                             <TableCell
                                                 style={{
                                                     color: "#BDBDBD",
@@ -1035,6 +1036,7 @@ class Events extends Component {
                                             </TableCell>
                                             <TableCell></TableCell>
                                             <TableCell></TableCell>
+                                          </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {Array.isArray(showEvents)
@@ -1068,6 +1070,7 @@ class Events extends Component {
                                                     row.sysReDTargetCap = row.finalBattery
                                                     return (
                                                         <TableRow
+                                                            key = {row.eventId}
                                                             style={{
                                                                 backgroundColor: "#fff",
                                                                 border: "15px solid #FBFBFB"
