@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import clsx from "clsx";
-import {makeStyles, useTheme} from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -18,7 +18,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import Select from "react-select";
-import {Base64} from 'js-base64';
+import { Base64 } from 'js-base64';
 import {
     Card,
     CardContent,
@@ -46,7 +46,7 @@ import {
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import moment from "moment";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 import RadialSeparators from "../common/RadialSeparators";
 import ChartJS from "../common/Chart";
@@ -61,11 +61,11 @@ import menuIcon from "../../assets/menu-icon.svg";
 import stockMarketArrowDown from "../../assets/stock-market-arrow.svg";
 import stockMarketArrowUp from "../../assets/stock-market-arrow-up.svg";
 import Spinner from "../common/Spinner";
-import {Add} from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import "./Dashboard.css";
 import store from "../../store/store";
-import {LOGIN_ERROR} from "../../actions/types";
-import {ThemeProvider} from "@material-ui/styles";
+import { LOGIN_ERROR } from "../../actions/types";
+import { ThemeProvider } from "@material-ui/styles";
 
 
 const customStyles = {
@@ -170,8 +170,8 @@ class Dashboard extends Component {
 
 
     componentDidMount() {
-        const {isAuthenticated, user,userid} = this.props.auth;
-        const {username,userpassword} = this.props.auth;
+        const { isAuthenticated, user, userid } = this.props.auth;
+        const { username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
 
@@ -348,26 +348,26 @@ class Dashboard extends Component {
     // };
 
     onClickSave = () => {
-        const {isAuthenticated, user} = this.props.auth;
-        const {userid,username,userpassword} = this.props.auth;
+        const { isAuthenticated, user } = this.props.auth;
+        const { userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        const {power, location, date, from, to} = this.state;
+        const { power, location, date, from, to } = this.state;
 
         if (location === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (date === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (from === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (to === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
         //
         // console.log("typeof from", typeof parseInt(location.id));
@@ -391,8 +391,8 @@ class Dashboard extends Component {
                     starttime: moment(from, "HH:mm:ss").format("HH:mm"),
                     endtime: moment(to, "HH:mm:ss").format("HH:mm"),
                     date: moment(date).format("YYYY-MM-DD"),
-                    power: power*1000,
-                    eventStatus : 0
+                    power: power * 1000,
+                    eventStatus: 0
                 })
 
             }
@@ -413,7 +413,7 @@ class Dashboard extends Component {
                 }
                 Promise.all([
                     fetch(
-                        "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/"+location.id,
+                        "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/" + location.id,
                         // "http://localhost:9081/event/group/upcoming/"+location.id,
                         {
                             method: "GET",
@@ -458,14 +458,14 @@ class Dashboard extends Component {
                 const date = moment(e).format("YYYY-MM-DD");
                 // const date = e;
 
-                return this.setState({[name]: date}, () => {
+                return this.setState({ [name]: date }, () => {
                     if (filter) {
                         this.onFilterEvents();
                     }
                 });
 
             case "location":
-                return this.setState({location: e, power: e.maxPower}, () => {
+                return this.setState({ location: e, power: e.maxPower }, () => {
                     if (filter) {
                         console.log("running callback");
                         this.onFilterEvents();
@@ -473,7 +473,7 @@ class Dashboard extends Component {
                 });
 
             default:
-                return this.setState({[name]: e}, () => {
+                return this.setState({ [name]: e }, () => {
                     if (filter) {
                         this.onFilterEvents();
                     }
@@ -482,13 +482,13 @@ class Dashboard extends Component {
     };
 
     onChangeLocation = (e, name) => {
-        const {userid,username,userpassword} = this.props.auth;
+        const { userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        this.setState({[name]: e, loading: true}, () => {
+        this.setState({ [name]: e, loading: true }, () => {
             console.log("e.id", e.id);
             fetch(
-                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/"+e.id,
+                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/" + e.id,
                 // "http://localhost:9081/event/group/upcoming/"+e.id,
                 {
                     method: "GET",
@@ -525,8 +525,8 @@ class Dashboard extends Component {
     };
 
     render() {
-        const {classes} = this.props;
-        const {isAuthenticated, user, error} = this.props.auth;
+        const { classes } = this.props;
+        const { isAuthenticated, user, error } = this.props.auth;
         const {
             events,
             chartData,
@@ -552,7 +552,7 @@ class Dashboard extends Component {
             chartData.BatteryCap = chartData.CurrentAvailablePower;
             chartData.BatteryCount = chartData.SystemNumber;
             chartData.BatteryTotal = chartData.CurrentAvailablePower;
-            const {BatteryCap, BatteryCount, BatteryTotal} = chartData;
+            const { BatteryCap, BatteryCount, BatteryTotal } = chartData;
             // console.log("typeof BatteryCap", typeof BatteryCap);
             // console.log("typeof BatteryTotal", typeof BatteryTotal);
             // console.log("typeof BatteryCount", typeof BatteryCount);
@@ -572,7 +572,7 @@ class Dashboard extends Component {
                             height: "100%"
                         }}
                     >
-                        <CardContent style={{width: "100%", height: "100%"}}>
+                        <CardContent style={{ width: "100%", height: "100%" }}>
                             <div
                                 style={{
                                     width: "100%",
@@ -583,7 +583,7 @@ class Dashboard extends Component {
                                 }}
                             >
                                 {/*{console.log("batteryCap", BatteryCap)}*/}
-                                <div style={{width: "16vw"}}>
+                                <div style={{ width: "16vw" }}>
                                     {/* <CircularProgressbarWithChildren
                     value={BatteryCap===undefined?0:BatteryCap}
                     text={`${Math.round(BatteryCap===undefined?0:BatteryCap)}W`}
@@ -612,7 +612,7 @@ class Dashboard extends Component {
                                     <CircularProgressbarWithChildren
                                         value={
                                             typeof BatteryCap !== "number" ||
-                                            typeof BatteryTotal !== "number"
+                                                typeof BatteryTotal !== "number"
                                                 ? (parseInt(BatteryCap) / parseInt(BatteryTotal)) * 100
                                                 : 0
                                         }
@@ -776,8 +776,8 @@ class Dashboard extends Component {
                         alignItems: "center"
                     }}
                 >
-                    <Card style={{borderRadius: 8, width: "84vw"}}>
-                        <CardContent style={{width: "100%"}}>
+                    <Card style={{ borderRadius: 8, width: "84vw" }}>
+                        <CardContent style={{ width: "100%" }}>
                             <div
                                 style={{
                                     display: "flex",
@@ -904,7 +904,7 @@ class Dashboard extends Component {
                                     >
                                         {event.groupname}
                                     </Typography>
-                                    <div style={{display: "flex"}}>
+                                    <div style={{ display: "flex" }}>
                                         <Typography
                                             style={{
                                                 paddingRight: "1px",
@@ -949,8 +949,8 @@ class Dashboard extends Component {
                         );
                     })
                 ) : (
-                    <Typography>No Upcoming Events!</Typography>
-                );
+                        <Typography>No Upcoming Events!</Typography>
+                    );
         }
 
         return (
@@ -960,58 +960,58 @@ class Dashboard extends Component {
                 }}
             >
                 {loading ? (
-                    <Spinner/>
+                    <Spinner />
                 ) : (
-                    <div
-                        style={
-                            {
-                                // width: "100%"
+                        <div
+                            style={
+                                {
+                                    // width: "100%"
+                                }
                             }
-                        }
-                    >{console.log("user", user)}
-                        {user.includes("admin") ? (
-                            <div
-                                style={{
-                                    display: "flex",
-                                    padding: "1% 0 1% 5%",
-                                    justifyContent: "flex-start",
-                                    alignItems: "center"
-                                }}
-                            >
+                        >{console.log("user", user)}
+                            {user.includes("admin") ? (
                                 <div
                                     style={{
-                                        width: "30%",
-                                        paddingRight: "3%",
-                                        color: "#BDBDBD",
-                                        letterSpacing: "1.5px",
-                                        fontFamily: "Gotham Rounded Medium"
+                                        display: "flex",
+                                        padding: "1% 0 1% 5%",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center"
                                     }}
                                 >
-                                    <div style={{fontSize: "1vw"}}>
-                                        {"Location".toUpperCase()}
+                                    <div
+                                        style={{
+                                            width: "30%",
+                                            paddingRight: "3%",
+                                            color: "#BDBDBD",
+                                            letterSpacing: "1.5px",
+                                            fontFamily: "Gotham Rounded Medium"
+                                        }}
+                                    >
+                                        <div style={{ fontSize: "1vw" }}>
+                                            {"Location".toUpperCase()}
+                                        </div>
+                                        <Select
+                                            onChange={e => this.onChangeLocation(e, "location")}
+                                            value={location}
+                                            styles={
+                                                customStyles
+                                            }
+                                            placeholder="All States"
+                                            options={
+                                                locations
+                                                    ? locations.map(location => {
+                                                        console.log("location all state", location)
+                                                        return {
+                                                            value: location.name,
+                                                            label: location.name,
+                                                            id: location.id
+                                                        };
+                                                    })
+                                                    : []
+                                            }
+                                        />
                                     </div>
-                                    <Select
-                                        onChange={e => this.onChangeLocation(e, "location")}
-                                        value={location}
-                                        styles={
-                                            customStyles
-                                        }
-                                        placeholder="All States"
-                                        options={
-                                            locations
-                                                ? locations.map(location => {
-                                                    console.log("location all state", location)
-                                                    return {
-                                                        value: location.name,
-                                                        label: location.name,
-                                                        id: location.id
-                                                    };
-                                                })
-                                                : []
-                                        }
-                                    />
-                                </div>
-                                {/* <div style={{ width: "30%" }}>
+                                    {/* <div style={{ width: "30%" }}>
             <h5>Network Provider</h5>
             <Select
               onChange={() => {}}
@@ -1021,11 +1021,11 @@ class Dashboard extends Component {
               ]}
             />
           </div> */}
-                            </div>
-                        ) : (
-                            ""
-                        )}
-                        {/* {user.includes("admin") ? (
+                                </div>
+                            ) : (
+                                    ""
+                                )}
+                            {/* {user.includes("admin") ? (
               <div style={{width:'100%'}}>
               <div
                 style={{
@@ -1051,54 +1051,54 @@ class Dashboard extends Component {
             ) : (
               ""
             )} */}
-                        <div
-                            style={{
-                                // position:'relative',
-                                display: "flex",
-                                justifyContent: "center",
-
-                                alignItems: "center"
-                                // padding: "3%",
-                                // width: "100%",
-
-                                // height: "40%"
-                            }}
-                        >
-                            {batteryContent}
                             <div
                                 style={{
-                                    width: "41vw",
-                                    height: "20vw",
-                                    position: "relative"
+                                    // position:'relative',
+                                    display: "flex",
+                                    justifyContent: "center",
+
+                                    alignItems: "center"
+                                    // padding: "3%",
+                                    // width: "100%",
+
+                                    // height: "40%"
                                 }}
                             >
-                                {events.length >= 0 ? <Card
+                                {batteryContent}
+                                <div
                                     style={{
-                                        overflow: "auto",
-                                        height: "100%",
-                                        // height: "22.5rem",
-                                        // width: "36rem",
-                                        borderRadius: 8
-                                        // padding: "1% 0",
-                                        // marginLeft: "27px"
+                                        width: "41vw",
+                                        height: "20vw",
+                                        position: "relative"
                                     }}
                                 >
-                                    <CardContent
-                                        style={{width: "100%", height: "100%", padding: "2vw"}}
+                                    {events.length >= 0 ? <Card
+                                        style={{
+                                            overflow: "auto",
+                                            height: "100%",
+                                            // height: "22.5rem",
+                                            // width: "36rem",
+                                            borderRadius: 8
+                                            // padding: "1% 0",
+                                            // marginLeft: "27px"
+                                        }}
                                     >
-                                        <Typography
-                                            style={{
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#83C4C4",
-                                                fontSize: "1.3vw",
-                                                textTransform: "uppercase"
-                                            }}
-                                            // variant="subtitle2"
+                                        <CardContent
+                                            style={{ width: "100%", height: "100%", padding: "2vw" }}
                                         >
-                                            Upcoming Events
+                                            <Typography
+                                                style={{
+                                                    fontFamily: "Gotham Rounded Light",
+                                                    color: "#83C4C4",
+                                                    fontSize: "1.3vw",
+                                                    textTransform: "uppercase"
+                                                }}
+                                            // variant="subtitle2"
+                                            >
+                                                Upcoming Events
                                         </Typography>
-                                        <div style={{padding: "2vw 0"}}>
-                                            {/* <div style={{ padding: "1% 0" }}>
+                                            <div style={{ padding: "2vw 0" }}>
+                                                {/* <div style={{ padding: "1% 0" }}>
                   <div
                   style={{
                     display: "flex",
@@ -1156,50 +1156,50 @@ class Dashboard extends Component {
                     value={86}
                     />
                   </div> */}
-                                            {upcomingEventsContent}
-                                        </div>
-                                    </CardContent>
-                                </Card> : <Typography
-                                    style={{fontSize: '3vw', fontFamily: 'Gotham Rounded Bold', textAlign: 'center'}}>Nothing
+                                                {upcomingEventsContent}
+                                            </div>
+                                        </CardContent>
+                                    </Card> : <Typography
+                                        style={{ fontSize: '3vw', fontFamily: 'Gotham Rounded Bold', textAlign: 'center' }}>Nothing
                                     to show!</Typography>}
-                                {user.includes("admin") ? (
-                                    <div
-                                        style={{
-                                            position: events.length > 0 ? "absolute" : "fixed",
-                                            right: events.length > 0 ? "-3%" : "4%",
-                                            width: "4vw",
-                                            height: "4vw",
-                                            top: events.length > 0 ? "-7%" : "90%",
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <Fab
+                                    {user.includes("admin") ? (
+                                        <div
                                             style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                alignSelf: "flex-end",
-                                                backgroundColor: "#25A8A8"
+                                                position: events.length === 0 ? "absolute" : "fixed",
+                                                right: events.length === 0 ? "-3%" : "4%",
+                                                width: "4vw",
+                                                height: "4vw",
+                                                top: events.length === 0 ? "-7%" : "90%",
+                                                zIndex: 1
                                             }}
-                                            onClick={() => this.setState({openAddEvent: true})}
                                         >
-                                            <Add style={{color: "#fff", fontSize: "2vw"}}/>
-                                        </Fab>
-                                    </div>
-                                ) : (
-                                    ""
-                                )}
+                                            <Fab
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    alignSelf: "flex-end",
+                                                    backgroundColor: "#25A8A8"
+                                                }}
+                                                onClick={() => this.setState({ openAddEvent: true })}
+                                            >
+                                                <Add style={{ color: "#fff", fontSize: "2vw" }} />
+                                            </Fab>
+                                        </div>
+                                    ) : (
+                                            ""
+                                        )}
+                                </div>
                             </div>
+                            {chartContent}
                         </div>
-                        {chartContent}
-                    </div>
-                )}
+                    )}
                 <Dialog
                     fullWidth
-                    style={{zIndex: 2}}
+                    style={{ zIndex: 2 }}
                     open={openAddEvent}
-                    onClose={() => this.setState({openAddEvent: false})}
+                    onClose={() => this.setState({ openAddEvent: false })}
                 >
-                    <DialogContent style={{height: "28vw"}}>
+                    <DialogContent style={{ height: "28vw" }}>
                         <div
                             style={{
                                 width: "100%",
@@ -1241,14 +1241,14 @@ class Dashboard extends Component {
                                         color: "#333",
                                         fontFamily: "Gotham Rounded Light"
                                     }}>Location</Typography>
-                                    <div style={{width: "70%"}}>
+                                    <div style={{ width: "70%" }}>
                                         <Select
                                             onChange={e => this.onChange(e, "location", false)}
                                             value={location}
                                             // menuPortalTarget={document.body}
                                             styles={{
-                                                menuPortal: styles => ({...styles, zIndex: 4})
-                                            },customStyles}
+                                                menuPortal: styles => ({ ...styles, zIndex: 4 })
+                                            }, customStyles}
                                             placeholder="All States"
                                             options={
                                                 locations
@@ -1278,7 +1278,7 @@ class Dashboard extends Component {
                                         color: "#333",
                                         fontFamily: "Gotham Rounded Light"
                                     }}>Date</Typography>
-                                    <div style={{width: "70%"}}>
+                                    <div style={{ width: "70%" }}>
                                         {/* <Select
                       menuPortalTarget={document.body}
                       styles={{
@@ -1319,7 +1319,7 @@ class Dashboard extends Component {
                                                 <DatePicker
                                                     disableToolbar
                                                     inputVariant="outlined"
-                                                    style={{fontFamily: "Gotham Rounded Light"}}
+                                                    style={{ fontFamily: "Gotham Rounded Light" }}
                                                     placeholder="Date"
                                                     // minDate={new Date()}
                                                     // minDateMessage="Date should not be in the past!"
@@ -1348,7 +1348,7 @@ class Dashboard extends Component {
                                         display: "flex", width: "70%",
                                         alignItems: "center"
                                     }}>
-                                        <div style={{width: "40%"}}>
+                                        <div style={{ width: "40%" }}>
                                             {/* <Select
                         menuPortalTarget={document.body}
                         styles={{
@@ -1401,9 +1401,9 @@ class Dashboard extends Component {
                                                 }}
                                                 variant="outlined"
                                                 value={from === null ? "02:00" : from}
-                                                style={{fontFamily: "Gotham Rounded Medium"}}
+                                                style={{ fontFamily: "Gotham Rounded Medium" }}
                                                 placeholder={"Enter as 22:15"}
-                                                onChange={e => this.setState({from: e.target.value})}
+                                                onChange={e => this.setState({ from: e.target.value })}
                                             />
 
                                         </div>
@@ -1415,7 +1415,7 @@ class Dashboard extends Component {
                                         }}>
                                             to
                                         </Typography>
-                                        <div style={{width: "40%"}}>
+                                        <div style={{ width: "40%" }}>
                                             {/* <Select
                         onChange={e => this.onChange(e, "to", false)}
                         menuPortalTarget={document.body}
@@ -1467,9 +1467,9 @@ class Dashboard extends Component {
                                                 }}
                                                 variant="outlined"
                                                 value={to === null ? "04:00" : to}
-                                                style={{fontFamily: "Gotham Rounded Light"}}
+                                                style={{ fontFamily: "Gotham Rounded Light" }}
                                                 placeholder={"04:00"}
-                                                onChange={e => this.setState({to: e.target.value})}
+                                                onChange={e => this.setState({ to: e.target.value })}
                                             />
                                         </div>
                                     </div>
@@ -1498,7 +1498,7 @@ class Dashboard extends Component {
                                     onChange={(e, value) => {
                                         // console.log("e", e);
                                         // console.log("value", value);
-                                        return this.setState({power: value});
+                                        return this.setState({ power: value });
                                     }}
                                     classes={{
                                         thumb: classes.thumb,
@@ -1514,12 +1514,12 @@ class Dashboard extends Component {
                                     }}
                                 >
                                     {validationText ? (
-                                        <Typography style={{color: "red"}}>
+                                        <Typography style={{ color: "red" }}>
                                             {validationText}
                                         </Typography>
                                     ) : null}
                                     {error ? (
-                                        <Typography style={{color: "red"}}>
+                                        <Typography style={{ color: "red" }}>
                                             {error.value}
                                         </Typography>
                                     ) : null}
