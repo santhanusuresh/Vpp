@@ -740,7 +740,7 @@ class Dashboard extends Component {
                                     >
                                         Power Plant
                                     </Typography>
-                                    <Typography
+                                    <Typography component={'div'}
                                         style={{
                                             fontFamily: "Gotham Rounded Light",
                                             color: "#828282",
@@ -882,6 +882,7 @@ class Dashboard extends Component {
 
                         return (
                             <div
+                                key = {event.eventId}
                                 style={
                                     {
                                         // padding: "1% 0"

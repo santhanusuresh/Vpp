@@ -19,7 +19,7 @@ function Separator(props) {
 function RadialSeparators(props) {
   const turns = 1 / props.count;
   return _.range(props.count/1.5).map(index => (
-    <Separator turns={index * turns} style={props.style} />
+    <Separator key = {index} turns={index * turns} style={props.style} />
   ));
 }
 
