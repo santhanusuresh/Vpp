@@ -1,6 +1,6 @@
-import React,{Component} from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
-import {Provider} from 'react-redux';
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import Layout from './components/layout/Layout';
 import Dashboard from './components/dashboard/Dashboard';
 import Login from './components/auth/Login';
@@ -8,7 +8,7 @@ import Events from './components/events/Events';
 import EditEvent from './components/edit-event/EditEvent';
 import store from './store/store';
 import PrivateRoute from './components/common/PrivateRoute';
-import {LOGIN} from './actions/types';
+import { LOGIN } from './actions/types';
 import moment from 'moment';
 
 // fetch('https://monitoring.shinehub.com.au/handler/web/User/handleQueryUserDetail.php',{
@@ -26,67 +26,67 @@ import moment from 'moment';
 
 
 
-if( localStorage.getItem('user')!==null){
-  const user=localStorage.getItem('user');
-  const userid=localStorage.getItem('userID');
-  const username=localStorage.getItem('username');
-  const userpassword=localStorage.getItem('password');
-  const expiretime=JSON.parse(localStorage.getItem('exp'));
+if (localStorage.getItem('user') !== null) {
+  const user = localStorage.getItem('user');
+  const userid = localStorage.getItem('userID');
+  const username = localStorage.getItem('username');
+  const userpassword = localStorage.getItem('password');
+  const expiretime = JSON.parse(localStorage.getItem('exp'));
 
-  console.log('time',new Date().getTime());
-  console.log('expiretime',expiretime);
+  console.log('time', new Date().getTime());
+  console.log('expiretime', expiretime);
 
-  const checkExpireTime=()=>{
+  const checkExpireTime = () => {
 
-    if(!expiretime){
-      
+    if (!expiretime) {
+
       return;
     }
-    console.log('date comp',new Date(expiretime).getTime()<new Date().getTime());
-    if(new Date(expiretime).getTime()<new Date().getTime()){
-      
+
+    if (new Date(expiretime).getTime() < new Date().getTime()) {
+
       return;
     }
-      
-      
-      
-      return store.dispatch({
-        type:LOGIN,
-        payload:{
-          isAuthenticated:user.length>0,
-          user,
-          userid,
-          username,
-          userpassword
-        }
-      })
-    }
-    
-    checkExpireTime();
+
+
+
+    return store.dispatch({
+      type: LOGIN,
+      payload: {
+        isAuthenticated: user.length > 0,
+        user,
+        userid,
+        username,
+        userpassword
+      }
+    })
+  }
+
+  checkExpireTime();
 }
 class App extends Component {
-  
-  state={
-    event:''
-  }
-  
-  render(){
 
-    const {event}=this.state;
+  state = {
+    event: ''
+  }
+
+  render() {
+
+    const { event } = this.state;
 
     return (
       <Provider store={store}>
-      <Router>
-    
-     
-        <PrivateRoute exact path="/" component={Dashboard}/>
-        <PrivateRoute exact path="/events" component={Events}/>
-        <PrivateRoute exact path="/edit-event" component={EditEvent}/>
-        <Route exact path="/login" component={Login}/>
-    </Router>
-    </Provider>
-  );
-}
+        <Router>
+
+
+          <PrivateRoute exact path="/" component={Dashboard} />
+          <PrivateRoute exact path="/events" component={Events} />
+          <PrivateRoute exact path="/edit-event" component={EditEvent} />
+          <Route exact path="/login" component={Login} />
+        </Router>
+      </Provider>
+    );
+  }
 }
 
 export default App;
