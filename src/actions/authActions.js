@@ -46,7 +46,7 @@ export const login = (email, password, history, md5) => dispatch => {
                         type: LOGIN,
                         payload: {
                             isAuthenticated: res.success === 1,
-                            user: res.success === 1 ? 'admin' : '',
+                            user: res.data.name,
                             userid: res.data.id,
                             username: email,
                             userpassword: password,
