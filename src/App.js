@@ -5,6 +5,7 @@ import Layout from './components/layout/Layout';
 import Dashboard from './components/dashboard/Dashboard';
 import Login from './components/auth/Login';
 import Events from './components/events/Events';
+import Fleet from './components/fleet/Fleet';
 import EditEvent from './components/edit-event/EditEvent';
 import store from './store/store';
 import PrivateRoute from './components/common/PrivateRoute';
@@ -82,6 +83,7 @@ class App extends Component {
           <PrivateRoute exact path="/" component={Dashboard} />
           <PrivateRoute exact path="/events" component={Events} />
           <PrivateRoute exact path="/edit-event" component={EditEvent} />
+          <PrivateRoute exact path="/fleet" component={Fleet} />
           <Route exact path="/login" component={Login} />
         </Router>
       </Provider>

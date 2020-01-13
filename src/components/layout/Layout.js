@@ -378,7 +378,7 @@ const Layout = props => {
                   {/*{console.log("window.innerHeight", window.innerHeight)}*/}
                   {[
                     { icon: analytics, text: "Overview", onClick: "/" },
-                    // { icon: fourRectangles, text: "Fleet",onClick:"/fleet" },
+                    { icon: fourRectangles, text: "Fleet",onClick:"/fleet" },
                     { icon: calendar, text: "Events", onClick: "/events" }
                     // { icon: cogWheel, text: "Settings",onClick:"/settings" }
                   ].map((item, index) => (
