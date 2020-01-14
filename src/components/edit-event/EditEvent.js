@@ -766,7 +766,7 @@ class EditEvent extends Component {
                                                             Discharging in progress
                                                         </Typography>
                                                     </div> :
-                                                    parseInt(event.sysReDCompVal) > 0
+                                                    parseInt(event.sysReDCompVal) >= 0
                                                         ?
                                                         <div
                                                             style={{
