@@ -645,7 +645,7 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${event.sysReDEstGen / 1000} kWh`}
+                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${(event.sysReDEstGen / 1000).toString().split('.')[0]}.${(event.sysReDEstGen / 1000).toString().split('.')[1].substr(0,2)} kWh`}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -720,7 +720,7 @@ class EditEvent extends Component {
                                                     fontFamily: "Gotham Rounded Medium"
                                                 }}
                                             >
-                                                {event.sysReDEstGen ? event.sysReDEstGen / 1000 : "N/A"}
+                                                {event.sysReDEstGen ? `${(event.sysReDEstGen / 1000).toString().split('.')[0]}.${(event.sysReDEstGen / 1000).toString().split('.')[1].substr(0,2)}`: "N/A"}
                                             </Typography>
                                             <Typography
                                                 style={{
