@@ -77,10 +77,12 @@ const Events = ({showEvents}) => {
                                             display: "flex", flexDirection: "column",
                                             justifyContent: "flex-end"
                                         }}>
-                                            <Typography style={{ ...tableBodyStyle, padding: 0, margin: 0 }}>
+                                            <Typography style={{ padding: 0, margin: 0, color: "#2E384D", 
+                                                    fontSize: "1.2vw", fontFamily: "Gotham Rounded Medium" }}>
                                                 {row.groupName}
                                             </Typography>
-                                            <Typography style={{ ...tableBodyStyle, padding: 0, margin: 0 }}>
+                                            <Typography style={{ color: "#BDBDBD", fontSize: "1.2vw", 
+                                                padding: 0, margin: 0, fontFamily: "Gotham Rounded Light" }}>
                                                 {`#${row.systemId.split(/-/)[0]}`}
                                             </Typography>
                                         </div>
@@ -92,7 +94,7 @@ const Events = ({showEvents}) => {
                                         {`${row.batteryOutput}kW`}
                                     </TableCell>
                                     <TableCell style={tableBodyStyle}>
-                                        {row.brandname}
+                                        {row.nmi}
                                     </TableCell>
                                     <TableCell style={tableBodyStyle}>
                                         {`${row.networkStatus === 1 ? 'Online' : 'Offline'}`}

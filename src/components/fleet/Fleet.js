@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import Spinner from "../common/Spinner";
 import { Base64 } from "js-base64";
@@ -39,8 +39,6 @@ const Fleet = (props) => {
         };
         fetchData();
     }, []);
-
-
 
     const loadComponent = (component) => (isLoading ?
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
