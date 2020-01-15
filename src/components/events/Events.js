@@ -493,6 +493,7 @@ class Events extends Component {
                         createTime: createtime,
                         date: dateprice,
                         price: price,
+                        eventStatus:3
                     })
                 }
             )
