@@ -647,7 +647,7 @@ class EditEvent extends Component {
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${(event.sysReDEstGen / 1000).toString().split('.')[0]}.${(event.sysReDEstGen / 1000).toString().split('.')[1].substr(0,2)} kWh`}
+                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${Number.isInteger(event.sysReDEstGen / 1000)?(event.sysReDEstGen / 1000):(event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)} kWh`}
                                                     </Typography>
                                                 )}
                                             </div>
@@ -722,7 +722,7 @@ class EditEvent extends Component {
                                                     fontFamily: "Gotham Rounded Medium"
                                                 }}
                                             >
-                                                {event.sysReDEstGen ? `${(event.sysReDEstGen / 1000).toString().split('.')[0]}.${(event.sysReDEstGen / 1000).toString().split('.')[1].substr(0,2)}`: "N/A"}
+                                                {event.sysReDEstGen ? `${Number.isInteger(event.sysReDEstGen / 1000)?(event.sysReDEstGen / 1000):(event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)}`: "N/A"}
                                             </Typography>
                                             <Typography
                                                 style={{

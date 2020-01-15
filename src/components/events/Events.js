@@ -984,15 +984,15 @@ class Events extends Component {
                                             : ""
                                     }`}</Typography>
                                 </div>
-                                <div style={{width: "100%"}}>
-                                    <Table>
-                                        <TableHead style={{backgroundColor: "#FBFBFB"}}>
+                                    <Table >
+                                        <TableHead style={{backgroundColor: "#FBFBFB",  whiteSpace: "nowrap" }}>
                                           <TableRow>
                                             <TableCell
                                                 style={{
-                                                    color: "#BDBDBD",
+                                                     color: "#BDBDBD",
                                                     fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw"
+                                                    fontSize: "1.3vw",
+                                                    width: "17%"
                                                 }}
                                             >
                                                 Location
@@ -1001,7 +1001,8 @@ class Events extends Component {
                                                 style={{
                                                     color: "#BDBDBD",
                                                     fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw"
+                                                    fontSize: "1.3vw",
+                                                    width: "13%"
                                                 }}
                                             >
                                                 Date
@@ -1010,7 +1011,8 @@ class Events extends Component {
                                                 style={{
                                                     color: "#BDBDBD",
                                                     fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw"
+                                                    fontSize: "1.3vw",
+                                                    width: "15%"
                                                 }}
                                             >
                                                 Time
@@ -1019,23 +1021,25 @@ class Events extends Component {
                                                 style={{
                                                     color: "#BDBDBD",
                                                     fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw"
+                                                    fontSize: "1.3vw",
+                                                    width: "10%"
                                                 }}
                                             >
                                                 Power
                                             </TableCell>
-                                            <TableCell></TableCell>
+                                            <TableCell style={{width:"3%"}}></TableCell>
                                             <TableCell
                                                 style={{
                                                     color: "#BDBDBD",
                                                     fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw"
+                                                    fontSize: "1.3vw",
+                                                    width: "30%"
                                                 }}
                                             >
                                                 Status
                                             </TableCell>
-                                            <TableCell></TableCell>
-                                            <TableCell></TableCell>
+                                            <TableCell style={{width:"3%"}}></TableCell>
+                                            <TableCell style={{width:"8%"}}></TableCell>
                                           </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -1077,7 +1081,7 @@ class Events extends Component {
                                                             }}
                                                         >
 
-                                                            <TableCell style={{whiteSpace: "nowrap"}}>
+                                                            <TableCell style={{whiteSpace: "nowrap", width: "17%"}}>
                                                                 <div
                                                                     style={{
                                                                         display: "flex",
@@ -1112,7 +1116,8 @@ class Events extends Component {
                                                                     whiteSpace: "nowrap",
                                                                     fontFamily: "Gotham Rounded Light",
                                                                     color: "#2E384D",
-                                                                    fontSize: "1.2vw"
+                                                                    fontSize: "1.2vw",
+                                                                    width: "13%"
                                                                 }}
                                                             >
                                                                 {moment(row.sysReDDate).format(
@@ -1124,7 +1129,8 @@ class Events extends Component {
                                                                     whiteSpace: "nowrap",
                                                                     fontFamily: "Gotham Rounded Light",
                                                                     color: "#2E384D",
-                                                                    fontSize: "1.2vw"
+                                                                    fontSize: "1.2vw",
+                                                                    width: "15%"
                                                                 }}
                                                             >
                                                                 {`${moment(
@@ -1140,17 +1146,19 @@ class Events extends Component {
                                                                     whiteSpace: "nowrap",
                                                                     fontFamily: "Gotham Rounded Light",
                                                                     color: "#2E384D",
-                                                                    fontSize: "1.2vw"
+                                                                    fontSize: "1.2vw",
+                                                                    width: "10%"
                                                                 }}
                                                             >
                                                                 {`${row.sysReDPower / 1000}kW`}
                                                             </TableCell>
                                                             <TableCell
                                                                 style={{
-                                                                    whiteSpace: "nowrap",
+                                                                    // whiteSpace: "nowrap",
                                                                     fontFamily: "Gotham Rounded Light",
                                                                     color: "#2E384D",
-                                                                    fontSize: "1.2vw"
+                                                                    fontSize: "1.2vw",
+                                                                    width: "3%"
                                                                 }}
                                                             >
                                                                 <div
@@ -1183,7 +1191,8 @@ class Events extends Component {
                                                                     // whiteSpace: "nowrap",
                                                                     fontFamily: "Gotham Rounded Light",
                                                                     color: "#2E384D",
-                                                                    fontSize: "1.2vw"
+                                                                    fontSize: "1.2vw",
+                                                                    width: "30%"
                                                                 }}
                                                             >
                                                                 {row.sysReDEventStatus === 0 ||
@@ -1198,11 +1207,12 @@ class Events extends Component {
                                                             <TableCell
                                                                 // onClick={() => this.onClickEvent(row)}
                                                                 style={{
-                                                                    whiteSpace: "nowrap",
+                                                                    // whiteSpace: "nowrap",
                                                                     color: "#25A8A8",
                                                                     cursor: "pointer",
                                                                     fontSize: "1.2vw",
-                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    width: "3%"
                                                                 }}
                                                             >
                                                                 {row.sysReDEventStatus === 0 ||
@@ -1239,7 +1249,8 @@ class Events extends Component {
                                                                     color: "#25A8A8",
                                                                     cursor: "pointer",
                                                                     fontSize: "1.2vw",
-                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    width: "8%"
                                                                 }}
                                                             >
                                                                 {row.sysReDEventStatus === "0"
@@ -1252,7 +1263,6 @@ class Events extends Component {
                                                 : ""}
                                         </TableBody>
                                     </Table>
-                                </div>
                                 <Dialog
                                     fullWidth
                                     open={openPriceDialog}

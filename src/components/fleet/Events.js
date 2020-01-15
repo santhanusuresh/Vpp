@@ -8,7 +8,7 @@ import {
     TableBody
 } from "@material-ui/core";
 
-const Events = ({showEvents}) => {
+const Events = ({ showEvents }) => {
 
     const tableHeaderStyle = {
         color: "#BDBDBD",
@@ -16,7 +16,6 @@ const Events = ({showEvents}) => {
         fontSize: "1.3vw"
     };
     const tableBodyStyle = {
-        whiteSpace: "nowrap",
         fontFamily: "Gotham Rounded Light",
         color: "#2E384D",
         fontSize: "1.2vw"
@@ -43,72 +42,74 @@ const Events = ({showEvents}) => {
                         ? "battery" : "batteries" : ""}`}
                 </Typography>
             </div>
-            <div style={{ width: "100%" }}>
-                <Table>
-                    <TableHead style={{ backgroundColor: "#FBFBFB" }}>
-                        <TableRow>
-                            <TableCell style={tableHeaderStyle}>
-                                Location
+            <Table style={{ whiteSpace: "nowrap" }} >
+                <TableHead style={{ backgroundColor: "#FBFBFB" }}>
+                    <TableRow>
+                        <TableCell style={{ ...tableHeaderStyle, width: "21%" }}>
+                            Location
                             </TableCell>
-                            <TableCell style={tableHeaderStyle}>
-                                Power
+                        <TableCell style={{ ...tableHeaderStyle, width: "11%" }}>
+                            Power
                             </TableCell>
-                            <TableCell style={tableHeaderStyle}>
-                                Capacity
+                        <TableCell style={{ ...tableHeaderStyle, width: "15%" }}>
+                            Capacity
                             </TableCell>
-                            <TableCell style={tableHeaderStyle}>
-                                NMI
+                        <TableCell style={{ ...tableHeaderStyle, width: "18%" }}>
+                            NMI
                             </TableCell>
-                            <TableCell style={tableHeaderStyle}>
-                                Status
+                        <TableCell style={{ ...tableHeaderStyle, width: "12%" }}>
+                            Status
                             </TableCell>
-                            <TableCell style={tableHeaderStyle}>
-                                Grid
+                        <TableCell style={{ ...tableHeaderStyle, width: "23%" }}>
+                            Grid
                             </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Array.isArray(showEvents) ? showEvents.map(row => {
-                            return (
-                                <TableRow key={row.systemId}
-                                    style={{ backgroundColor: "#fff", border: "15px solid #FBFBFB" }}>
-                                    <TableCell style={{ whiteSpace: "nowrap" }}>
-                                        <div style={{
-                                            display: "flex", flexDirection: "column",
-                                            justifyContent: "flex-end"
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Array.isArray(showEvents) ? showEvents.map(row => {
+                        return (
+                            <TableRow key={row.systemId}
+                                style={{ backgroundColor: "#fff", border: "15px solid #FBFBFB" }}>
+                                <TableCell style={{ width: "21%" }}>
+                                    <div style={{
+                                        display: "flex", flexDirection: "column",
+                                        justifyContent: "flex-end"
+                                    }}>
+                                        <Typography style={{
+                                            padding: 0, margin: 0, color: "#2E384D",
+                                            fontSize: "1.2vw", fontFamily: "Gotham Rounded Medium"
                                         }}>
-                                            <Typography style={{ padding: 0, margin: 0, color: "#2E384D", 
-                                                    fontSize: "1.2vw", fontFamily: "Gotham Rounded Medium" }}>
-                                                {row.groupName}
-                                            </Typography>
-                                            <Typography style={{ color: "#BDBDBD", fontSize: "1.2vw", 
-                                                padding: 0, margin: 0, fontFamily: "Gotham Rounded Light" }}>
-                                                {`#${row.systemId.split(/-/)[0]}`}
-                                            </Typography>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell style={tableBodyStyle}>
-                                        {`${row.poinv}kW`}
-                                    </TableCell>
-                                    <TableCell style={tableBodyStyle}>
-                                        {`${row.batteryOutput}kW`}
-                                    </TableCell>
-                                    <TableCell style={tableBodyStyle}>
-                                        {row.nmi}
-                                    </TableCell>
-                                    <TableCell style={tableBodyStyle}>
-                                        {`${row.networkStatus === 1 ? 'Online' : 'Offline'}`}
-                                    </TableCell>
-                                    <TableCell style={tableBodyStyle}>
-                                        {row.providerName}
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        }) : ""
-                        }
-                    </TableBody>
-                </Table>
-            </div>
+                                            {row.groupName}
+                                        </Typography>
+                                        <Typography style={{
+                                            color: "#BDBDBD", fontSize: "1.2vw",
+                                            padding: 0, margin: 0, fontFamily: "Gotham Rounded Light"
+                                        }}>
+                                            {`#${row.systemId.split(/-/)[0]}`}
+                                        </Typography>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ ...tableBodyStyle, width: "11%" }}>
+                                    {`${row.poinv}kW`}
+                                </TableCell>
+                                <TableCell style={{ ...tableBodyStyle, width: "15%" }}>
+                                    {`${row.batteryOutput}kWh`}
+                                </TableCell>
+                                <TableCell style={{ ...tableBodyStyle, width: "18%" }}>
+                                    {row.nmi}
+                                </TableCell>
+                                <TableCell style={{ ...tableBodyStyle, width: "12%" }}>
+                                    {`${row.networkStatus === 1 ? 'Online' : 'Offline'}`}
+                                </TableCell>
+                                <TableCell style={{ ...tableBodyStyle, width: "23%" }}>
+                                    {row.providerName}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    }) : ""
+                    }
+                </TableBody>
+            </Table>
         </div>
     )
 }
