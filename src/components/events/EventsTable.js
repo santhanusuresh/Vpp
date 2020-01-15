@@ -125,7 +125,7 @@ const EventsTable = ({ showEvents, moneyClickHandler, eventClickHandler }) => {
                                     {`${moment(row.date).format( "DD / MM / YY")}`}
                                 </TableCell>
                                 <TableCell style={{ ...tableBodyStyle, width: "15%" }}>
-                                    {`${moment(row.startTime,"HH:mm").format("HH:mm")} - ${moment( row.sysReDEndTime,"HH:mm").format("HH:mm")}`}
+                                    {`${moment(row.startTime,"HH:mm").format("HH:mm")} - ${moment( row.endTime,"HH:mm").format("HH:mm")}`}
                                 </TableCell>
                                 <TableCell style={{ ...tableBodyStyle, width: "11%" }}>
                                     {`${row.power / 1000}kW`}
