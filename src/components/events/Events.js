@@ -1,12 +1,7 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
     Typography,
-    Table,
     withStyles,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
     Card,
     CardContent,
     Slider,
@@ -17,35 +12,28 @@ import {
     DialogTitle,
     TextField,
     DialogActions,
-    OutlinedInput
 } from "@material-ui/core";
 import {
-    Add,
-    Money,
-    MoneyOff,
-    AttachMoney,
-    AttachMoneyOutlined
+    Add
 } from "@material-ui/icons";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import Select from "react-select";
-import SelectPlus from "react-select";
 import "./reactSelectFix.css";
 import Spinner from "../common/Spinner";
 import moment from "moment";
 import {
     MuiPickersUtilsProvider,
-    DatePicker,
-    TimePicker
+    DatePicker
 } from "@material-ui/pickers";
-import {createMuiTheme} from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MomentUtils from "@date-io/moment";
 import store from "../../store/store";
-import {LOGIN_ERROR} from "../../actions/types";
-import {ThemeProvider} from "@material-ui/styles";
-import {Base64} from "js-base64";
+import { LOGIN_ERROR } from "../../actions/types";
+import { ThemeProvider } from "@material-ui/styles";
+import { Base64 } from "js-base64";
+import EventsTable from "./EventsTable"
 
-const md5 = require("md5");
 
 const customStyles = {
     control: (base, state) => {
@@ -216,7 +204,7 @@ class Events extends Component {
     };
 
     componentDidMount() {
-        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const { isAuthenticated, user, userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
         console.log("isAuthenticated", isAuthenticated);
@@ -267,14 +255,14 @@ class Events extends Component {
 
         switch (name) {
             case "location":
-                return this.setState({location: e, power: e.maxPower}, () => {
+                return this.setState({ location: e, power: e.maxPower }, () => {
                     if (filter) {
                         console.log("running callback");
                         this.onFilterEvents();
                     }
                 });
             case "price":
-                return this.setState({price: e.target.value}, () => {
+                return this.setState({ price: e.target.value }, () => {
                     if (filter) {
                         console.log("running callback");
                         this.onFilterEvents();
@@ -282,7 +270,7 @@ class Events extends Component {
                 });
 
             default:
-                return this.setState({[name]: e}, () => {
+                return this.setState({ [name]: e }, () => {
                     if (filter) {
                         console.log("running callback");
                         this.onFilterEvents();
@@ -291,26 +279,45 @@ class Events extends Component {
         }
     };
 
+    moneyClickHandler = (row) => {
+        this.setState({
+            idPrice: row.groupId,
+            price:
+                row.price === null
+                    ? ""
+                    : row.price,
+            isEmail: row.isemail,
+            openPriceDialog: true,
+            namePrice: row.groupname,
+            datePrice: row.date,
+            startTimePrice: row.startTime,
+            endTimePrice: row.endTime,
+            hasCompletedPrice:
+                row.eventstatus,
+            createtime: row.createdTime,
+        })
+    }
+
     onClickSave = () => {
-        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+        const { isAuthenticated, user, userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        const {power, location, date, from, to} = this.state;
+        const { power, location, date, from, to } = this.state;
 
         if (location === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (date === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (from === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         if (to === null) {
-            return this.setState({validationText: "Please enter all details"});
+            return this.setState({ validationText: "Please enter all details" });
         }
 
         // console.log("typeof from", typeof parseInt(location.id));
@@ -334,8 +341,8 @@ class Events extends Component {
                     starttime: moment(from, "HH:mm:ss").format("HH:mm"),
                     endtime: moment(to, "HH:mm:ss").format("HH:mm"),
                     date: moment(date).format("YYYY-MM-DD"),
-                    power: power *1000,
-                    eventStatus : 0,
+                    power: power * 1000,
+                    eventStatus: 0,
 
                 })
 
@@ -396,26 +403,26 @@ class Events extends Component {
             });
     };
 
-    onClickSavePrice = (id, price,dateprice,createtime) => {
-        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+    onClickSavePrice = (id, price, dateprice, createtime) => {
+        const { isAuthenticated, user, userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        const {power, location, date, from, to} = this.state;
+        const { power, location, date, from, to } = this.state;
 
         console.log("createtime", createtime);
         console.log("date", dateprice);
         console.log("price", price);
         fetch(
-            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/price/"+id,
+            "https://vppspark.shinehub.com.au:8443/backend-service/event/group/price/" + id,
             {
                 method: "PATCH",
-                mode:'cors',
+                mode: 'cors',
                 headers: {
                     "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    createTime:  createtime,
+                    createTime: createtime,
                     date: dateprice,
                     price: price,
                 })
@@ -465,25 +472,25 @@ class Events extends Component {
             });
     };
 
-    onClickSaveAndSendPrice = (id, price,dateprice,createtime) => {
-        const {isAuthenticated,user, userid,username,userpassword} = this.props.auth;
+    onClickSaveAndSendPrice = (id, price, dateprice, createtime) => {
+        const { isAuthenticated, user, userid, username, userpassword } = this.props.auth;
         const password = userpassword;
         const userID = userid;
-        const {power, location, date, from, to} = this.state;
+        const { power, location, date, from, to } = this.state;
 
 
         if (window.confirm("Are you sure? This cannot be undone!")) {
             fetch(
-                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/email/"+id,
+                "https://vppspark.shinehub.com.au:8443/backend-service/event/group/email/" + id,
                 {
                     method: "PATCH",
-                    mode:'cors',
+                    mode: 'cors',
                     headers: {
                         "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        createTime:  createtime,
+                        createTime: createtime,
                         date: dateprice,
                         price: price,
                     })
@@ -536,6 +543,34 @@ class Events extends Component {
     };
 
     onClickEvent = event => {
+        event.availablepower = event.power
+        event.groupname = event.groupname
+        event.sysReDCompVal = event.compval
+        event.sysReDControlMode = ''
+        event.sysReDCreatTime = event.createdTime
+        event.sysReDDaily = ''
+        event.sysReDDate = event.date
+        event.sysReDEndCap = event.endCap
+        event.sysReDEstGen = event.estgen
+        event.sysReDEventStatus = event.eventstatus
+        event.sysReDGroupID = event.groupId
+        event.sysReDId = event.eventId
+        event.sysReDIsComplete = event.isComplete
+        event.sysReDIsEmail = event.isemail
+        event.sysReDIsPrice = event.isprice
+        event.sysReDIsStart = event.isStart
+        event.sysReDIsValid = 1
+        event.sysReDMode = ''
+        event.sysReDNeedCharge = 0
+        event.sysReDPower = event.power
+        event.sysReDPrice = event.price
+        event.sysReDSOC = 10
+        event.sysReDStartCap = event.startBattery
+        event.sysReDStartTime = event.startTime
+        event.sysReDEndTime = event.endTime
+        event.sysReDStatus = "1"
+        event.sysReDTargetCap = event.finalBattery
+
         this.props.history.push({
             pathname: "/edit-event",
             state: {
@@ -860,17 +895,17 @@ class Events extends Component {
             }
         });
         // console.log("newEvents", newEvents);
-        this.setState({showEvents: newEvents});
+        this.setState({ showEvents: newEvents });
     };
 
     onClickPriceDialog = (e, name, date, startTime, endTime, hasCompleted) => {
-        const {price, openPriceDialog} = this.state;
+        const { price, openPriceDialog } = this.state;
 
         return;
     };
 
     render() {
-        const {classes} = this.props;
+        const { classes } = this.props;
         const {
             status,
             validationText,
@@ -902,7 +937,7 @@ class Events extends Component {
             idPrice
         } = this.state;
 
-        const {isAuthenticated, user, error} = this.props.auth;
+        const { isAuthenticated, user, error } = this.props.auth;
 
         return (
             <div
@@ -924,349 +959,29 @@ class Events extends Component {
                             alignItems: "center"
                         }}
                     >
-                        <Spinner/>
+                        <Spinner />
                     </div>
                 ) : (
-                    <div
-                        style={{
-                            display: "flex",
-                            width: "100%",
-                            justifyContent: "space-around",
-                            alignItems: "center",
-                            flexDirection: "column"
-                        }}
-                    >
                         <div
                             style={{
                                 display: "flex",
-                                justifyContent: "space-evenly",
-                                width: "100%"
+                                width: "100%",
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                                flexDirection: "column"
                             }}
                         >
                             <div
                                 style={{
                                     display: "flex",
-                                    width: "65vw",
-                                    flexDirection: "column",
-                                    alignItems: "flex-start"
+                                    justifyContent: "space-evenly",
+                                    width: "100%"
                                 }}
                             >
-                                <div
-                                    style={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            fontSize: "2.2vw",
-                                            paddingRight: "20px",
-                                            fontWeight: "bolder",
-                                            fontFamily: "Gotham Rounded Bold"
-                                        }}
-                                    >
-                                        Events
-                                    </Typography>
-                                    <Typography
-                                        style={{
-                                            color: "#BDBDBD",
-                                            fontFamily: "Gotham Rounded Bold",
-                                            paddingTop: "1%",
-                                            fontSize: "1.3vw"
-                                        }}
-                                    >{`${Array.isArray(showEvents) ? showEvents.length : ""} ${
-                                        Array.isArray(showEvents)
-                                            ? showEvents.length === 1
-                                            ? "result"
-                                            : "results"
-                                            : ""
-                                    }`}</Typography>
-                                </div>
-                                    <Table >
-                                        <TableHead style={{backgroundColor: "#FBFBFB",  whiteSpace: "nowrap" }}>
-                                          <TableRow>
-                                            <TableCell
-                                                style={{
-                                                     color: "#BDBDBD",
-                                                    fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw",
-                                                    width: "17%"
-                                                }}
-                                            >
-                                                Location
-                                            </TableCell>
-                                            <TableCell
-                                                style={{
-                                                    color: "#BDBDBD",
-                                                    fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw",
-                                                    width: "13%"
-                                                }}
-                                            >
-                                                Date
-                                            </TableCell>
-                                            <TableCell
-                                                style={{
-                                                    color: "#BDBDBD",
-                                                    fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw",
-                                                    width: "15%"
-                                                }}
-                                            >
-                                                Time
-                                            </TableCell>
-                                            <TableCell
-                                                style={{
-                                                    color: "#BDBDBD",
-                                                    fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw",
-                                                    width: "10%"
-                                                }}
-                                            >
-                                                Power
-                                            </TableCell>
-                                            <TableCell style={{width:"3%"}}></TableCell>
-                                            <TableCell
-                                                style={{
-                                                    color: "#BDBDBD",
-                                                    fontFamily: "Gotham Rounded Bold",
-                                                    fontSize: "1.3vw",
-                                                    width: "30%"
-                                                }}
-                                            >
-                                                Status
-                                            </TableCell>
-                                            <TableCell style={{width:"3%"}}></TableCell>
-                                            <TableCell style={{width:"8%"}}></TableCell>
-                                          </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {Array.isArray(showEvents)
-                                                ? showEvents.map(row => {
-                                                    row.availablepower = row.power
-                                                    row.groupname = row.groupname
-                                                    row.sysReDCompVal = row.compval
-                                                    row.sysReDControlMode = ''
-                                                    row.sysReDCreatTime = row.createdTime
-                                                    row.sysReDDaily = ''
-                                                    row.sysReDDate = row.date
-                                                    row.sysReDEndCap = row.endCap
-                                                    row.sysReDEstGen = row.estgen
-                                                    row.sysReDEventStatus = row.eventstatus
-                                                    row.sysReDGroupID = row.groupId
-                                                    row.sysReDId = row.eventId
-                                                    row.sysReDIsComplete = row.isComplete
-                                                    row.sysReDIsEmail = row.isemail
-                                                    row.sysReDIsPrice = row.isprice
-                                                    row.sysReDIsStart = row.isStart
-                                                    row.sysReDIsValid = 1
-                                                    row.sysReDMode = ''
-                                                    row.sysReDNeedCharge = 0
-                                                    row.sysReDPower = row.power
-                                                    row.sysReDPrice = row.price
-                                                    row.sysReDSOC = 10
-                                                    row.sysReDStartCap = row.startBattery
-                                                    row.sysReDStartTime = row.startTime
-                                                    row.sysReDEndTime = row.endTime
-                                                    row.sysReDStatus = "1"
-                                                    row.sysReDTargetCap = row.finalBattery
-                                                    return (
-                                                        <TableRow
-                                                            key = {row.eventId}
-                                                            style={{
-                                                                backgroundColor: "#fff",
-                                                                border: "15px solid #FBFBFB"
-                                                            }}
-                                                        >
-
-                                                            <TableCell style={{whiteSpace: "nowrap", width: "17%"}}>
-                                                                <div
-                                                                    style={{
-                                                                        display: "flex",
-                                                                        flexDirection: "column",
-                                                                        justifyContent: "flex-end"
-                                                                    }}
-                                                                >
-                                                                    <Typography
-                                                                        style={{
-                                                                            padding: 0,
-                                                                            margin: 0,
-                                                                            fontFamily: "Gotham Rounded Medium",
-                                                                            color: "#2E384D",
-                                                                            fontSize: "1.2vw"
-                                                                        }}
-                                                                    >
-                                                                        {row.groupname}
-                                                                    </Typography>
-                                                                    <Typography
-                                                                        style={{
-                                                                            padding: 0,
-                                                                            margin: 0,
-                                                                            color: "#BDBDBD",
-                                                                            fontFamily: "Gotham Rounded Light",
-                                                                            fontSize: "1.2vw"
-                                                                        }}
-                                                                    >{`#${row.sysReDId.split(/-/)[0]}`}</Typography>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell
-                                                                style={{
-                                                                    whiteSpace: "nowrap",
-                                                                    fontFamily: "Gotham Rounded Light",
-                                                                    color: "#2E384D",
-                                                                    fontSize: "1.2vw",
-                                                                    width: "13%"
-                                                                }}
-                                                            >
-                                                                {moment(row.sysReDDate).format(
-                                                                    "DD / MM / YY"
-                                                                )}
-                                                            </TableCell>
-                                                            <TableCell
-                                                                style={{
-                                                                    whiteSpace: "nowrap",
-                                                                    fontFamily: "Gotham Rounded Light",
-                                                                    color: "#2E384D",
-                                                                    fontSize: "1.2vw",
-                                                                    width: "15%"
-                                                                }}
-                                                            >
-                                                                {`${moment(
-                                                                    row.sysReDStartTime,
-                                                                    "HH:mm"
-                                                                ).format("HH:mm")} - ${moment(
-                                                                    row.sysReDEndTime,
-                                                                    "HH:mm"
-                                                                ).format("HH:mm")}`}
-                                                            </TableCell>
-                                                            <TableCell
-                                                                style={{
-                                                                    whiteSpace: "nowrap",
-                                                                    fontFamily: "Gotham Rounded Light",
-                                                                    color: "#2E384D",
-                                                                    fontSize: "1.2vw",
-                                                                    width: "10%"
-                                                                }}
-                                                            >
-                                                                {`${row.sysReDPower / 1000}kW`}
-                                                            </TableCell>
-                                                            <TableCell
-                                                                style={{
-                                                                    // whiteSpace: "nowrap",
-                                                                    fontFamily: "Gotham Rounded Light",
-                                                                    color: "#2E384D",
-                                                                    fontSize: "1.2vw",
-                                                                    width: "3%"
-                                                                }}
-                                                            >
-                                                                <div
-                                                                    style={
-                                                                        row.sysReDEventStatus === 0 ||
-                                                                        row.sysReDEventStatus === 1 ||
-                                                                        row.sysReDEventStatus === 4
-                                                                            ? {
-                                                                                backgroundColor: "#fff",
-                                                                                border: "solid",
-                                                                                borderColor: "rgb(124, 124, 124)",
-                                                                                borderWidth: 4,
-                                                                                borderRadius: 40,
-                                                                                width: "1vw",
-                                                                                height: "1vw"
-                                                                            }
-                                                                            : {
-                                                                                backgroundColor: "green",
-                                                                                borderRadius: 40,
-                                                                                width: "1vw",
-                                                                                height: "1vw"
-                                                                            }
-                                                                    }
-                                                                >
-                                                                    &nbsp;
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell
-                                                                style={{
-                                                                    // whiteSpace: "nowrap",
-                                                                    fontFamily: "Gotham Rounded Light",
-                                                                    color: "#2E384D",
-                                                                    fontSize: "1.2vw",
-                                                                    width: "30%"
-                                                                }}
-                                                            >
-                                                                {row.sysReDEventStatus === 0 ||
-                                                                row.sysReDEventStatus === 1
-                                                                    ? "Scheduled"
-                                                                    : row.sysReDEventStatus === 2
-                                                                        ? "Completed"
-                                                                        : row.sysReDEventStatus === 4
-                                                                            ? "No Available Power\n to discharge"
-                                                                            : "Completed and\n Sent Email to Customer"}
-                                                            </TableCell>
-                                                            <TableCell
-                                                                // onClick={() => this.onClickEvent(row)}
-                                                                style={{
-                                                                    // whiteSpace: "nowrap",
-                                                                    color: "#25A8A8",
-                                                                    cursor: "pointer",
-                                                                    fontSize: "1.2vw",
-                                                                    fontFamily: "Gotham Rounded Medium",
-                                                                    width: "3%"
-                                                                }}
-                                                            >
-                                                                {row.sysReDEventStatus === 0 ||
-                                                                row.sysReDEventStatus === 1 ||
-                                                                row.sysReDEventStatus === 4 ? (
-                                                                    <MoneyOff/>
-                                                                ) : (
-                                                                    <AttachMoneyOutlined
-                                                                        onClick={e =>
-                                                                            this.setState({
-                                                                                idPrice: row.sysReDGroupID,
-                                                                                price:
-                                                                                    row.sysReDPrice === null
-                                                                                        ? ""
-                                                                                        : row.sysReDPrice,
-                                                                                isEmail: row.sysReDIsEmail,
-                                                                                openPriceDialog: true,
-                                                                                namePrice: row.groupname,
-                                                                                datePrice: row.sysReDDate,
-                                                                                startTimePrice: row.sysReDStartTime,
-                                                                                endTimePrice: row.sysReDEndTime,
-                                                                                hasCompletedPrice:
-                                                                                row.sysReDEventStatus,
-                                                                                createtime:row.sysReDCreatTime,
-                                                                            })
-                                                                        }
-                                                                    />
-                                                                )}
-                                                            </TableCell>
-                                                            <TableCell
-                                                                onClick={() => this.onClickEvent(row)}
-                                                                style={{
-                                                                    whiteSpace: "nowrap",
-                                                                    color: "#25A8A8",
-                                                                    cursor: "pointer",
-                                                                    fontSize: "1.2vw",
-                                                                    fontFamily: "Gotham Rounded Medium",
-                                                                    width: "8%"
-                                                                }}
-                                                            >
-                                                                {row.sysReDEventStatus === "0"
-                                                                    ? "Edit"
-                                                                    : "View"}
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
-                                                })
-                                                : ""}
-                                        </TableBody>
-                                    </Table>
                                 <Dialog
                                     fullWidth
                                     open={openPriceDialog}
-                                    onClose={() => this.setState({openPriceDialog: false})}
+                                    onClose={() => this.setState({ openPriceDialog: false })}
                                 >
                                     <DialogTitle
                                         style={{
@@ -1297,7 +1012,7 @@ class Events extends Component {
                                             endTimePrice,
                                             "HH:mm"
                                         ).format("HH:mm")} in ${namePrice}`}</div>
-                                        <div style={{width: "15vw", height: "1vw"}}></div>
+                                        <div style={{ width: "15vw", height: "1vw" }}></div>
                                         <TextField
                                             InputProps={{
                                                 startAdornment: (
@@ -1307,16 +1022,16 @@ class Events extends Component {
                                                     <InputAdornment position="end">/MWh</InputAdornment>
                                                 )
                                             }}
-                                            inputProps={{style: {textAlign: "right"}}}
+                                            inputProps={{ style: { textAlign: "right" } }}
                                             disabled={isEmail === 0 ? false : true}
                                             placeholder="Enter your price"
-                                            value={price === 0 ?'':price}
+                                            value={price === 0 ? '' : price}
                                             name="price"
                                             onChange={e => this.onChange(e, "price", false)}
                                         />
                                         {hasCompletedPrice !== 3 ? (
                                             <DialogActions>
-                                                <div style={{width: "15vw", height: "5vw"}}></div>
+                                                <div style={{ width: "15vw", height: "5vw" }}></div>
                                                 <Button
                                                     style={{
                                                         color: "#fff",
@@ -1325,13 +1040,13 @@ class Events extends Component {
                                                         width: "30%"
                                                     }}
                                                     disabled={isEmail === 0 ? false : true}
-                                                    onClick={() => this.onClickSavePrice(idPrice, price,datePrice,createtime)}
+                                                    onClick={() => this.onClickSavePrice(idPrice, price, datePrice, createtime)}
                                                 >
                                                     Save
                                                 </Button>
                                                 <Button
                                                     onClick={() =>
-                                                        this.onClickSaveAndSendPrice(idPrice, price,datePrice,createtime)
+                                                        this.onClickSaveAndSendPrice(idPrice, price, datePrice, createtime)
                                                     }
                                                     style={{
                                                         color: "#fff",
@@ -1345,138 +1060,140 @@ class Events extends Component {
                                                 </Button>
                                             </DialogActions>
                                         ) : (
-                                            <div style={{width: "15vw", height: "2vw"}}></div>
-                                        )}
+                                                <div style={{ width: "15vw", height: "2vw" }}></div>
+                                            )}
                                     </DialogContent>
                                 </Dialog>
-                            </div>
-                            <div style={{width: "15vw", height: "27vw"}}>
-                                <Card style={{width: "100%", height: "100%"}}>
-                                    <CardContent
-                                        style={{
-                                            display: "flex",
-                                            height: "100%",
-                                            flexDirection: "column",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <div style={{width: "88%", height: "100%"}}>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    height: "100%",
-                                                    flexDirection: "column",
-                                                    justifyContent: "space-evenly",
-                                                    alignItems: "flex-start"
-                                                }}
-                                            >
-                                                <Typography
-                                                    style={{
-                                                        color: "#25A8A8",
-                                                        fontFamily: "Gotham Rounded Light",
-                                                        letterSpacing: "1.2133px",
-                                                        paddingBottom: "3%",
-                                                        fontSize: "1vw",
-                                                        textTransform: "uppercase"
-                                                    }}
-                                                >
-                                                    Filter
-                                                </Typography>
-                                                <Typography
-                                                    style={{
-                                                        width: "30%",
-                                                        paddingRight: "3%",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                    }}
-                                                >
-                                                    Location
-                                                </Typography>
+                                <EventsTable showEvents={showEvents}
+                                    moneyClickHandler={(row, e) => this.moneyClickHandler(row)}
+                                    eventClickHandler={(row, e) => this.onClickEvent(row)} />
+                                <div style={{ width: "15vw", height: "27vw" }}>
+                                    <Card style={{ width: "100%", height: "100%" }}>
+                                        <CardContent
+                                            style={{
+                                                display: "flex",
+                                                height: "100%",
+                                                flexDirection: "column",
+                                                alignItems: "center"
+                                            }}
+                                        >
+                                            <div style={{ width: "88%", height: "100%" }}>
                                                 <div
                                                     style={{
-                                                        width: "100%",
-                                                        paddingRight: "3%",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                        //  padding: "3% 0 8% 0"
+                                                        display: "flex",
+                                                        height: "100%",
+                                                        flexDirection: "column",
+                                                        justifyContent: "space-evenly",
+                                                        alignItems: "flex-start"
                                                     }}
                                                 >
-                                                    <Select
-                                                        value={filterLocation}
-                                                        styles={customStyles}
-                                                        onChange={e => {
-                                                            // console.log("e", e);
-
-                                                            this.onChange(e, "filterLocation", true);
+                                                    <Typography
+                                                        style={{
+                                                            color: "#25A8A8",
+                                                            fontFamily: "Gotham Rounded Light",
+                                                            letterSpacing: "1.2133px",
+                                                            paddingBottom: "3%",
+                                                            fontSize: "1vw",
+                                                            textTransform: "uppercase"
                                                         }}
-                                                        options={
-                                                            locations
-                                                                ? locations.map(location => {
-                                                                    console.log(location)
-                                                                    return {
-                                                                        value: location.name,
-                                                                        label: location.name,
-                                                                        id: location.id
-                                                                    };
-                                                                })
-                                                                : []
-                                                        }
-                                                    />
-                                                </div>
-                                                <Typography
-                                                    style={{
-                                                        width: "30%",
-                                                        paddingRight: "3%",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                    }}
-                                                >
-                                                    Date
+                                                    >
+                                                        Filter
                                                 </Typography>
-                                                <div
-                                                    style={{
-                                                        width: "100%",
-                                                        paddingRight: "3%",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                    }}
-                                                >
-                                                    <ThemeProvider theme={muiTheme}>
-                                                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                                                            <DatePicker
-                                                                // TextFieldComponent={<OutlinedInput style={{backgroundColor:'red'}}/>}
-                                                                InputProps={{
-                                                                    classes: {
-                                                                        // root:classes.datePickerInput
-                                                                    }
-                                                                }}
-                                                                // classes={{
-                                                                //   input:classes.input
-                                                                // }}
+                                                    <Typography
+                                                        style={{
+                                                            width: "30%",
+                                                            paddingRight: "3%",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        Location
+                                                </Typography>
+                                                    <div
+                                                        style={{
+                                                            width: "100%",
+                                                            paddingRight: "3%",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                            //  padding: "3% 0 8% 0"
+                                                        }}
+                                                    >
+                                                        <Select
+                                                            value={filterLocation}
+                                                            styles={customStyles}
+                                                            onChange={e => {
+                                                                // console.log("e", e);
 
-                                                                disableToolbar
-                                                                style={{
-                                                                    padding: 0,
-                                                                    fontFamily: "Gotham Rounded Medium"
-                                                                }}
-                                                                inputVariant="outlined"
-                                                                // minDate={new Date()}
-                                                                // minDateMessage="Date should not be in the past!"
-                                                                format="DD/MM/YY"
-                                                                placeholder="Date"
-                                                                // className="MuiOutlinedInput-input"
-                                                                onChange={e =>
-                                                                    this.onChange(e, "filterDate", true)
-                                                                }
-                                                                value={filterDate}
-                                                            />
-                                                        </MuiPickersUtilsProvider>
-                                                    </ThemeProvider>
-                                                    {/* <Select
+                                                                this.onChange(e, "filterLocation", true);
+                                                            }}
+                                                            options={
+                                                                locations
+                                                                    ? locations.map(location => {
+                                                                        console.log(location)
+                                                                        return {
+                                                                            value: location.name,
+                                                                            label: location.name,
+                                                                            id: location.id
+                                                                        };
+                                                                    })
+                                                                    : []
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <Typography
+                                                        style={{
+                                                            width: "30%",
+                                                            paddingRight: "3%",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        Date
+                                                </Typography>
+                                                    <div
+                                                        style={{
+                                                            width: "100%",
+                                                            paddingRight: "3%",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        <ThemeProvider theme={muiTheme}>
+                                                            <MuiPickersUtilsProvider utils={MomentUtils}>
+                                                                <DatePicker
+                                                                    // TextFieldComponent={<OutlinedInput style={{backgroundColor:'red'}}/>}
+                                                                    InputProps={{
+                                                                        classes: {
+                                                                            // root:classes.datePickerInput
+                                                                        }
+                                                                    }}
+                                                                    // classes={{
+                                                                    //   input:classes.input
+                                                                    // }}
+
+                                                                    disableToolbar
+                                                                    style={{
+                                                                        padding: 0,
+                                                                        fontFamily: "Gotham Rounded Medium"
+                                                                    }}
+                                                                    inputVariant="outlined"
+                                                                    // minDate={new Date()}
+                                                                    // minDateMessage="Date should not be in the past!"
+                                                                    format="DD/MM/YY"
+                                                                    placeholder="Date"
+                                                                    // className="MuiOutlinedInput-input"
+                                                                    onChange={e =>
+                                                                        this.onChange(e, "filterDate", true)
+                                                                    }
+                                                                    value={filterDate}
+                                                                />
+                                                            </MuiPickersUtilsProvider>
+                                                        </ThemeProvider>
+                                                        {/* <Select
                           menuPortalTarget={document.body}
                           styles={{
                             menuPortal: styles => ({ ...styles, zIndex: 4 })
@@ -1504,16 +1221,64 @@ class Events extends Component {
                             { value: "2019-09-31", label: "30/09/2019" }
                           ]}
                         /> */}
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        width: "100%",
-                                                        display: "flex",
-                                                        justifyContent: "space-between",
-                                                        alignItems: "center",
-                                                        paddingBottom: "4%"
-                                                    }}
-                                                >
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                            paddingBottom: "4%"
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            style={{
+                                                                width: "30%",
+                                                                paddingRight: "3%",
+                                                                color: "#BDBDBD",
+                                                                letterSpacing: "1.5px",
+                                                                fontFamily: "Gotham Rounded Medium"
+                                                            }}
+                                                        >
+                                                            Power
+                                                    </Typography>
+                                                        <Typography
+                                                            style={{
+                                                                whiteSpace: "nowrap",
+                                                                color: "#828282",
+                                                                fontFamily: "Gotham Rounded Medium",
+                                                                fontSize: "1vw"
+                                                            }}
+                                                        >
+                                                            {`${filterStartPower}-${filterEndPower} kWh`}
+                                                        </Typography>
+                                                    </div>
+                                                    <Slider
+                                                        classes={{
+                                                            thumb: classes.thumb,
+                                                            track: classes.track
+                                                        }}
+                                                        value={[filterStartPower, filterEndPower]}
+                                                        onChange={(e, value) => {
+                                                            //  console.log(typeof value[0]);
+                                                            //  console.log(typeof value[1]);
+                                                            this.setState(
+                                                                {
+                                                                    touchedPower: true,
+                                                                    filterStartPower: value[0],
+                                                                    filterEndPower: value[1]
+                                                                },
+                                                                () => {
+                                                                    return this.onFilterEvents();
+                                                                }
+                                                            );
+                                                        }}
+                                                        valueLabelDisplay="auto"
+                                                        aria-labelledby="range-slider"
+                                                    // getAriaValueText={value => {
+                                                    //   return `${value}`;
+                                                    // }}
+                                                    />
                                                     <Typography
                                                         style={{
                                                             width: "30%",
@@ -1523,131 +1288,83 @@ class Events extends Component {
                                                             fontFamily: "Gotham Rounded Medium"
                                                         }}
                                                     >
-                                                        Power
-                                                    </Typography>
-                                                    <Typography
+                                                        Status
+                                                </Typography>
+                                                    <div
                                                         style={{
-                                                            whiteSpace: "nowrap",
-                                                            color: "#828282",
-                                                            fontFamily: "Gotham Rounded Medium",
-                                                            fontSize: "1vw"
+                                                            width: "100%",
+                                                            padding: "3% 0 8% 0",
+                                                            color: "#BDBDBD",
+                                                            letterSpacing: "1.5px",
+                                                            fontFamily: "Gotham Rounded Medium"
                                                         }}
                                                     >
-                                                        {`${filterStartPower}-${filterEndPower} kWh`}
-                                                    </Typography>
-                                                </div>
-                                                <Slider
-                                                    classes={{
-                                                        thumb: classes.thumb,
-                                                        track: classes.track
-                                                    }}
-                                                    value={[filterStartPower, filterEndPower]}
-                                                    onChange={(e, value) => {
-                                                        //  console.log(typeof value[0]);
-                                                        //  console.log(typeof value[1]);
-                                                        this.setState(
-                                                            {
-                                                                touchedPower: true,
-                                                                filterStartPower: value[0],
-                                                                filterEndPower: value[1]
-                                                            },
-                                                            () => {
-                                                                return this.onFilterEvents();
-                                                            }
-                                                        );
-                                                    }}
-                                                    valueLabelDisplay="auto"
-                                                    aria-labelledby="range-slider"
-                                                    // getAriaValueText={value => {
-                                                    //   return `${value}`;
-                                                    // }}
-                                                />
-                                                <Typography
-                                                    style={{
-                                                        width: "30%",
-                                                        paddingRight: "3%",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                    }}
-                                                >
-                                                    Status
-                                                </Typography>
-                                                <div
-                                                    style={{
-                                                        width: "100%",
-                                                        padding: "3% 0 8% 0",
-                                                        color: "#BDBDBD",
-                                                        letterSpacing: "1.5px",
-                                                        fontFamily: "Gotham Rounded Medium"
-                                                    }}
-                                                >
-                                                    <Select
-                                                        menuPortalTarget={document.body}
-                                                        styles={{
-                                                            menuPortal: styles => ({
-                                                                ...styles,
-                                                                zIndex: 0,
-                                                                paddingRight: "3%",
-                                                                color: "#BDBDBD",
-                                                                letterSpacing: "1.5px",
-                                                                fontFamily: "Gotham Rounded Medium"
-                                                            })
-                                                        },customStyles}
-                                                        options={[
-                                                            {value: false, label: "Scheduled"},
-                                                            {value: true, label: "Completed"}
-                                                        ]}
-                                                        value={filterStatus}
-                                                        onChange={e => {
-                                                            this.setState({filterStatus: e}, () => {
-                                                                return this.onFilterEvents();
-                                                            });
-                                                        }}
-                                                    />
+                                                        <Select
+                                                            menuPortalTarget={document.body}
+                                                            styles={{
+                                                                menuPortal: styles => ({
+                                                                    ...styles,
+                                                                    zIndex: 0,
+                                                                    paddingRight: "3%",
+                                                                    color: "#BDBDBD",
+                                                                    letterSpacing: "1.5px",
+                                                                    fontFamily: "Gotham Rounded Medium"
+                                                                })
+                                                            }, customStyles}
+                                                            options={[
+                                                                { value: false, label: "Scheduled" },
+                                                                { value: true, label: "Completed" }
+                                                            ]}
+                                                            value={filterStatus}
+                                                            onChange={e => {
+                                                                this.setState({ filterStatus: e }, () => {
+                                                                    return this.onFilterEvents();
+                                                                });
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </div>
-                        </div>
 
-                        {user.includes("admin") ? (
-                            <div
-                                style={{
-                                    position: "fixed",
-                                    display: "flex",
-                                    alignSelf: "flex-end",
-                                    padding: "0 2vw",
-                                    bottom: "3%",
-                                    right: "3%"
-                                }}
-                            >
-                                <Fab
+                            {user.includes("admin") ? (
+                                <div
                                     style={{
-                                        // position: "absolute",
-                                        // bottom: "3%",
-                                        // right: "3%",
-                                        backgroundColor: "#25A8A8"
+                                        position: "fixed",
+                                        display: "flex",
+                                        alignSelf: "flex-end",
+                                        padding: "0 2vw",
+                                        bottom: "3%",
+                                        right: "3%"
                                     }}
-                                    onClick={() => this.setState({openAddEvent: true})}
                                 >
-                                    <Add style={{color: "#fff"}}/>
-                                </Fab>
-                            </div>
-                        ) : (
-                            ""
-                        )}
-                    </div>
-                )}
+                                    <Fab
+                                        style={{
+                                            // position: "absolute",
+                                            // bottom: "3%",
+                                            // right: "3%",
+                                            backgroundColor: "#25A8A8"
+                                        }}
+                                        onClick={() => this.setState({ openAddEvent: true })}
+                                    >
+                                        <Add style={{ color: "#fff" }} />
+                                    </Fab>
+                                </div>
+                            ) : (
+                                    ""
+                                )}
+                        </div>
+                    )}
                 <Dialog
                     fullWidth
-                    style={{zIndex: 0}}
+                    style={{ zIndex: 0 }}
                     open={openAddEvent}
-                    onClose={() => this.setState({openAddEvent: false})}
+                    onClose={() => this.setState({ openAddEvent: false })}
                 >
-                    <DialogContent style={{height: "28vw"}}>
+                    <DialogContent style={{ height: "28vw" }}>
                         <div
                             style={{
                                 width: "100%",
@@ -1690,12 +1407,12 @@ class Events extends Component {
                                     >
                                         Location
                                     </Typography>
-                                    <div style={{width: "70%"}}>
+                                    <div style={{ width: "70%" }}>
                                         <Select
                                             menuPortalTarget={document.body}
                                             styles={{
-                                                menuPortal: styles => ({...styles, zIndex: 4})
-                                            },customStyles}
+                                                menuPortal: styles => ({ ...styles, zIndex: 4 })
+                                            }, customStyles}
                                             onChange={e => this.onChange(e, "location", false)}
                                             options={
                                                 locations
@@ -1730,7 +1447,7 @@ class Events extends Component {
                                     >
                                         Date
                                     </Typography>
-                                    <div style={{width: "70%"}}>
+                                    <div style={{ width: "70%" }}>
                                         {/* <Select
                       menuPortalTarget={document.body}
                       styles={{
@@ -1809,7 +1526,7 @@ class Events extends Component {
                                             alignItems: "center"
                                         }}
                                     >
-                                        <div style={{width: "40%"}}>
+                                        <div style={{ width: "40%" }}>
                                             {/* <Select
                         menuPortalTarget={document.body}
                         styles={{
@@ -1861,9 +1578,9 @@ class Events extends Component {
                                                 }}
                                                 variant="outlined"
                                                 value={from === null ? "02:00" : from}
-                                                style={{fontFamily: "Gotham Rounded Light"}}
+                                                style={{ fontFamily: "Gotham Rounded Light" }}
                                                 placeholder={"02:00"}
-                                                onChange={e => this.setState({from: e.target.value})}
+                                                onChange={e => this.setState({ from: e.target.value })}
                                             />
                                         </div>
                                         <Typography
@@ -1876,7 +1593,7 @@ class Events extends Component {
                                         >
                                             to
                                         </Typography>
-                                        <div style={{width: "40%"}}>
+                                        <div style={{ width: "40%" }}>
                                             {/* <Select
                         onChange={e => this.onChange(e, "to", false)}
                         menuPortalTarget={document.body}
@@ -1918,9 +1635,9 @@ class Events extends Component {
                                                 }}
                                                 variant="outlined"
                                                 value={to === null ? "04:00" : to}
-                                                style={{fontFamily: "Gotham Rounded Light"}}
+                                                style={{ fontFamily: "Gotham Rounded Light" }}
                                                 placeholder={"04:00"}
-                                                onChange={e => this.setState({to: e.target.value})}
+                                                onChange={e => this.setState({ to: e.target.value })}
                                             />
                                             {/* <MuiPickersUtilsProvider utils={MomentUtils}>
                         <TimePicker
@@ -1965,7 +1682,7 @@ class Events extends Component {
                                     onChange={(e, value) => {
                                         // console.log("e", e);
                                         // console.log("value", value);
-                                        return this.setState({power: value});
+                                        return this.setState({ power: value });
                                     }}
                                     classes={{
                                         thumb: classes.thumb,
@@ -1981,12 +1698,12 @@ class Events extends Component {
                                     }}
                                 >
                                     {validationText ? (
-                                        <Typography style={{color: "red"}}>
+                                        <Typography style={{ color: "red" }}>
                                             {validationText}
                                         </Typography>
                                     ) : null}
                                     {error ? (
-                                        <Typography style={{color: "red"}}>
+                                        <Typography style={{ color: "red" }}>
                                             {error.value}
                                         </Typography>
                                     ) : null}
@@ -2057,19 +1774,3 @@ const mapStateToProps = state => ({
 });
 
 export default withStyles(styles)(connect(mapStateToProps)(Events));
-
-/*
-    {[
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Scheduled'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Completed'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Completed'},
-                    {location:'New South Wales-Sydney #1210',date:'01/08/19',time:'3-6pm',power:'74 kW',status:'Completed'}
-                ].map(row=>{
-            
-*/
