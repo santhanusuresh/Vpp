@@ -93,7 +93,7 @@ class EditEvent extends Component {
         // const {isAuthenticated, user,userid,username,userpassword} = this.props.auth;
 
         // window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
-        const filename= "VPP Event Summary "+event.sysReDDate+" "+moment(event.sysReDStartTime, "HH-mm").format("HH-mm")+" "+event.groupname;
+        const filename= "VPP Event Summary "+moment(event.sysReDDate).format('MMM D YYYY')+" "+moment(event.sysReDStartTime, "HH-mm").format("HH-mm")+" "+event.groupname;
         // console.log("filename",filename)
         window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/" + event.sysReDGroupID + "/" + event.sysReDDate + "/" + event.sysReDCreatTime + "/" + filename+"/")
         // window.open("http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/" +"filename/")
