@@ -50,7 +50,7 @@ const EventsTable = ({ showEvents, moneyClickHandler, eventClickHandler }) => {
             default: return  "Completed and\n Sent Email to Customer";
         }
     };
-    const getMoneyIndicator = (row) => (row.eventstatus === 0 || row.eventstatus === 1 || row.eventstatus === 4) ? <MoneyOff /> :
+    const getMoneyIndicator = (row) => (row.eventstatus === 0 || row.eventstatus === 1 || row.eventstatus === 3|| row.eventstatus === 4) ? <MoneyOff /> :
         <AttachMoneyOutlined onClick={e => moneyClickHandler(row,e)} />;
 
     return (
