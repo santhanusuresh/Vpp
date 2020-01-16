@@ -10,9 +10,11 @@ import {
 } from "react-circular-progressbar";
 import RadialSeparators from "../common/RadialSeparators";
 
-const BatteryContent = ({ BatteryCap, BatteryCount, BatteryTotal }) => {
+const BatteryContent = ({ chartData }) => {
+
+    const { CurrentAvailablePower: BatteryCap, SystemNumber: BatteryCount, CurrentAvailablePower: BatteryTotal } = chartData;
     
-    return (
+    return Object.entries(chartData).length > 0 && (
         <div
             style={{
                 width: "41vw",

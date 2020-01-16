@@ -8,7 +8,7 @@ import {
     TableBody
 } from "@material-ui/core";
 
-const Events = ({ showEvents }) => {
+const FleetTable = ({ showEvents }) => {
 
     const tableHeaderStyle = {
         color: "#BDBDBD",
@@ -114,4 +114,4 @@ const Events = ({ showEvents }) => {
     )
 }
 
-export default Events
+export default FleetTable

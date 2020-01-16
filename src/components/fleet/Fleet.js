@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Spinner from "../common/Spinner";
 import { Base64 } from "js-base64";
 import axios from "axios";
-import Events from "./Events"
+import FleetTable from "./FleetTable"
 import Filter from "./Filter"
 
 const Fleet = (props) => {
@@ -57,7 +57,7 @@ const Fleet = (props) => {
                 alignItems: "center", flexDirection: "column"
             }}>
                 <div style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}>
-                <Events showEvents = {showEvents} />
+                <FleetTable showEvents = {showEvents} />
                 <Filter {...filterProps} />
                 </div>
             </div>)}

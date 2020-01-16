@@ -8,7 +8,7 @@ import ChartJS from "../common/Chart";
 
 const Power = ({ chartData }) => {
     
-    return (
+    return Object.entries(chartData).length > 0 && (
         <div
             style={{
                 padding: "3% 0",

@@ -28,8 +28,9 @@ import "./Dashboard.css";
 import store from "../../store/store";
 import { LOGIN_ERROR } from "../../actions/types";
 import { ThemeProvider } from "@material-ui/styles";
-import Power from "./Power"
-import BatteryContent from './BatteryContent'
+import Power from "./Power";
+import BatteryContent from "./BatteryContent";
+import UpComingEvents from "./UpComingEvents";
 
 
 const customStyles = {
@@ -109,7 +110,7 @@ const muiTheme = createMuiTheme({
 class Dashboard extends Component {
     state = {
         events: [],
-        chartData: [],
+        chartData: {},
         locations: [],
         loading: true,
         openAddEvent: false,
@@ -178,8 +179,8 @@ class Dashboard extends Component {
                             .then(events => {
 
                                 // console.log("events", events);
-                                // console.log("locations", locations);
-                                // console.log("chartData", chartData);
+                                // console.log("locations".padEnd(30,'*'), locations);
+                                // console.log("chartData".padEnd(30,'*'), chartData);
 
                                 if (events.r === -2 || chartData.success != 1) {
                                     return this.props.history.push('/login');
@@ -187,8 +188,8 @@ class Dashboard extends Component {
                                 this.setState({
                                     loading: false,
                                     locations: locations.data,
-                                    events: events.data ? events.data : [],
-                                    chartData: chartData.data ? chartData.data : {}
+                                    events: events.data || [],
+                                    chartData: chartData.data || {}
                                 });
                             });
                     });
@@ -293,7 +294,6 @@ class Dashboard extends Component {
                 ])
                     .then(res => res.map(value => value.json()))
                     .then(res => {
-                        let eventsRes, locationsRes;
                         Promise.all([res[0], res[1]]).then(res => {
                             return this.setState({
                                 loading: false,
@@ -400,97 +400,6 @@ class Dashboard extends Component {
             validationText
         } = this.state;
 
-        let chartContent;
-        let batteryContent;
-        let upcomingEventsContent;
-
-        if (Object.keys(chartData).length > 0) {
-            batteryContent = (
-                <BatteryContent  BatteryCap = {chartData.CurrentAvailablePower} BatteryCount={chartData.SystemNumber} BatteryTotal = {chartData.CurrentAvailablePower} />
-             );
-            chartContent = (
-                <Power chartData={chartData} />
-            );
-        }
-
-        if (events.length > 0) {
-            upcomingEventsContent =
-                events.length > 0 ? (
-                    events.map(event => {
-                        return (
-                            <div
-                                key = {event.eventId}
-                                style={
-                                    {
-                                        // padding: "1% 0"
-                                    }
-                                }
-                            >
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            whiteSpace: "nowrap",
-                                            fontFamily: "Gotham Rounded Medium",
-                                            fontSize: "1.3vw"
-                                        }}
-                                    >
-                                        {event.groupname}
-                                    </Typography>
-                                    <div style={{ display: "flex" }}>
-                                        <Typography
-                                            style={{
-                                                paddingRight: "1px",
-                                                fontFamily: "Gotham Rounded Medium",
-                                                fontSize: "1.3vw"
-                                            }}
-                                        >
-                                            {`${parseInt(event.power) / 1000} kW`}
-                                        </Typography>
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        padding: "1% 0",
-                                        justifyContent: "space-between",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            fontFamily: "Gotham Rounded Medium",
-                                            color: "#828282",
-                                            fontSize: "1vw"
-                                        }}
-                                    >
-                                        {moment(event.date).format("DD/MM/YYYY")}
-                                    </div>
-                                    <div
-                                        style={{
-                                            fontFamily: "Gotham Rounded Medium",
-                                            color: "#828282",
-                                            fontSize: "1vw"
-                                        }}
-                                    >{`${moment(event.startTime, "HH:mm:ss").format(
-                                        "HH:mm"
-                                    )}-${moment(event.endTime, "HH:mm:ss").format(
-                                        "HH:mm"
-                                    )}`}</div>
-                                </div>
-                            </div>
-                        );
-                    })
-                ) : (
-                        <Typography>No Upcoming Events!</Typography>
-                    );
-        }
-
         return (
             <div
                 style={{
@@ -500,14 +409,8 @@ class Dashboard extends Component {
                 {loading ? (
                     <Spinner />
                 ) : (
-                        <div
-                            style={
-                                {
-                                    // width: "100%"
-                                }
-                            }
-                        >{console.log("user", user)}
-                            {user.includes("admin") ? (
+                        <div>
+                            { user.includes("admin")  &&  (
                                 <div
                                     style={{
                                         display: "flex",
@@ -538,7 +441,6 @@ class Dashboard extends Component {
                                             options={
                                                 locations
                                                     ? locations.map(location => {
-                                                        console.log("location all state", location)
                                                         return {
                                                             value: location.name,
                                                             label: location.name,
@@ -549,60 +451,16 @@ class Dashboard extends Component {
                                             }
                                         />
                                     </div>
-                                    {/* <div style={{ width: "30%" }}>
-            <h5>Network Provider</h5>
-            <Select
-              onChange={() => {}}
-              value="networkProvider"
-              options={[
-                { value: "ausgrid", label: "Ausgrid" }
-              ]}
-            />
-          </div> */}
                                 </div>
-                            ) : (
-                                    ""
-                                )}
-                            {/* {user.includes("admin") ? (
-              <div style={{width:'100%'}}>
-              <div
-                style={{
-                  backgroundColor:'red',
-                  width: "100%",
-                  display: "flex",
-                  justifyContent:'flex-end',
-                  padding: "3% 0 0 3%"
-                }}
-              >
-
-                <Fab
-                  style={{
-                    alignSelf:'flex-end',
-                    backgroundColor: "#25A8A8"
-                  }}
-                  onClick={() => this.setState({ openAddEvent: true })}
-                >
-                  <Add style={{ color: "#fff" }} />
-                </Fab>
-              </div>
-            </div>
-            ) : (
-              ""
-            )} */}
+                            ) }
                             <div
                                 style={{
-                                    // position:'relative',
                                     display: "flex",
                                     justifyContent: "center",
-
                                     alignItems: "center"
-                                    // padding: "3%",
-                                    // width: "100%",
-
-                                    // height: "40%"
                                 }}
                             >
-                                {batteryContent}
+                                <BatteryContent chartData={chartData} />
                                 <div
                                     style={{
                                         width: "41vw",
@@ -610,15 +468,11 @@ class Dashboard extends Component {
                                         position: "relative"
                                     }}
                                 >
-                                    {events.length >= 0 ? <Card
+                                  <Card
                                         style={{
                                             overflow: "auto",
                                             height: "100%",
-                                            // height: "22.5rem",
-                                            // width: "36rem",
                                             borderRadius: 8
-                                            // padding: "1% 0",
-                                            // marginLeft: "27px"
                                         }}
                                     >
                                         <CardContent
@@ -631,76 +485,15 @@ class Dashboard extends Component {
                                                     fontSize: "1.3vw",
                                                     textTransform: "uppercase"
                                                 }}
-                                            // variant="subtitle2"
                                             >
                                                 Upcoming Events
                                         </Typography>
                                             <div style={{ padding: "2vw 0" }}>
-                                                {/* <div style={{ padding: "1% 0" }}>
-                  <div
-                  style={{
-                    display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center"
-                    }}
-                  >
-                  <Typography style={{ whiteSpace: "nowrap" }}>
-                    New South Wales - Sydney
-                    </Typography>
-                    <div style={{ display: "flex" }}>
-                    <Typography style={{ paddingRight: "5px" }}>
-                        1428 kW{"   "}
-                        </Typography>
-                      <Typography>
-                      <img src={stockMarketArrowDown} /> -7.6%
-                      </Typography>
-                    </div>
-                  </div>
-                  <LinearProgress
-                  classes={{
-                    bar1Determinate: classes.firstBarColor
-                    }}
-                    style={{ height: 10, borderRadius: 20, color: "#E84A50" }}
-                    variant="determinate"
-                    value={86}
-                    />
-                    </div>
-                    <div style={{ padding: "1% 0" }}>
-                    <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center"
-                    }}
-                    >
-                  <Typography style={{ whiteSpace: "nowrap" }}>
-                  New South Wales - Sydney
-                  </Typography>
-                  <div style={{ display: "flex" }}>
-                  <Typography style={{ paddingRight: "5px" }}>
-                  1428 kW{"   "}
-                  </Typography>
-                  <Typography>
-                  <img src={stockMarketArrowUp} /> 7.6%
-                  </Typography>
-                  </div>
-                  </div>
-                  <LinearProgress
-                  style={{ height: 10, borderRadius: 20 }}
-                  classes={{
-                      bar1Determinate: classes.secondBarColor
-                    }}
-                    variant="determinate"
-                    value={86}
-                    />
-                  </div> */}
-                                                {upcomingEventsContent}
+                                                <UpComingEvents events={events} />
                                             </div>
                                         </CardContent>
-                                    </Card> : <Typography
-                                        style={{ fontSize: '3vw', fontFamily: 'Gotham Rounded Bold', textAlign: 'center' }}>Nothing
-                                    to show!</Typography>}
-                                    {user.includes("admin") ? (
+                                    </Card>
+                                    {user.includes("admin")  && (
                                         <div
                                             style={{
                                                 position: events.length === 0 ? "absolute" : "fixed",
@@ -723,12 +516,10 @@ class Dashboard extends Component {
                                                 <Add style={{ color: "#fff", fontSize: "2vw" }} />
                                             </Fab>
                                         </div>
-                                    ) : (
-                                            ""
-                                        )}
+                                    ) }
                                 </div>
                             </div>
-                            {chartContent}
+                            <Power chartData={chartData} />
                         </div>
                     )}
                 <Dialog
@@ -744,7 +535,6 @@ class Dashboard extends Component {
                                 height: "100%",
                                 display: "flex",
                                 flexDirection: "column",
-                                // fontFamily: "Gotham Rounded Medium",
                                 alignItems: "center",
                                 zIndex: 3
                             }}
@@ -755,7 +545,6 @@ class Dashboard extends Component {
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "space-evenly",
-                                    // fontFamily: "Gotham Rounded Medium",
                                     height: "100%"
                                 }}
                             >
@@ -783,7 +572,6 @@ class Dashboard extends Component {
                                         <Select
                                             onChange={e => this.onChange(e, "location", false)}
                                             value={location}
-                                            // menuPortalTarget={document.body}
                                             styles={{
                                                 menuPortal: styles => ({ ...styles, zIndex: 4 })
                                             }, customStyles}
@@ -791,7 +579,6 @@ class Dashboard extends Component {
                                             options={
                                                 locations
                                                     ? locations.map(location => {
-                                                        // console.log("location all state",location)
                                                         return {
                                                             value: location.name,
                                                             label: location.name,
@@ -817,37 +604,6 @@ class Dashboard extends Component {
                                         fontFamily: "Gotham Rounded Light"
                                     }}>Date</Typography>
                                     <div style={{ width: "70%" }}>
-                                        {/* <Select
-                      menuPortalTarget={document.body}
-                      styles={{
-                        menuPortal: styles => ({ ...styles, zIndex: 4 })
-                      }}
-                      options={[
-                        { value: "2019-09-10", label: "10/09/2019" },
-                        { value: "2019-09-11", label: "11/09/2019" },
-                        { value: "2019-09-12", label: "12/09/2019" },
-                        { value: "2019-09-13", label: "13/09/2019" },
-                        { value: "2019-09-14", label: "14/09/2019" },
-                        { value: "2019-09-15", label: "15/09/2019" },
-                        { value: "2019-09-16", label: "16/09/2019" },
-                        { value: "2019-09-17", label: "17/09/2019" },
-                        { value: "2019-09-18", label: "18/09/2019" },
-                        { value: "2019-09-19", label: "19/09/2019" },
-                        { value: "2019-09-20", label: "20/09/2019" },
-                        { value: "2019-09-21", label: "21/09/2019" },
-                        { value: "2019-09-22", label: "22/09/2019" },
-                        { value: "2019-09-23", label: "23/09/2019" },
-                        { value: "2019-09-24", label: "24/09/2019" },
-                        { value: "2019-09-26", label: "25/09/2019" },
-                        { value: "2019-09-27", label: "26/09/2019" },
-                        { value: "2019-09-28", label: "27/09/2019" },
-                        { value: "2019-09-29", label: "28/09/2019" },
-                        { value: "2019-09-30", label: "29/09/2019" },
-                        { value: "2019-09-31", label: "30/09/2019" }
-                      ]}
-                      onChange={e => this.onChange(e, "date",false)}
-                      value={date}
-                    /> */}
                                         <ThemeProvider theme={muiTheme}>
 
                                             <MuiPickersUtilsProvider
@@ -859,8 +615,6 @@ class Dashboard extends Component {
                                                     inputVariant="outlined"
                                                     style={{ fontFamily: "Gotham Rounded Light" }}
                                                     placeholder="Date"
-                                                    // minDate={new Date()}
-                                                    // minDateMessage="Date should not be in the past!"
                                                     format="DD/MM/YY"
                                                     onChange={e => this.onChange(e, "date", false)}
                                                     value={date}
@@ -887,51 +641,6 @@ class Dashboard extends Component {
                                         alignItems: "center"
                                     }}>
                                         <div style={{ width: "40%" }}>
-                                            {/* <Select
-                        menuPortalTarget={document.body}
-                        styles={{
-                          menuPortal: styles => ({ ...styles, zIndex: 4 })
-                        }}
-                        value={from}
-                        onChange={e => this.onChange(e, "from", false)}
-                        options={[
-                          { value: "01", label: "1 am" },
-                          { value: "02", label: "2 am" },
-                          { value: "03", label: "3 am" },
-                          { value: "04", label: "4 am" },
-                          { value: "05", label: "5 am" },
-                          { value: "06", label: "6 am" },
-                          { value: "07", label: "7 am" },
-                          { value: "08", label: "8 am" },
-                          { value: "09", label: "9 am" },
-                          { value: "10", label: "10 am" },
-                          { value: "11", label: "11 am" },
-                          { value: "12", label: "12 pm" },
-                          { value: "13", label: "1 pm" },
-                          { value: "14", label: "2 pm" },
-                          { value: "15", label: "3 pm" },
-                          { value: "16", label: "4 pm" },
-                          { value: "17", label: "5 pm" },
-                          { value: "18", label: "6 pm" },
-                          { value: "19", label: "7 pm" },
-                          { value: "20", label: "8 pm" },
-                          { value: "21", label: "9 pm" },
-                          { value: "22", label: "10 pm" },
-                          { value: "23", label: "11 pm" },
-                          { value: "24", label: "12 pm" }
-                        ]}
-                      /> */}
-
-                                            {/* <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <TimePicker
-                          inputVariant="outlined"
-                          clearable
-                          ampm={false}
-                          //  label="24 hours"
-                          value={from}
-                          onChange={e => this.onChange(e, "from", false)}
-                        />
-                      </MuiPickersUtilsProvider> */}
                                             <TextField
                                                 type="time"
                                                 inputProps={{
@@ -954,50 +663,6 @@ class Dashboard extends Component {
                                             to
                                         </Typography>
                                         <div style={{ width: "40%" }}>
-                                            {/* <Select
-                        onChange={e => this.onChange(e, "to", false)}
-                        menuPortalTarget={document.body}
-                        styles={{
-                          menuPortal: styles => ({ ...styles, zIndex: 4 })
-                        }}
-                        options={[
-                          { value: "01", label: "1 am" },
-                          { value: "02", label: "2 am" },
-                          { value: "03", label: "3 am" },
-                          { value: "04", label: "4 am" },
-                          { value: "05", label: "5 am" },
-                          { value: "06", label: "6 am" },
-                          { value: "07", label: "7 am" },
-                          { value: "08", label: "8 am" },
-                          { value: "09", label: "9 am" },
-                          { value: "10", label: "10 am" },
-                          { value: "11", label: "11 am" },
-                          { value: "12", label: "12 pm" },
-                          { value: "13", label: "1 pm" },
-                          { value: "14", label: "2 pm" },
-                          { value: "15", label: "3 pm" },
-                          { value: "16", label: "4 pm" },
-                          { value: "17", label: "5 pm" },
-                          { value: "18", label: "6 pm" },
-                          { value: "19", label: "7 pm" },
-                          { value: "20", label: "8 pm" },
-                          { value: "21", label: "9 pm" },
-                          { value: "22", label: "10 pm" },
-                          { value: "23", label: "11 pm" },
-                          { value: "24", label: "12 pm" }
-                        ]}
-                        value={to}
-                      /> */}
-                                            {/* <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <TimePicker
-                          inputVariant="outlined"
-                          clearable
-                          ampm={false}
-                          //  label="24 hours"
-                          value={to}
-                          onChange={e => this.onChange(e, "to", false)}
-                        />
-                      </MuiPickersUtilsProvider> */}
                                             <TextField
                                                 type="time"
                                                 inputProps={{
@@ -1034,8 +699,6 @@ class Dashboard extends Component {
                                     max={location ? location.maxPower : 100}
                                     aria-label="custom thumb label"
                                     onChange={(e, value) => {
-                                        // console.log("e", e);
-                                        // console.log("value", value);
                                         return this.setState({ power: value });
                                     }}
                                     classes={{
