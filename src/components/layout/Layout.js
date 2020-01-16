@@ -594,7 +594,6 @@ const Layout = props => {
                             style={{
                               display: "flex",
                               width: "100%",
-                              position: "absolute",
                               bottom: "3%",
                               justifyContent: "center",
                               paddingTop: "10%"

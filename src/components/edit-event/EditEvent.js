@@ -8,20 +8,15 @@ import {
 } from "@material-ui/core";
 import {connect} from "react-redux";
 import ChartJS from "../common/Chart";
-// import arrowDown from "../../assets/stock-market-arrow.svg";
-// import arrowUp from "../../assets/arrow-up-icon.png";
 import {CallMade, CallReceived} from '@material-ui/icons';
 import Spinner from "../common/Spinner";
 import moment from "moment";
-import {TimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
-import MomentUtils from "@date-io/moment";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import {Base64} from "js-base64";
+import { Base64 } from "js-base64";
+import axios from "axios";
 
 const username = localStorage.getItem('username');
 const password = localStorage.getItem('password');
-// const username = 'saraswata';
-// const password = '#abcd123';
 const userID = localStorage.getItem('userID');
 
 class EditEvent extends Component {
@@ -90,24 +85,21 @@ class EditEvent extends Component {
     };
 
     onExportEvent = event => {
-        // const {isAuthenticated, user,userid,username,userpassword} = this.props.auth;
-
-        // window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/")
         const filename= "VPP Event Summary "+moment(event.sysReDDate).format('MMM D YYYY')+" "+moment(event.sysReDStartTime, "HH-mm").format("HH-mm")+" "+event.groupname;
-        // console.log("filename",filename)
-        window.open("https://vppspark.shinehub.com.au:8443/backend-service/system/export/" + event.sysReDGroupID + "/" + event.sysReDDate + "/" + event.sysReDCreatTime + "/" + filename+"/")
-        // window.open("http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/" +"filename/")
-
-        // fetch(
-        //     "http://localhost:9081/system/export/"+event.sysReDGroupID+"/"+event.sysReDDate+"/"+event.sysReDCreatTime+"/" +"whatname/",
-        //     {
-        //         method: "GET",
-        //         headers: {
-        //             "Authorization": "Basic " + Base64.encode(`${username}:${userpassword}`),
-        //             "Content-Type": "application/json"
-        //         }
-        //     }
-        // )
+        const options = {
+            headers: {
+                "Authorization": "Basic " + Base64.encode(`${this.props.auth.username}:${this.props.auth.userpassword}`),
+                "Content-Type": "application/vnd.ms-excel"
+            }
+        };
+        axios.get(`https://vppspark.shinehub.com.au:8443/backend-service/system/export/${event.sysReDGroupID}/${event.sysReDDate}/${event.sysReDCreatTime}/${filename}/`, options).then(res => {
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${filename}.csv`);
+            document.body.appendChild(link);
+            link.click();
+        });
     };
 
     onEditEvent = event => {
@@ -401,9 +393,9 @@ class EditEvent extends Component {
                                                 backgroundColor: "#25A8A8",
                                                 width: "7vw",
                                                 height: "2.3vw",
-                                                fontSize: "0.7vw",
+                                                fontSize: "0.8rem",
                                                 textTransform: "none",
-                                                fontFamily: "Gotham Rounded Light"
+                                                fontFamily: "Gotham Rounded Medium"
                                             }}
                                         >
                                             Export
@@ -429,9 +421,9 @@ class EditEvent extends Component {
                                                 backgroundColor: "#25A8A8",
                                                 width: "7vw",
                                                 height: "2.3vw",
-                                                fontSize: "0.7vw",
+                                                fontSize: "0.8rem",
                                                 textTransform: "none",
-                                                fontFamily: "Gotham Rounded Light"
+                                                fontFamily: "Gotham Rounded Medium"
                                             }}
                                         >
                                             Edit
@@ -445,9 +437,9 @@ class EditEvent extends Component {
                                                 color: "#25A8A8",
                                                 width: "7vw",
                                                 height: "2.3vw",
-                                                fontSize: "0.7vw",
+                                                fontSize: "0.8rem",
                                                 textTransform: "none",
-                                                fontFamily: "Gotham Rounded Light"
+                                                fontFamily: "Gotham Rounded Medium"
                                             }}
                                         >
                                             Cancel
