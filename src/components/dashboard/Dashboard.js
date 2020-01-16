@@ -1,29 +1,10 @@
 import React, { Component } from "react";
-import clsx from "clsx";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 import Select from "react-select";
 import { Base64 } from 'js-base64';
 import {
     Card,
     CardContent,
-    LinearProgress,
-    Icon,
     withStyles,
     Fab,
     Dialog,
@@ -36,56 +17,31 @@ import {
 import MomentUtils from "@date-io/moment";
 import {
     DatePicker,
-    MuiPickersUtilsProvider,
-    TimePicker
+    MuiPickersUtilsProvider
 } from "@material-ui/pickers";
-import {
-    CircularProgressbar,
-    buildStyles,
-    CircularProgressbarWithChildren
-} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import moment from "moment";
 import { connect } from "react-redux";
-
-import RadialSeparators from "../common/RadialSeparators";
-import ChartJS from "../common/Chart";
-import logo from "../../assets/shinehub-logo.svg";
-import avatar from "../../assets/Avatar.svg";
-import bell from "../../assets/Shape.svg";
-import analytics from "../../assets/icon-analytics.svg";
-import fourRectangles from "../../assets/four-rectangles.svg";
-import calendar from "../../assets/Calendar.svg";
-import cogWheel from "../../assets/cog-wheel.svg";
-import menuIcon from "../../assets/menu-icon.svg";
-import stockMarketArrowDown from "../../assets/stock-market-arrow.svg";
-import stockMarketArrowUp from "../../assets/stock-market-arrow-up.svg";
 import Spinner from "../common/Spinner";
 import { Add } from "@material-ui/icons";
 import "./Dashboard.css";
 import store from "../../store/store";
 import { LOGIN_ERROR } from "../../actions/types";
 import { ThemeProvider } from "@material-ui/styles";
+import Power from "./Power"
+import BatteryContent from './BatteryContent'
 
 
 const customStyles = {
     control: (base, state) => {
-        // console.log('state',state);
-        // console.log('base',base);
         return {
             ...base,
-            // borderColor: state.isFocused?'red':'blue',
             "&:hover": {
                 borderColor: state.isFocused ? "#00008b" : base.borderColor
             }
-            // You can also use state.isFocused to conditionally style based on the focus state
         }
     }
 };
-
-// const username = 'saraswata';
-// const password = '#abcd123';
-// const userID = 'c4fb633e19ec8d3948e1951d62f5f067';
 
 const muiTheme = createMuiTheme({
     overrides: {
@@ -159,8 +115,8 @@ class Dashboard extends Component {
         openAddEvent: false,
         location: null,
         date: null,
-        from: null,
-        to: null,
+        from: "02:00",
+        to: "04:00",
         status: null,
         power: 45,
         windowHeight: window.innerHeight,
@@ -256,97 +212,6 @@ class Dashboard extends Component {
         console.log("isAuthenticated", this.props.auth.isAuthenticated);
     }
 
-    // onClickSave = () => {
-    //   const { isAuthenticated, user } = this.props.auth;
-    //   const { power, location, date, from, to,openAddEvent } = this.state;
-    //   console.log("typeof from", typeof parseInt(location.id));
-    //   console.log("typeof from", typeof parseInt(from));
-    //   console.log(" from", from);
-    //   console.log("typeof to", typeof parseInt(to));
-    //   console.log("typeof date", typeof date);
-    //   console.log("date", date);
-    //   console.log("typeof date", typeof power);
-
-    //   if(date===null || date){
-    //     return;
-    //   }
-    //   if(location===null || location){
-    //     return;
-    //   }
-    //   if(from===null || from){
-    //     return;
-    //   }
-    //   if(to===null || to){
-    //     return;
-    //   }
-
-    //   fetch(
-    //     "https://monitoring.shinehub.com.au/handler/web/Group/handleAddRelationDispatch.php",
-    //     {
-    //       method: "POST",
-    //       body: JSON.stringify({
-    //         d: JSON.stringify({
-    //           cvs: {
-    //             a: parseInt(location.id),
-    //             st: parseInt(from.value),
-    //             et: parseInt(to.value),
-    //             // d: moment(date._d).format('YYYY-MM-DD'),
-    //             d: date.toString(),
-    //             p: power,
-    //             i: 0
-    //           }
-    //         })
-    //       })
-    //     }
-    //   )
-    //     .then(res => res.text())
-    //     .then(res => {
-    //       console.log("save", res);
-    //       Promise.all([
-    //         fetch(
-    //           "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupAllDischarge.php",
-    //           {
-    //             method: "POST",
-    //             body: JSON.stringify({
-    //               d: JSON.stringify({
-    //                 cvs: {
-    //                   u: user
-    //                 }
-    //               })
-    //             })
-    //           }
-    //         ),
-    //         fetch(
-    //           "https://monitoring.shinehub.com.au/handler/web/Group/handleQueryGroupList.php",
-    //           {
-    //             method: "POST",
-    //             body: JSON.stringify({
-    //               d: JSON.stringify({
-    //                 cvs: {
-    //                   u: user
-    //                 }
-    //               })
-    //             })
-    //           }
-    //         )
-    //       ])
-    //         .then(res => res.map(value => value.json()))
-    //         .then(res => {
-    //           let eventsRes, locationsRes;
-    //           Promise.all([res[0], res[1]]).then(res => {
-    //             console.log("reses", res);
-    //             return this.setState({
-    //               loading: false,
-    //               openAddEvent: false,
-    //               showEvents: res[0].d,
-    //               events: res[0].d,
-    //               locations: res[1].d
-    //             });
-    //           });
-    //         });
-    //     });
-    // };
-
     onClickSave = () => {
         const { isAuthenticated, user } = this.props.auth;
         const { userid, username, userpassword } = this.props.auth;
@@ -369,14 +234,6 @@ class Dashboard extends Component {
         if (to === null) {
             return this.setState({ validationText: "Please enter all details" });
         }
-        //
-        // console.log("typeof from", typeof parseInt(location.id));
-        // console.log("typeof from", typeof parseInt(from));
-        // console.log(" from", from);
-        // console.log("typeof to", typeof parseInt(to));
-        // console.log("typeof date", typeof date);
-        // console.log("date", date);
-        // console.log("typeof date", typeof power);
 
         fetch(
             "https://vppspark.shinehub.com.au:8443/backend-service/event/group/",
@@ -548,329 +405,11 @@ class Dashboard extends Component {
         let upcomingEventsContent;
 
         if (Object.keys(chartData).length > 0) {
-            // console.log('results',graphcfreetdIna)
-            chartData.BatteryCap = chartData.CurrentAvailablePower;
-            chartData.BatteryCount = chartData.SystemNumber;
-            chartData.BatteryTotal = chartData.CurrentAvailablePower;
-            const { BatteryCap, BatteryCount, BatteryTotal } = chartData;
-            // console.log("typeof BatteryCap", typeof BatteryCap);
-            // console.log("typeof BatteryTotal", typeof BatteryTotal);
-            // console.log("typeof BatteryCount", typeof BatteryCount);
             batteryContent = (
-                <div
-                    style={{
-                        // height: "100%"
-                        width: "41vw",
-                        height: "20vw",
-                        marginRight: "2vw"
-                    }}
-                >
-                    <Card
-                        style={{
-                            borderRadius: 8,
-                            //  height: "22.5rem"
-                            height: "100%"
-                        }}
-                    >
-                        <CardContent style={{ width: "100%", height: "100%" }}>
-                            <div
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    display: "flex",
-                                    justifyContent: "space-evenly",
-                                    alignItems: "center"
-                                }}
-                            >
-                                {/*{console.log("batteryCap", BatteryCap)}*/}
-                                <div style={{ width: "16vw" }}>
-                                    {/* <CircularProgressbarWithChildren
-                    value={BatteryCap===undefined?0:BatteryCap}
-                    text={`${Math.round(BatteryCap===undefined?0:BatteryCap)}W`}
-                    circleRatio={0.5}
-                    strokeWidth={6}
-                    styles={buildStyles({
-                      strokeLinecap: "round",
-                      backgroundColor: "blue",
-                      // trailColor: "red",
-                      pathColor: "#25A8A8",
-                      borderBottomColor: "transparent"
-                    })}
-                  >
-                  <RadialSeparators
-                      count={66}
-                      style={{
-                        borderRadius: -20,
-                        borderBottomColor: "transparent",
-                        background: "#000",
-                        width: "6px",
-                        // This needs to be equal to props.strokeWidth
-                        height: `${6}%`
-                      }}
-                      />
-                  </CircularProgressbarWithChildren> */}
-                                    <CircularProgressbarWithChildren
-                                        value={
-                                            typeof BatteryCap !== "number" ||
-                                                typeof BatteryTotal !== "number"
-                                                ? (parseInt(BatteryCap) / parseInt(BatteryTotal)) * 100
-                                                : 0
-                                        }
-                                        // text={`${50}%`}
-                                        strokeWidth={15}
-                                        circleRatio={0.6}
-                                        className="CircularProgressbar"
-                                        styles={buildStyles({
-                                            rotation: 1 / 2 + 1 / 8,
-                                            strokeLinecap: "butt",
-                                            trailColor: "#D3E9EA",
-                                            pathColor: "#25A8A8",
-                                            alignSelf: "flex-end"
-                                        })}
-                                    >
-                                        <RadialSeparators
-                                            count={60}
-                                            style={{
-                                                // borderRadius: 5,
-                                                borderBottomColor: "transparent",
-                                                background: "#fff",
-                                                width: `.45vw`,
-                                                // This needs to be equal to props.strokeWidth
-                                                height: `2.4vw`
-                                            }}
-                                        />
-                                        <div
-                                            style={{
-                                                // padding: "10px 0 0 0",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    padding: 0,
-                                                    margin: 0
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        fontFamily: "Gotham Rounded Medium",
-                                                        fontSize: "3.5vw",
-                                                        padding: 0,
-                                                        margin: 0
-                                                    }}
-                                                >
-                                                    {Math.round(BatteryCap / 1000)}
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        fontFamily: "Gotham Rounded Light",
-                                                        margin: "2vw 0 0 0",
-                                                        fontSize: "0.8vw",
-                                                        padding: 0
-                                                    }}
-                                                >
-                                                    kW
-                                                </div>
-                                            </div>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    padding: 0,
-                                                    margin: 0
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        color: "#83C4C4",
-                                                        // fontWeight: "100",
-                                                        fontSize: "1.1vw",
-                                                        fontFamily: "Gotham Rounded Light",
-                                                        padding: 0,
-                                                        margin: 0,
-                                                        textTransform: "uppercase"
-                                                    }}
-                                                >
-                                                    Available
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        color: "#83C4C4",
-                                                        // fontWeight: "100",
-                                                        fontFamily: "Gotham Rounded Light",
-                                                        padding: 0,
-                                                        margin: 0,
-                                                        fontSize: "1.1vw",
-                                                        textTransform: "uppercase"
-                                                    }}
-                                                >
-                                                    Power
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CircularProgressbarWithChildren>
-                                </div>
-                                <div
-                                    style={{
-                                        fontFamily: "Gotham Rounded Bold",
-                                        paddingLeft: "8px",
-                                        paddingBottom: "10%"
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            fontFamily: "Gotham Rounded Medium",
-                                            fontSize: "2.2vw"
-                                        }}
-                                    >
-                                        Your Virtual
-                                    </Typography>
-                                    <Typography
-                                        style={{
-                                            fontFamily: "Gotham Rounded Medium",
-                                            fontSize: "2.2vw"
-                                        }}
-                                    >
-                                        Power Plant
-                                    </Typography>
-                                    <Typography component={'div'}
-                                        style={{
-                                            fontFamily: "Gotham Rounded Light",
-                                            color: "#828282",
-                                            fontSize: "1vw",
-                                            display: "inline-block",
-                                            overflowWrap: "break-word"
-                                        }}
-                                    >
-                                        {(BatteryCount == 1) ? `There is currently ${BatteryCount}` : `There are currently ${BatteryCount}`}
-                                        <Typography
-                                            style={{
-                                                display: "table",
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#828282",
-                                                fontSize: "1vw"
-                                            }}
-                                        >{(BatteryCount == 1) ? `home in your fleet` : `homes in your fleet`}
-                                        </Typography>
-                                    </Typography>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            );
-
+                <BatteryContent  BatteryCap = {chartData.CurrentAvailablePower} BatteryCount={chartData.SystemNumber} BatteryTotal = {chartData.CurrentAvailablePower} />
+             );
             chartContent = (
-                <div
-                    style={{
-                        padding: "3% 0",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}
-                >
-                    <Card style={{ borderRadius: 8, width: "84vw" }}>
-                        <CardContent style={{ width: "100%" }}>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    marginBottom: "6px",
-                                    justifyContent: "space-between",
-                                    alignItems: "center"
-                                }}
-                            >
-                                <Typography
-                                    style={{
-                                        padding: "0 0 3% 8%",
-                                        color: "#83C4C4",
-                                        fontSize: "1.3vw",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}
-                                >
-                                    {"Power".toUpperCase()}
-                                </Typography>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-evenly",
-                                        alignItems: "center",
-                                        alignSelf: "flex-end"
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            paddingRight: "2vw",
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                backgroundColor: "#25A8A8",
-                                                width: "1vw",
-                                                height: "1vw",
-                                                borderRadius: 50
-                                            }}
-                                        >
-                                            &nbsp;
-                                        </div>
-                                        <Typography
-                                            style={{
-                                                fontSize: "1.5vw",
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#828282"
-                                            }}
-                                        >
-                                            Available Power
-                                        </Typography>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                backgroundColor: "#B5D145",
-                                                width: "1vw",
-                                                height: "1vw",
-                                                borderRadius: 40
-                                            }}
-                                        >
-                                            &nbsp;
-                                        </div>
-                                        <Typography
-                                            style={{
-                                                fontSize: "1.5vw",
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#828282",
-                                                paddingRight: "28px"
-                                            }}
-                                        >
-                                            Net Grid Power
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </div>
-                            <ChartJS
-                                charge={chartData.NetToGrid}
-                                time={chartData.Time}
-                                availablePower={chartData.AvailablePower}
-                                netInGrid={chartData.NetToGrid}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
+                <Power chartData={chartData} />
             );
         }
 
@@ -878,8 +417,6 @@ class Dashboard extends Component {
             upcomingEventsContent =
                 events.length > 0 ? (
                     events.map(event => {
-                        // console.log("filter api what", new Date(event.date));
-
                         return (
                             <div
                                 key = {event.eventId}
@@ -1571,14 +1108,4 @@ const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default withStyles(styles)(
-    connect(
-        mapStateToProps,
-        {}
-    )(Dashboard)
-);
-
-{
-    /*
-     */
-}
+export default withStyles(styles)(connect(mapStateToProps)(Dashboard));

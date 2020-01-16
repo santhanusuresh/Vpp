@@ -184,9 +184,8 @@ class Events extends Component {
         locations: [],
         location: null,
         date: null,
-        from: null,
-
-        to: null,
+        from: "02:00",
+        to: "04:00",
         status: null,
         loading: true,
         openPriceDialog: false,
