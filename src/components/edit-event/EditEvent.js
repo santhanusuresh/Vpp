@@ -60,7 +60,7 @@ class EditEvent extends Component {
                         date: state.event.sysReDDate,
                         startTime: moment(state.event.sysReDStartTime, "HH:mm"),
                         endTime: moment(state.event.sysReDEndTime, "HH:mm"),
-                        power: parseInt(state.event.availablepower/1000),
+                        power: state.event.availablepower/1000,
                         chartData: res.data ? res.data : {},
                         completed: state.event.sysReDEventStatus === 0 ? false : state.event.sysReDEventStatus === 1 ? false : true
 
@@ -185,7 +185,7 @@ class EditEvent extends Component {
                             date: updatedEvent[0].sysReDDate,
                             startTime: moment(updatedEvent[0].sysReDStartTime, "HH:mm").format("HH:mm"),
                             endTime: moment(updatedEvent[0].sysReDEndTime, "HH:mm").format("HH:mm"),
-                            power: parseInt(updatedEvent[0].availablepower),
+                            power: updatedEvent[0].availablepower,
                             completed: updatedEvent[0].sysReDEventStatus === 0 ? false : updatedEvent[0].sysReDEventStatus === 1 ? false : true
                         });
                     });

@@ -294,7 +294,7 @@ const Layout = props => {
                         <img src={menuIcon} />
                       </IconButton>
                       <Typography  variant="h6" noWrap>
-                        <a  href={"https://monitoring.shinehub.com.au"}><img src={logo}/></a>
+                        <a  href={"https://monitor.shinehub.com.au"}><img src={logo}/></a>
                       </Typography>
                     </div>
                     <div
