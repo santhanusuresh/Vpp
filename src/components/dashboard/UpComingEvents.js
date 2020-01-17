@@ -3,9 +3,7 @@ import Typography from "@material-ui/core/Typography"
 import moment from "moment"
 
 const UpComingEvents = ({events = []}) => {
-    return (
-        (events.length === 0 && <Typography>No Upcoming Events!</Typography>) || 
-            events.map(event => {
+    return events.map(event => {
                 return (
                     <div key = {event.eventId}>
                         <div
@@ -66,8 +64,7 @@ const UpComingEvents = ({events = []}) => {
                             )}`}</div>
                         </div>
                     </div>
-                )})  
-    )
+                )})
 }
 
 export default UpComingEvents

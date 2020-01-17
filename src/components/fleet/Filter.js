@@ -23,7 +23,14 @@ const Filter = (props) => {
             return {
                 ...base,
             }
-        }
+        },
+        option: base => ({
+            ...base,
+            color: "#BDBDBD",
+            fontFamily: "Gotham Rounded Medium",
+            paddingRight: "3%",
+            letterSpacing: "1.5px"
+        })
     };
 
     const { locations, providers, classes, events, setShowEvents } = props;
@@ -103,7 +110,8 @@ const Filter = (props) => {
                                 width: "100%", paddingRight: "3%", color: "#BDBDBD",
                                 letterSpacing: "1.5px", fontFamily: "Gotham Rounded Medium"
                             }}>
-                                <Select value={filterNetworkProvider} styles={customStyles}
+                                <Select menuPortalTarget={document.body}
+                                    value={filterNetworkProvider} styles={customStyles}
                                     onChange={e => setFilterNetworkProvider(e)}
                                     options={providers ? providers.map(provider => {
                                         return {
@@ -154,13 +162,7 @@ const Filter = (props) => {
                                 letterSpacing: "1.5px", fontFamily: "Gotham Rounded Medium"
                             }}>
                                 <Select menuPortalTarget={document.body}
-                                    styles={{
-                                        menuPortal: styles => ({
-                                            ...styles, zIndex: 0,
-                                            paddingRight: "3%", color: "#BDBDBD", letterSpacing: "1.5px",
-                                            fontFamily: "Gotham Rounded Medium"
-                                        })
-                                    }, customStyles}
+                                    styles={customStyles}
                                     options={[{ value: 0, label: "Offline" }, { value: 1, label: "Online" }]}
                                     value={filterStatus}
                                     onChange={e => setFilterStatus(e)}

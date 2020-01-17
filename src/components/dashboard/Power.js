@@ -7,6 +7,12 @@ import {
 import ChartJS from "../common/Chart";
 
 const Power = ({ chartData }) => {
+
+    const chartJsProps = {
+        time: chartData.Time,
+        availablePower: ((chartData.AvailablePower && chartData.AvailablePower.map(d=>d/1000))||[]),
+        netInGrid: ((chartData.NetToGrid && chartData.NetToGrid .map(d=>d/1000))||[])
+    }
     
     return Object.entries(chartData).length > 0 && (
         <div
@@ -103,12 +109,7 @@ const Power = ({ chartData }) => {
                             </div>
                         </div>
                     </div>
-                    <ChartJS
-                        charge={chartData.NetToGrid}
-                        time={chartData.Time}
-                        availablePower={chartData.AvailablePower}
-                        netInGrid={chartData.NetToGrid}
-                    />
+                    <ChartJS {...chartJsProps} />
                 </CardContent>
             </Card>
         </div>

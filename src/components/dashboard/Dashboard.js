@@ -6,19 +6,8 @@ import {
     Card,
     CardContent,
     withStyles,
-    Fab,
-    Dialog,
-    DialogContent,
-    Slider,
-    Button,
-    TextField,
-    createMuiTheme
+    Fab
 } from "@material-ui/core";
-import MomentUtils from "@date-io/moment";
-import {
-    DatePicker,
-    MuiPickersUtilsProvider
-} from "@material-ui/pickers";
 import "react-circular-progressbar/dist/styles.css";
 import moment from "moment";
 import { connect } from "react-redux";
@@ -27,10 +16,10 @@ import { Add } from "@material-ui/icons";
 import "./Dashboard.css";
 import store from "../../store/store";
 import { LOGIN_ERROR } from "../../actions/types";
-import { ThemeProvider } from "@material-ui/styles";
 import Power from "./Power";
 import BatteryContent from "./BatteryContent";
 import UpComingEvents from "./UpComingEvents";
+import AddEvent from "../dialog/AddEvent"
 
 
 const customStyles = {
@@ -44,68 +33,6 @@ const customStyles = {
     }
 };
 
-const muiTheme = createMuiTheme({
-    overrides: {
-        MuiPickersToolbar: {
-            toolbar: {
-                backgroundColor: "#25A8A8"
-            }
-        },
-        MuiPickersCalendarHeader: {
-            switchHeader: {
-                // backgroundColor: lightBlue.A200,
-                // color: "white",
-            }
-        },
-        MuiPickersDay: {
-            day: {
-                color: "#25A8A8"
-            },
-            daySelected: {
-                backgroundColor: "#25A8A8"
-            },
-            dayDisabled: {
-                color: "#25A8A8"
-            },
-            current: {
-                color: "#25A8A8"
-            }
-        },
-        MuiPickersModal: {
-            dialogAction: {
-                color: "#25A8A8"
-            }
-        },
-        MuiOutlinedInput: {
-            // input:{
-            //     border:'0.2rem solid black',
-            //     borderRadius:'2px',
-            //     '&$focused':{
-            //       border:'0.2rem solid red',
-            //       borderRadius:'100px'
-            //     }
-            // },
-            // focused:{}
-            root: {
-                position: 'relative',
-                '& $notchedOutline': {
-                    borderColor: 'rgba(0, 0, 0, 0.23)',
-                },
-                '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
-                    borderColor: '#00008b',
-                    // Reset on touch devices, it doesn't add specificity
-                    '@media (hover: none)': {
-                        borderColor: 'rgba(0, 0, 0, 0.23)',
-                    },
-                },
-                '&$focused $notchedOutline': {
-                    borderColor: '#4A90E2',
-                    borderWidth: 2,
-                },
-            },
-        }
-    }
-});
 
 class Dashboard extends Component {
     state = {
@@ -213,26 +140,11 @@ class Dashboard extends Component {
         console.log("isAuthenticated", this.props.auth.isAuthenticated);
     }
 
-    onClickSave = () => {
-        const { isAuthenticated, user } = this.props.auth;
-        const { userid, username, userpassword } = this.props.auth;
-        const password = userpassword;
-        const userID = userid;
-        const { power, location, date, from, to } = this.state;
-
-        if (location === null) {
-            return this.setState({ validationText: "Please enter all details" });
-        }
-
-        if (date === null) {
-            return this.setState({ validationText: "Please enter all details" });
-        }
-
-        if (from === null) {
-            return this.setState({ validationText: "Please enter all details" });
-        }
-
-        if (to === null) {
+    onClickSave = (eventData = [null]) => {
+        const { username, userpassword:  password } = this.props.auth;
+        const [power, location, date, from, to] = eventData;
+        
+        if (eventData.includes(null)) {
             return this.setState({ validationText: "Please enter all details" });
         }
 
@@ -257,9 +169,7 @@ class Dashboard extends Component {
         )
             .then(res => res.text())
             .then(res => {
-                // console.log("save", res);
-                // console.log("res.success", JSON.parse(res).success);
-                // console.log("res.success", typeof JSON.parse(res).success);
+
                 if (JSON.parse(res).success !== 1) {
                     return store.dispatch({
                         type: LOGIN_ERROR,
@@ -272,7 +182,6 @@ class Dashboard extends Component {
                 Promise.all([
                     fetch(
                         "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/" + location.id,
-                        // "http://localhost:9081/event/group/upcoming/"+location.id,
                         {
                             method: "GET",
                             headers: {
@@ -307,46 +216,13 @@ class Dashboard extends Component {
             });
     };
 
-    onChange = (e, name, filter) => {
-        console.log("e", e);
-
-        switch (name) {
-            case "date":
-                const date = moment(e).format("YYYY-MM-DD");
-                // const date = e;
-
-                return this.setState({ [name]: date }, () => {
-                    if (filter) {
-                        this.onFilterEvents();
-                    }
-                });
-
-            case "location":
-                return this.setState({ location: e, power: e.maxPower }, () => {
-                    if (filter) {
-                        console.log("running callback");
-                        this.onFilterEvents();
-                    }
-                });
-
-            default:
-                return this.setState({ [name]: e }, () => {
-                    if (filter) {
-                        this.onFilterEvents();
-                    }
-                });
-        }
-    };
-
-    onChangeLocation = (e, name) => {
-        const { userid, username, userpassword } = this.props.auth;
+    onChangeLocation = (e) => {
+        const {username, userpassword } = this.props.auth;
         const password = userpassword;
-        const userID = userid;
-        this.setState({ [name]: e, loading: true }, () => {
+        this.setState({ location: e, loading: true }, () => {
             console.log("e.id", e.id);
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/event/group/upcoming/" + e.id,
-                // "http://localhost:9081/event/group/upcoming/"+e.id,
                 {
                     method: "GET",
                     headers: {
@@ -369,11 +245,9 @@ class Dashboard extends Component {
                     )
                         .then(res => res.json())
                         .then(chartData => {
-                            // console.log("api 19 res", events);
-                            // console.log("api 19 res", chartData);
                             this.setState({
-                                events: events.data ? events.data : [],
-                                chartData: chartData.data ? chartData.data : {},
+                                events: events.data || [],
+                                chartData:  chartData.data || {},
                                 loading: false
                             });
                         });
@@ -399,6 +273,17 @@ class Dashboard extends Component {
             windowWidth,
             validationText
         } = this.state;
+
+        const addEventProps = {
+            openAddEvent,
+            locations,
+            validationText,
+            error,
+            onClickSave: ((...eventData) => this.onClickSave(eventData)) ,
+            customStyles,
+            classes,
+            closeAddEvent: (() => this.setState({ openAddEvent: false }))
+        }
 
         return (
             <div
@@ -432,7 +317,7 @@ class Dashboard extends Component {
                                             {"Location".toUpperCase()}
                                         </div>
                                         <Select
-                                            onChange={e => this.onChangeLocation(e, "location")}
+                                            onChange={ this.onChangeLocation}
                                             value={location}
                                             styles={
                                                 customStyles
@@ -496,11 +381,11 @@ class Dashboard extends Component {
                                     {user.includes("admin")  && (
                                         <div
                                             style={{
-                                                position: events.length === 0 ? "absolute" : "fixed",
-                                                right: events.length === 0 ? "-3%" : "4%",
+                                                position: "fixed",
+                                                right: "4%",
                                                 width: "4vw",
                                                 height: "4vw",
-                                                top: events.length === 0 ? "-7%" : "90%",
+                                                top: "90%",
                                                 zIndex: 1
                                             }}
                                         >
@@ -522,234 +407,7 @@ class Dashboard extends Component {
                             <Power chartData={chartData} />
                         </div>
                     )}
-                <Dialog
-                    fullWidth
-                    style={{ zIndex: 2 }}
-                    open={openAddEvent}
-                    onClose={() => this.setState({ openAddEvent: false })}
-                >
-                    <DialogContent style={{ height: "28vw" }}>
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                zIndex: 3
-                            }}
-                        >
-                            <div
-                                style={{
-                                    width: "80%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "space-evenly",
-                                    height: "100%"
-                                }}
-                            >
-                                <Typography
-                                    style={{
-                                        color: "#25A8A8",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}
-                                >
-                                    {"Add event".toUpperCase()}
-                                </Typography>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        width: "100%",
-                                        justifyContent: "space-between"
-                                    }}
-                                >
-                                    <Typography style={{
-                                        color: "#333",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}>Location</Typography>
-                                    <div style={{ width: "70%" }}>
-                                        <Select
-                                            onChange={e => this.onChange(e, "location", false)}
-                                            value={location}
-                                            styles={{
-                                                menuPortal: styles => ({ ...styles, zIndex: 4 })
-                                            }, customStyles}
-                                            placeholder="All States"
-                                            options={
-                                                locations
-                                                    ? locations.map(location => {
-                                                        return {
-                                                            value: location.name,
-                                                            label: location.name,
-                                                            id: location.id,
-                                                            maxPower: location.maxPower / 1000
-                                                        };
-                                                    })
-                                                    : []
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        width: "100%",
-                                        justifyContent: "space-between"
-                                    }}
-                                >
-                                    <Typography style={{
-                                        color: "#333",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}>Date</Typography>
-                                    <div style={{ width: "70%" }}>
-                                        <ThemeProvider theme={muiTheme}>
-
-                                            <MuiPickersUtilsProvider
-                                                className="MuiOutlinedInput-input"
-                                                utils={MomentUtils}
-                                            >
-                                                <DatePicker
-                                                    disableToolbar
-                                                    inputVariant="outlined"
-                                                    style={{ fontFamily: "Gotham Rounded Light" }}
-                                                    placeholder="Date"
-                                                    format="DD/MM/YY"
-                                                    onChange={e => this.onChange(e, "date", false)}
-                                                    value={date}
-                                                />
-                                            </MuiPickersUtilsProvider>
-                                        </ThemeProvider>
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        width: "100%",
-                                        alignItems: "center",
-                                        justifyContent: "space-between"
-                                    }}
-                                >
-                                    <Typography style={{
-                                        color: "#333",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}>Time</Typography>
-                                    <div style={{
-                                        display: "flex", width: "70%",
-                                        alignItems: "center"
-                                    }}>
-                                        <div style={{ width: "40%" }}>
-                                            <TextField
-                                                type="time"
-                                                inputProps={{
-                                                    step: '1800'
-                                                }}
-                                                variant="outlined"
-                                                value={from === null ? "02:00" : from}
-                                                style={{ fontFamily: "Gotham Rounded Medium" }}
-                                                placeholder={"Enter as 22:15"}
-                                                onChange={e => this.setState({ from: e.target.value })}
-                                            />
-
-                                        </div>
-                                        <Typography style={{
-                                            color: "#333",
-                                            width: "20%",
-                                            textAlign: "center",
-                                            fontFamily: "Gotham Rounded Light"
-                                        }}>
-                                            to
-                                        </Typography>
-                                        <div style={{ width: "40%" }}>
-                                            <TextField
-                                                type="time"
-                                                inputProps={{
-                                                    step: '1800'
-                                                }}
-                                                variant="outlined"
-                                                value={to === null ? "04:00" : to}
-                                                style={{ fontFamily: "Gotham Rounded Light" }}
-                                                placeholder={"04:00"}
-                                                onChange={e => this.setState({ to: e.target.value })}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        width: "100%",
-                                        justifyContent: "space-between"
-                                    }}
-                                >
-                                    <Typography style={{
-                                        color: "#333",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}>Power</Typography>
-                                    <Typography style={{
-                                        color: "#333",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}>{`${power} kW`}</Typography>
-                                </div>
-                                <Slider
-                                    value={power}
-                                    max={location ? location.maxPower : 100}
-                                    aria-label="custom thumb label"
-                                    onChange={(e, value) => {
-                                        return this.setState({ power: value });
-                                    }}
-                                    classes={{
-                                        thumb: classes.thumb,
-                                        track: classes.track
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    {validationText ? (
-                                        <Typography style={{ color: "red" }}>
-                                            {validationText}
-                                        </Typography>
-                                    ) : null}
-                                    {error ? (
-                                        <Typography style={{ color: "red" }}>
-                                            {error.value}
-                                        </Typography>
-                                    ) : null}
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        width: "100%"
-                                    }}
-                                >
-                                    <Button
-                                        onClick={this.onClickSave}
-                                        variant="contained"
-                                        style={{
-                                            color: "#fff",
-                                            textTransform: "none",
-                                            backgroundColor: "#25A8A8",
-                                            width: "30%"
-                                        }}
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                <AddEvent  { ...addEventProps } />
             </div>
         );
     }
