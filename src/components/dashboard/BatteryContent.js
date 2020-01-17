@@ -15,13 +15,6 @@ const BatteryContent = ({ chartData }) => {
     const { CurrentAvailablePower: BatteryCap, SystemNumber: BatteryCount, CurrentAvailablePower: BatteryTotal } = chartData;
     
     return Object.entries(chartData).length > 0 && (
-        <div
-            style={{
-                width: "41vw",
-                height: "20vw",
-                marginRight: "2vw"
-            }}
-        >
             <Card
                 style={{
                     borderRadius: 8,
@@ -190,7 +183,6 @@ const BatteryContent = ({ chartData }) => {
                     </div>
                 </CardContent>
             </Card>
-        </div>
     )
 }
 

@@ -15,14 +15,6 @@ const Power = ({ chartData }) => {
     }
     
     return Object.entries(chartData).length > 0 && (
-        <div
-            style={{
-                padding: "3% 0",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-            }}
-        >
             <Card style={{ borderRadius: 8, width: "84vw" }}>
                 <CardContent style={{ width: "100%" }}>
                     <div
@@ -112,7 +104,6 @@ const Power = ({ chartData }) => {
                     <ChartJS {...chartJsProps} />
                 </CardContent>
             </Card>
-        </div>
     )
 }
 

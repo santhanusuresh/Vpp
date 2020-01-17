@@ -11,10 +11,7 @@ class Chart extends Component {
   componentDidMount(){
 
     const {availablePower,netInGrid,time}=this.props;
-    console.log('time chart',time);
     const newTime=time.map(time=>([time,parseInt(time.split(":")[1])]));
-    console.log('newTime', newTime);
-    console.log("availablePower,netInGrid,time".padEnd(30,'*'),availablePower,netInGrid,time);
     
   const config = {
       // rangeSelector: {
@@ -69,7 +66,8 @@ class Chart extends Component {
         data: availablePower,
         color:"#25A8A8",
         tooltip: {
-          valueDecimals: 3
+          valueDecimals: 3,
+          valueSuffix: "kW".padStart(3)
         }
       },
         {
@@ -77,7 +75,8 @@ class Chart extends Component {
         data: netInGrid,
         color:'#B5D145',
         tooltip: {
-          valueDecimals: 3
+          valueDecimals: 3,
+          valueSuffix: "kW".padStart(3)
         }
       }
     ]

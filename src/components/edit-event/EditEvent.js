@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
     Button,
     Typography,
@@ -6,24 +6,23 @@ import {
     CardContent,
     TextField
 } from "@material-ui/core";
-import {connect} from "react-redux";
-import ChartJS from "../common/Chart";
-import {CallMade, CallReceived} from '@material-ui/icons';
+import { connect } from "react-redux";
+import { CallMade, CallReceived } from '@material-ui/icons';
 import Spinner from "../common/Spinner";
 import moment from "moment";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Base64 } from "js-base64";
 import axios from "axios";
+import Power from '../dashboard/Power'
 
 const username = localStorage.getItem('username');
 const password = localStorage.getItem('password');
-const userID = localStorage.getItem('userID');
 
 class EditEvent extends Component {
     state = {
         completed: false,
         event: {},
-        chartData: [],
+        chartData: {},
         loading: true,
         editClicked: false,
         date: "",
@@ -34,8 +33,8 @@ class EditEvent extends Component {
 
     componentDidMount() {
         console.log("this.props", this.props);
-        const {state} = this.props.location;
-        const {isAuthenticated, user} = this.props.auth;
+        const { state } = this.props.location;
+        const { isAuthenticated, user } = this.props.auth;
 
         console.log("user", user);
         console.log("isAuthenticated", isAuthenticated);
@@ -60,8 +59,8 @@ class EditEvent extends Component {
                         date: state.event.sysReDDate,
                         startTime: moment(state.event.sysReDStartTime, "HH:mm"),
                         endTime: moment(state.event.sysReDEndTime, "HH:mm"),
-                        power: state.event.availablepower/1000,
-                        chartData: res.data ? res.data : {},
+                        power: state.event.availablepower / 1000,
+                        chartData: res.data || {},
                         completed: state.event.sysReDEventStatus === 0 ? false : state.event.sysReDEventStatus === 1 ? false : true
 
                     });
@@ -75,17 +74,17 @@ class EditEvent extends Component {
         console.log("e", e);
         switch (name) {
             case "startTime":
-                return this.setState({startTime: e});
+                return this.setState({ startTime: e });
 
             case "endTime":
-                return this.setState({endTime: e});
+                return this.setState({ endTime: e });
             default:
-                return this.setState({[e.target.name]: e.target.value});
+                return this.setState({ [e.target.name]: e.target.value });
         }
     };
 
     onExportEvent = event => {
-        const filename= "VPP Event Summary "+moment(event.sysReDDate).format('MMM D YYYY')+" "+moment(event.sysReDStartTime, "HH-mm").format("HH-mm")+" "+event.groupname;
+        const filename = "VPP Event Summary " + moment(event.sysReDDate).format('MMM D YYYY') + " " + moment(event.sysReDStartTime, "HH-mm").format("HH-mm") + " " + event.groupname;
         const options = {
             headers: {
                 "Authorization": "Basic " + Base64.encode(`${this.props.auth.username}:${this.props.auth.userpassword}`),
@@ -104,10 +103,10 @@ class EditEvent extends Component {
 
     onEditEvent = event => {
         console.log("edit event");
-        const {state} = this.props.location;
-        const {isAuthenticated, user, userid, username, userpassword} = this.props.auth;
-        const {date, startTime, endTime, power} = this.state;
-        this.setState({loading: true});
+        const { state } = this.props.location;
+        const { username, userpassword } = this.props.auth;
+        const { date, startTime, endTime, power } = this.state;
+        this.setState({ loading: true });
         fetch(
             "https://vppspark.shinehub.com.au:8443/backend-service/event/group/" + event.sysReDGroupID,
             {
@@ -120,7 +119,7 @@ class EditEvent extends Component {
                 body: JSON.stringify({
                     createTime: event.sysReDCreatTime,
                     date: date,
-                    power: power*1000,
+                    power: power * 1000,
                     starttime: moment(startTime, "HH:mm").format("HH:mm"),
                     endtime: moment(endTime, "HH:mm").format("HH:mm")
                 })
@@ -151,7 +150,7 @@ class EditEvent extends Component {
                         // console.log("updatedEvent", updatedEvent);
                         // console.log("power", typeof updatedEvent.sysReDPower);
                         // console.log("power", typeof parseInt(updatedEvent.sysReDPower));
-                        updatedEvent[0].availablepower = updatedEvent[0].power/1000
+                        updatedEvent[0].availablepower = updatedEvent[0].power / 1000
                         updatedEvent[0].groupname = updatedEvent[0].groupname
                         updatedEvent[0].sysReDCompVal = updatedEvent[0].compval
                         updatedEvent[0].sysReDControlMode = ''
@@ -205,118 +204,7 @@ class EditEvent extends Component {
             endTime
         } = this.state;
 
-        const {isAuthenticated, user} = this.props.auth;
-
-        let chartContent;
-
-        if (Object.keys(chartData).length > 0) {
-            chartContent = (
-                <div
-                    style={{
-                        // padding: "3% 0",
-                        display: "flex",
-                        width: "100%",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}
-                >
-                    <Card style={{borderRadius: 8, width: "100%"}}>
-                        <CardContent style={{width: "100%"}}>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    marginBottom: "6px",
-                                    justifyContent: "space-between",
-                                    alignItems: "center"
-                                }}
-                            >
-                                <Typography
-                                    style={{
-                                        padding: "0 0 3% 8%",
-                                        color: "#83C4C4",
-                                        fontSize: "1.3vw",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}
-                                >
-                                    {"Power".toUpperCase()}
-                                </Typography>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-evenly",
-                                        alignItems: "center",
-                                        alignSelf: "flex-end"
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            paddingRight: "2vw",
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                backgroundColor: "#25A8A8",
-                                                width: "1vw",
-                                                height: "1vw",
-                                                borderRadius: 50
-                                            }}
-                                        >
-                                            &nbsp;
-                                        </div>
-                                        <Typography
-                                            style={{
-                                                fontSize: "1.5vw",
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#828282"
-                                            }}
-                                        >
-                                            Available Power
-                                        </Typography>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                backgroundColor: "#B5D145",
-                                                width: "1vw",
-                                                height: "1vw",
-                                                borderRadius: 40
-                                            }}
-                                        >
-                                            &nbsp;
-                                        </div>
-                                        <Typography
-                                            style={{
-                                                fontSize: "1.5vw",
-                                                fontFamily: "Gotham Rounded Light",
-                                                color: "#828282",
-                                                paddingRight: "28px"
-                                            }}
-                                        >
-                                            Net Grid Power
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </div>
-                            <ChartJS
-                                time={chartData.Time}
-                                charge={chartData.NetToGrid}
-                                availablePower={chartData.AvailablePower}
-                                netInGrid={chartData.NetToGrid}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
-            );
-        }
+        const { user } = this.props.auth;
 
         return (
             <div
@@ -330,512 +218,502 @@ class EditEvent extends Component {
                 }}
             >
                 {loading ? (
-                    <Spinner/>
+                    <Spinner />
                 ) : (
-                    <div style={{width: "100%"}}>
-                        <div
-                            style={{
-                                width: "100%",
-                                padding: "3% 0",
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }}
-                        >
+                        <div style={{ width: "100%" }}>
                             <div
                                 style={{
-                                    display: "flex",
                                     width: "100%",
-                                    justifyContent: "flex-start",
+                                    padding: "3% 0",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
                                     alignItems: "center"
                                 }}
                             >
-                                <Typography
-                                    variant="h5"
+                                <div
                                     style={{
-                                        whiteSpace: "nowrap",
-                                        color: "#2E384D",
-                                        fontSize: "2.3vw",
-                                        paddingRight: "1.3vw",
-                                        fontFamily: "Gotham Rounded Medium"
+                                        display: "flex",
+                                        width: "100%",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center"
                                     }}
                                 >
-                                    {event.groupname}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                        color: "#828282",
-                                        paddingTop: "0.9vw",
-                                        fontSize: "1.2vw",
-                                        fontFamily: "Gotham Rounded Light"
-                                    }}
-                                >
-                                    {`#${event.sysReDId.split(/-/)[0]}`}
-                                </Typography>
-                            </div>
-                            {user.includes("admin") ? (
-                                completed ? (
-                                    <div
+                                    <Typography
+                                        variant="h5"
                                         style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            width: "20%"
+                                            whiteSpace: "nowrap",
+                                            color: "#2E384D",
+                                            fontSize: "2.3vw",
+                                            paddingRight: "1.3vw",
+                                            fontFamily: "Gotham Rounded Medium"
                                         }}
                                     >
-                                        <Button
-                                            onClick={() => this.onExportEvent(event)}
-                                            variant="contained"
+                                        {event.groupname}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        style={{
+                                            whiteSpace: "nowrap",
+                                            color: "#828282",
+                                            paddingTop: "0.9vw",
+                                            fontSize: "1.2vw",
+                                            fontFamily: "Gotham Rounded Light"
+                                        }}
+                                    >
+                                        {`#${event.sysReDId.split(/-/)[0]}`}
+                                    </Typography>
+                                </div>
+                                {user.includes("admin") ? (
+                                    completed ? (
+                                        <div
                                             style={{
-                                                color: "#fff",
-                                                backgroundColor: "#25A8A8",
-                                                width: "7vw",
-                                                height: "2.3vw",
-                                                fontSize: "0.8rem",
-                                                textTransform: "none",
-                                                fontFamily: "Gotham Rounded Medium"
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                width: "20%"
                                             }}
                                         >
-                                            Export
+                                            <Button
+                                                onClick={() => this.onExportEvent(event)}
+                                                variant="contained"
+                                                style={{
+                                                    color: "#fff",
+                                                    backgroundColor: "#25A8A8",
+                                                    width: "7vw",
+                                                    height: "2.3vw",
+                                                    fontSize: "0.8rem",
+                                                    textTransform: "none",
+                                                    fontFamily: "Gotham Rounded Medium"
+                                                }}
+                                            >
+                                                Export
                                         </Button>
-                                    </div>
+                                        </div>
+                                    ) : (
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    width: "20%"
+                                                }}
+                                            >
+                                                <Button
+                                                    onClick={() => {
+                                                        !editClicked
+                                                            ? this.setState({ editClicked: true })
+                                                            : this.onEditEvent(event);
+                                                    }}
+                                                    variant="contained"
+                                                    style={{
+                                                        color: "#fff",
+                                                        backgroundColor: "#25A8A8",
+                                                        width: "7vw",
+                                                        height: "2.3vw",
+                                                        fontSize: "0.8rem",
+                                                        textTransform: "none",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    Edit
+                                        </Button>
+                                                <Button
+                                                    onClick={() => {
+                                                        this.setState({ editClicked: false });
+                                                    }}
+                                                    variant="outlined"
+                                                    style={{
+                                                        color: "#25A8A8",
+                                                        width: "7vw",
+                                                        height: "2.3vw",
+                                                        fontSize: "0.8rem",
+                                                        textTransform: "none",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    Cancel
+                                        </Button>
+                                            </div>
+                                        )
                                 ) : (
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            width: "20%"
-                                        }}
-                                    >
-                                        <Button
-                                            onClick={() => {
-                                                !editClicked
-                                                    ? this.setState({editClicked: true})
-                                                    : this.onEditEvent(event);
-                                            }}
-                                            variant="contained"
-                                            style={{
-                                                color: "#fff",
-                                                backgroundColor: "#25A8A8",
-                                                width: "7vw",
-                                                height: "2.3vw",
-                                                fontSize: "0.8rem",
-                                                textTransform: "none",
-                                                fontFamily: "Gotham Rounded Medium"
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            onClick={() => {
-                                                this.setState({editClicked: false});
-                                            }}
-                                            variant="outlined"
-                                            style={{
-                                                color: "#25A8A8",
-                                                width: "7vw",
-                                                height: "2.3vw",
-                                                fontSize: "0.8rem",
-                                                textTransform: "none",
-                                                fontFamily: "Gotham Rounded Medium"
-                                            }}
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </div>
-                                )
-                            ) : (
-                                ""
-                            )}
-                        </div>
-                        <div
-                            style={{
-                                paddingBottom: "3%",
-                                width: "100%",
-                                height: "12vw",
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }}
-                        >
-                            <Card style={{width: "70%", height: "100%", padding: "1% 0"}}>
-                                <CardContent style={{height: "100%"}}>
-                                    <div style={{display: "flex", height: "100%"}}>
-                                        <div
-                                            style={{
-                                                paddingRight: "5%",
-                                                width: "50%",
-                                                height: "100%",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "space-between",
-                                                alignItems: "center"
-                                            }}
-                                        >
+                                        ""
+                                    )}
+                            </div>
+                            <div
+                                style={{
+                                    paddingBottom: "3%",
+                                    width: "100%",
+                                    height: "12vw",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
+                                }}
+                            >
+                                <Card style={{ width: "70%", height: "100%", padding: "1% 0" }}>
+                                    <CardContent style={{ height: "100%" }}>
+                                        <div style={{ display: "flex", height: "100%" }}>
                                             <div
                                                 style={{
-                                                    paddingBottom: "6%",
-                                                    width: "100%",
+                                                    paddingRight: "5%",
+                                                    width: "50%",
+                                                    height: "100%",
                                                     display: "flex",
-                                                    justifyContent: "flex-start",
+                                                    flexDirection: "column",
+                                                    justifyContent: "space-between",
                                                     alignItems: "center"
                                                 }}
                                             >
-                                                <Typography
+                                                <div
                                                     style={{
-                                                        color: "#2E384D",
-                                                        fontFamily: "Gotham Rounded Medium",
-                                                        paddingRight: "4vw",
-                                                        fontSize: "1vw"
+                                                        paddingBottom: "6%",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "flex-start",
+                                                        alignItems: "center"
                                                     }}
                                                 >
-                                                    Date
-                                                </Typography>
-                                                {editClicked ? (
-                                                    <TextField
-                                                        name="date"
-                                                        onChange={this.onChange}
-                                                        value={date}
-                                                    />
-                                                ) : (
                                                     <Typography
                                                         style={{
-                                                            color: "#828282",
+                                                            color: "#2E384D",
                                                             fontFamily: "Gotham Rounded Medium",
+                                                            paddingRight: "4vw",
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {moment(event.sysReDDate).format("DD/MM/YYYY")}
-                                                    </Typography>
-                                                )}
-                                            </div>
-                                            <div
-                                                style={{
-                                                    width: "100%",
-                                                    display: "flex",
-                                                    justifyContent: "flex-start",
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <Typography
-                                                    style={{
-                                                        color: "#2E384D",
-                                                        fontFamily: "Gotham Rounded Medium",
-                                                        paddingRight: "4vw",
-                                                        fontSize: "1vw"
-                                                    }}
-                                                >
-                                                    Time
+                                                        Date
                                                 </Typography>
-                                                {editClicked ? (
-                                                    <div style={{display: "flex"}}>
+                                                    {editClicked ? (
                                                         <TextField
-                                                            name="startTime"
-                                                            type="time"
-                                                            inputProps={{
-                                                                step: '1800'
-                                                            }}
+                                                            name="date"
                                                             onChange={this.onChange}
-                                                            value={moment(startTime, "HH:mm").format(
-                                                                "HH:mm"
-                                                            )}
+                                                            value={date}
                                                         />
-                                                        -
+                                                    ) : (
+                                                            <Typography
+                                                                style={{
+                                                                    color: "#828282",
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    fontSize: "1vw"
+                                                                }}
+                                                            >
+                                                                {moment(event.sysReDDate).format("DD/MM/YYYY")}
+                                                            </Typography>
+                                                        )}
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "flex-start",
+                                                        alignItems: "center"
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        style={{
+                                                            color: "#2E384D",
+                                                            fontFamily: "Gotham Rounded Medium",
+                                                            paddingRight: "4vw",
+                                                            fontSize: "1vw"
+                                                        }}
+                                                    >
+                                                        Time
+                                                </Typography>
+                                                    {editClicked ? (
+                                                        <div style={{ display: "flex" }}>
+                                                            <TextField
+                                                                name="startTime"
+                                                                type="time"
+                                                                inputProps={{
+                                                                    step: '1800'
+                                                                }}
+                                                                onChange={this.onChange}
+                                                                value={moment(startTime, "HH:mm").format(
+                                                                    "HH:mm"
+                                                                )}
+                                                            />
+                                                            -
                                                         <TextField
-                                                            name="endTime"
-                                                            type="time"
-                                                            inputProps={{
-                                                                step: '1800'
+                                                                name="endTime"
+                                                                type="time"
+                                                                inputProps={{
+                                                                    step: '1800'
+                                                                }}
+                                                                onChange={this.onChange}
+                                                                value={moment(endTime, "HH:mm").format(
+                                                                    "HH:mm"
+                                                                )}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                            <Typography
+                                                                style={{
+                                                                    color: "#828282",
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    fontSize: "1vw"
+                                                                }}
+                                                            >
+                                                                {`${moment(event.sysReDStartTime, "HH:mm").format(
+                                                                    "HH:mm"
+                                                                )}-${moment(event.sysReDEndTime, "HH:mm").format(
+                                                                    "HH:mm"
+                                                                )}`}
+                                                            </Typography>
+                                                        )}
+                                                </div>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    width: "50%",
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    height: "100%",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center"
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        paddingBottom: "6%",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "flex-start",
+                                                        alignItems: "center"
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        style={{
+                                                            color: "#2E384D",
+                                                            fontFamily: "Gotham Rounded Medium",
+                                                            paddingRight: "4vw",
+                                                            fontSize: "1vw"
+                                                        }}
+                                                    >
+                                                        Power
+                                                </Typography>
+                                                    {editClicked ? (
+                                                        <TextField
+                                                            name="power"
+                                                            InputProps={{
+                                                                endAdornment: (
+                                                                    <InputAdornment position="end">kWh</InputAdornment>
+                                                                )
                                                             }}
+                                                            inputProps={{ style: { textAlign: "right" } }}
+                                                            value={power}
                                                             onChange={this.onChange}
-                                                            value={moment(endTime, "HH:mm").format(
-                                                                "HH:mm"
-                                                            )}
                                                         />
-                                                        {/*<MuiPickersUtilsProvider utils={MomentUtils}>*/}
-                                                        {/*<TimePicker*/}
-                                                        {/*  clearable*/}
-                                                        {/*  ampm={false}*/}
-                                                        {/*  //  label="24 hours"*/}
-                                                        {/*  value={startTime}*/}
-                                                        {/*  onChange={e=>this.onChange(e,"startTime")}*/}
-                                                        {/*/>*/}
-                                                        {/*<TimePicker*/}
-                                                        {/*  clearable*/}
-                                                        {/*  ampm={false}*/}
-                                                        {/*  //  label="24 hours"*/}
-                                                        {/*  value={endTime}*/}
-                                                        {/*  onChange={e=>this.onChange(e,"endTime")}*/}
-                                                        {/*/>*/}
-                                                        {/*</MuiPickersUtilsProvider>*/}
-
-                                                    </div>
-                                                ) : (
-                                                    <Typography
-                                                        style={{
-                                                            color: "#828282",
-                                                            fontFamily: "Gotham Rounded Medium",
-                                                            fontSize: "1vw"
-                                                        }}
-                                                    >
-                                                        {`${moment(event.sysReDStartTime, "HH:mm").format(
-                                                            "HH:mm"
-                                                        )}-${moment(event.sysReDEndTime, "HH:mm").format(
-                                                            "HH:mm"
-                                                        )}`}
-                                                    </Typography>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div
-                                            style={{
-                                                width: "50%",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                height: "100%",
-                                                justifyContent: "space-between",
-                                                alignItems: "center"
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    paddingBottom: "6%",
-                                                    width: "100%",
-                                                    display: "flex",
-                                                    justifyContent: "flex-start",
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <Typography
+                                                    ) : (
+                                                            <Typography
+                                                                style={{
+                                                                    color: "#828282",
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    fontSize: "1vw"
+                                                                }}
+                                                            >
+                                                                {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${Number.isInteger(event.sysReDEstGen / 1000) ? (event.sysReDEstGen / 1000) : (event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)} kWh`}
+                                                            </Typography>
+                                                        )}
+                                                </div>
+                                                <div
                                                     style={{
-                                                        color: "#2E384D",
-                                                        fontFamily: "Gotham Rounded Medium",
-                                                        paddingRight: "4vw",
-                                                        fontSize: "1vw"
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "flex-start",
+                                                        alignItems: "center"
                                                     }}
                                                 >
-                                                    Power
-                                                </Typography>
-                                                {editClicked ? (
-                                                    <TextField
-                                                        name="power"
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                <InputAdornment position="end">kWh</InputAdornment>
-                                                            )
-                                                        }}
-                                                        inputProps={{style: {textAlign: "right"}}}
-                                                        value={power}
-                                                        onChange={this.onChange}
-                                                    />
-                                                ) : (
                                                     <Typography
                                                         style={{
-                                                            color: "#828282",
+                                                            color: "#2E384D",
                                                             fontFamily: "Gotham Rounded Medium",
+                                                            paddingRight: "4vw",
                                                             fontSize: "1vw"
                                                         }}
                                                     >
-                                                        {`${Math.round(event.sysReDTargetCap * 100) / 100} kWh out of ${Number.isInteger(event.sysReDEstGen / 1000)?(event.sysReDEstGen / 1000):(event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)} kWh`}
-                                                    </Typography>
-                                                )}
-                                            </div>
-                                            <div
-                                                style={{
-                                                    width: "100%",
-                                                    display: "flex",
-                                                    justifyContent: "flex-start",
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <Typography
-                                                    style={{
-                                                        color: "#2E384D",
-                                                        fontFamily: "Gotham Rounded Medium",
-                                                        paddingRight: "4vw",
-                                                        fontSize: "1vw"
-                                                    }}
-                                                >
-                                                    Status
+                                                        Status
                                                 </Typography>
-                                                {editClicked ? (
-                                                    <Typography
-                                                        style={{
-                                                            fontSize: "1vw",
-                                                            color: "#828282",
-                                                            fontFamily: "Gotham Rounded Medium"
-                                                        }}
-                                                    >
-                                                        {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
-                                                            ? "Scheduled"
-                                                            : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
-                                                    </Typography>
-                                                ) : (
-                                                    <Typography
-                                                        style={{
-                                                            color: "#828282",
-                                                            fontFamily: "Gotham Rounded Medium",
-                                                            fontSize: "1vw"
-                                                        }}
-                                                    >
-                                                        {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
-                                                            ? "Scheduled"
-                                                            : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
-                                                    </Typography>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card style={{width: "25%", height: "100%"}}>
-                                <CardContent>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "flex-start"
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                paddingLeft: "5%"
-                                            }}
-                                        >
-                                            <Typography
-                                                style={{
-                                                    fontSize: "4vw",
-                                                    color: "#2E384D",
-                                                    fontFamily: "Gotham Rounded Medium"
-                                                }}
-                                            >
-                                                {event.sysReDEstGen ? `${Number.isInteger(event.sysReDEstGen / 1000)?(event.sysReDEstGen / 1000):(event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)}`: "N/A"}
-                                            </Typography>
-                                            <Typography
-                                                style={{
-                                                    fontSize: "1vw",
-                                                    paddingTop: "2vw",
-                                                    fontFamily: "Gotham Rounded Medium"
-                                                }}
-                                            >
-                                                {event.sysReDEstGen ? "kWh" : ""}
-                                            </Typography>
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                width: "100%",
-                                                height: "100%",
-                                                paddingLeft: "5%",
-                                                paddingTop: "0"
-                                            }}
-                                        >
-
-                                            {
-                                                parseInt(event.sysReDEventStatus) == 1 ?
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            paddingLeft: "2%",
-                                                            paddingTop: "0",
-                                                            alignItems: "center",
-                                                            width: "100%",
-                                                            height: "100%"
-                                                        }}
-                                                    >
+                                                    {editClicked ? (
                                                         <Typography
                                                             style={{
-                                                                paddingTop: "0",
-                                                                fontSize: "1.0vw",
-                                                                paddingLeft: "4px",
-                                                                color: "black",
-                                                                fontWeight: "500"
+                                                                fontSize: "1vw",
+                                                                color: "#828282",
+                                                                fontFamily: "Gotham Rounded Medium"
                                                             }}
                                                         >
-                                                            Discharging in progress
+                                                            {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
+                                                                ? "Scheduled"
+                                                                : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
                                                         </Typography>
-                                                    </div> :
-                                                    parseInt(event.sysReDCompVal* 100) > 0
-                                                        ?
-                                                        <div
-                                                            style={{
-                                                                display: "flex",
-                                                                paddingLeft: "2%",
-                                                                paddingTop: "0",
-                                                                alignItems: "center",
-                                                                width: "100%",
-                                                                height: "100%"
-                                                            }}
-                                                        >
-                                                            <CallMade
-                                                                style={{
-                                                                    minWidth: 19,
-                                                                    maxWidth: 50,
-                                                                    height: "auto",
-                                                                    color: 'green'
-                                                                }}
-                                                            />
+                                                    ) : (
                                                             <Typography
                                                                 style={{
-                                                                    paddingTop: "0",
-                                                                    fontSize: "1.3vw",
-                                                                    paddingLeft: "4px",
-                                                                    color: "green",
-                                                                    fontWeight: "500"
+                                                                    color: "#828282",
+                                                                    fontFamily: "Gotham Rounded Medium",
+                                                                    fontSize: "1vw"
                                                                 }}
                                                             >
-                                                                {`${parseInt(event.sysReDCompVal*100)}%`}
+                                                                {(event.sysReDEventStatus === 0 || event.sysReDEventStatus === 1)
+                                                                    ? "Scheduled"
+                                                                    : (event.sysReDEventStatus === 2 ? "Completed" : event.sysReDEventStatus === 4 ? 'No Available Power\n to discharge' : 'Completed and\n Sent Email to Customer')}
                                                             </Typography>
-                                                        </div>
-                                                        :
-                                                        <div
-                                                            style={{
-                                                                display: "flex",
-                                                                paddingLeft: "2%",
-                                                                paddingTop: "0",
-                                                                alignItems: "center",
-                                                                width: "100%",
-                                                                height: "100%"
-                                                            }}
-                                                        >
-                                                            <CallReceived
-                                                                style={{
-                                                                    minWidth: 19,
-                                                                    maxWidth: 50,
-                                                                    height: "auto",
-                                                                    color: 'red',
-                                                                    transform: 'rotate(270deg)'
-                                                                }}
-                                                            />
-                                                            <Typography
-                                                                style={{
-                                                                    paddingTop: "0",
-                                                                    fontSize: "1.3vw",
-                                                                    paddingLeft: "4px",
-                                                                    color: "red",
-                                                                    fontWeight: "500"
-                                                                }}
-                                                            >
-                                                                {`${parseInt(event.sysReDCompVal*100)}%`}
-                                                            </Typography>
-                                                        </div>
-
-
-                                            }
-
+                                                        )}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                                <Card style={{ width: "25%", height: "100%" }}>
+                                    <CardContent>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "flex-start"
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    paddingLeft: "5%"
+                                                }}
+                                            >
+                                                <Typography
+                                                    style={{
+                                                        fontSize: "4vw",
+                                                        color: "#2E384D",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    {event.sysReDEstGen ? `${Number.isInteger(event.sysReDEstGen / 1000) ? (event.sysReDEstGen / 1000) : (event.sysReDEstGen / 1000).toString().match(/\d+(\.\d{1,2})/g)}` : "N/A"}
+                                                </Typography>
+                                                <Typography
+                                                    style={{
+                                                        fontSize: "1vw",
+                                                        paddingTop: "2vw",
+                                                        fontFamily: "Gotham Rounded Medium"
+                                                    }}
+                                                >
+                                                    {event.sysReDEstGen ? "kWh" : ""}
+                                                </Typography>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    paddingLeft: "5%",
+                                                    paddingTop: "0"
+                                                }}
+                                            >
+
+                                                {
+                                                    parseInt(event.sysReDEventStatus) == 1 ?
+                                                        <div
+                                                            style={{
+                                                                display: "flex",
+                                                                paddingLeft: "2%",
+                                                                paddingTop: "0",
+                                                                alignItems: "center",
+                                                                width: "100%",
+                                                                height: "100%"
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                style={{
+                                                                    paddingTop: "0",
+                                                                    fontSize: "1.0vw",
+                                                                    paddingLeft: "4px",
+                                                                    color: "black",
+                                                                    fontWeight: "500"
+                                                                }}
+                                                            >
+                                                                Discharging in progress
+                                                        </Typography>
+                                                        </div> :
+                                                        parseInt(event.sysReDCompVal * 100) > 0
+                                                            ?
+                                                            <div
+                                                                style={{
+                                                                    display: "flex",
+                                                                    paddingLeft: "2%",
+                                                                    paddingTop: "0",
+                                                                    alignItems: "center",
+                                                                    width: "100%",
+                                                                    height: "100%"
+                                                                }}
+                                                            >
+                                                                <CallMade
+                                                                    style={{
+                                                                        minWidth: 19,
+                                                                        maxWidth: 50,
+                                                                        height: "auto",
+                                                                        color: 'green'
+                                                                    }}
+                                                                />
+                                                                <Typography
+                                                                    style={{
+                                                                        paddingTop: "0",
+                                                                        fontSize: "1.3vw",
+                                                                        paddingLeft: "4px",
+                                                                        color: "green",
+                                                                        fontWeight: "500"
+                                                                    }}
+                                                                >
+                                                                    {`${parseInt(event.sysReDCompVal * 100)}%`}
+                                                                </Typography>
+                                                            </div>
+                                                            :
+                                                            <div
+                                                                style={{
+                                                                    display: "flex",
+                                                                    paddingLeft: "2%",
+                                                                    paddingTop: "0",
+                                                                    alignItems: "center",
+                                                                    width: "100%",
+                                                                    height: "100%"
+                                                                }}
+                                                            >
+                                                                <CallReceived
+                                                                    style={{
+                                                                        minWidth: 19,
+                                                                        maxWidth: 50,
+                                                                        height: "auto",
+                                                                        color: 'red',
+                                                                        transform: 'rotate(270deg)'
+                                                                    }}
+                                                                />
+                                                                <Typography
+                                                                    style={{
+                                                                        paddingTop: "0",
+                                                                        fontSize: "1.3vw",
+                                                                        paddingLeft: "4px",
+                                                                        color: "red",
+                                                                        fontWeight: "500"
+                                                                    }}
+                                                                >
+                                                                    {`${parseInt(event.sysReDCompVal * 100)}%`}
+                                                                </Typography>
+                                                            </div>
+
+
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                            <div style={{
+                                    display: "flex",
+                                    width: "100%",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                <Power chartData={chartData} />
+                            </div>
                         </div>
-                        {chartContent}
-                    </div>
-                )}
+                    )}
             </div>
         );
     }

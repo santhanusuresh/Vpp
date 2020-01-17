@@ -141,9 +141,9 @@ class Dashboard extends Component {
     }
 
     onClickSave = (eventData = [null]) => {
-        const { username, userpassword:  password } = this.props.auth;
+        const { username, userpassword: password } = this.props.auth;
         const [power, location, date, from, to] = eventData;
-        
+
         if (eventData.includes(null)) {
             return this.setState({ validationText: "Please enter all details" });
         }
@@ -217,7 +217,7 @@ class Dashboard extends Component {
     };
 
     onChangeLocation = (e) => {
-        const {username, userpassword } = this.props.auth;
+        const { username, userpassword } = this.props.auth;
         const password = userpassword;
         this.setState({ location: e, loading: true }, () => {
             console.log("e.id", e.id);
@@ -247,7 +247,7 @@ class Dashboard extends Component {
                         .then(chartData => {
                             this.setState({
                                 events: events.data || [],
-                                chartData:  chartData.data || {},
+                                chartData: chartData.data || {},
                                 loading: false
                             });
                         });
@@ -264,13 +264,7 @@ class Dashboard extends Component {
             locations,
             loading,
             location,
-            date,
-            to,
-            from,
-            power,
             openAddEvent,
-            windowHeight,
-            windowWidth,
             validationText
         } = this.state;
 
@@ -279,7 +273,7 @@ class Dashboard extends Component {
             locations,
             validationText,
             error,
-            onClickSave: ((...eventData) => this.onClickSave(eventData)) ,
+            onClickSave: ((...eventData) => this.onClickSave(eventData)),
             customStyles,
             classes,
             closeAddEvent: (() => this.setState({ openAddEvent: false }))
@@ -295,7 +289,7 @@ class Dashboard extends Component {
                     <Spinner />
                 ) : (
                         <div>
-                            { user.includes("admin")  &&  (
+                            {user.includes("admin") && (
                                 <div
                                     style={{
                                         display: "flex",
@@ -317,7 +311,7 @@ class Dashboard extends Component {
                                             {"Location".toUpperCase()}
                                         </div>
                                         <Select
-                                            onChange={ this.onChangeLocation}
+                                            onChange={this.onChangeLocation}
                                             value={location}
                                             styles={
                                                 customStyles
@@ -337,7 +331,7 @@ class Dashboard extends Component {
                                         />
                                     </div>
                                 </div>
-                            ) }
+                            )}
                             <div
                                 style={{
                                     display: "flex",
@@ -345,7 +339,13 @@ class Dashboard extends Component {
                                     alignItems: "center"
                                 }}
                             >
-                                <BatteryContent chartData={chartData} />
+                                <div style={{
+                                        width: "41vw",
+                                        height: "20vw",
+                                        marginRight: "2vw"
+                                    }} >
+                                    <BatteryContent chartData={chartData} />
+                                </div>
                                 <div
                                     style={{
                                         width: "41vw",
@@ -353,7 +353,7 @@ class Dashboard extends Component {
                                         position: "relative"
                                     }}
                                 >
-                                  <Card
+                                    <Card
                                         style={{
                                             overflow: "auto",
                                             height: "100%",
@@ -378,7 +378,7 @@ class Dashboard extends Component {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    {user.includes("admin")  && (
+                                    {user.includes("admin") && (
                                         <div
                                             style={{
                                                 position: "fixed",
@@ -401,13 +401,20 @@ class Dashboard extends Component {
                                                 <Add style={{ color: "#fff", fontSize: "2vw" }} />
                                             </Fab>
                                         </div>
-                                    ) }
+                                    )}
                                 </div>
                             </div>
-                            <Power chartData={chartData} />
+                            <div style={{
+                                padding: "3% 0",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }} >
+                                <Power chartData={chartData} />
+                            </div>
                         </div>
                     )}
-                <AddEvent  { ...addEventProps } />
+                <AddEvent  {...addEventProps} />
             </div>
         );
     }
