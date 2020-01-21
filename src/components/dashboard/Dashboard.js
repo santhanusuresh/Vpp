@@ -109,9 +109,9 @@ class Dashboard extends Component {
                                 // console.log("locations".padEnd(30,'*'), locations);
                                 // console.log("chartData".padEnd(30,'*'), chartData);
 
-                                if (events.r === -2 || chartData.success != 1) {
-                                    return this.props.history.push('/login');
-                                }
+                                //if (events.r === -2 || chartData.success != 1) {
+                                //    return this.props.history.push('/login');
+                                //}
                                 this.setState({
                                     loading: false,
                                     locations: locations.data,
