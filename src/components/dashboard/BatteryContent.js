@@ -12,15 +12,9 @@ import RadialSeparators from "../common/RadialSeparators";
 
 const BatteryContent = ({ chartData }) => {
 
-    // const { CurrentAvailablePower: BatteryCap, SystemNumber: BatteryCount, CurrentAvailablePower: BatteryTotal } = chartData;
-    // const { CurrentAvailablePower: BatteryCap, SystemNumber: BatteryCount, CurrentAvailablePower: BatteryTotal } = chartData;
-    const BatteryCap = 0;
-    const BatteryCount = 47;
-    const BatteryTotal = 0;
+    const { CurrentAvailablePower: BatteryCap, SystemNumber: BatteryCount, CurrentAvailablePower: BatteryTotal } = chartData;
 
-
-    // return Object.entries(chartData).length > 0 && (
-    return  (
+    return Object.entries(chartData).length > 0 && (
             <Card
                 style={{
                     borderRadius: 8,
