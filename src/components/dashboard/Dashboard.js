@@ -20,6 +20,7 @@ import Power from "./Power";
 import BatteryContent from "./BatteryContent";
 import UpComingEvents from "./UpComingEvents";
 import AddEvent from "../dialog/AddEvent"
+import Can from "../common/Can"
 
 
 const customStyles = {
@@ -352,8 +353,9 @@ class Dashboard extends Component {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    {user.includes("admin") && (
-                                        <div
+                                    <Can show="AddEventButton"
+                                        yes={() => (
+                                            <div
                                             style={{
                                                 position: "fixed",
                                                 right: "4%",
@@ -375,7 +377,7 @@ class Dashboard extends Component {
                                                 <Add style={{ color: "#fff", fontSize: "2vw" }} />
                                             </Fab>
                                         </div>
-                                    )}
+                                        )} />
                                 </div>
                             </div>
                             <div style={{

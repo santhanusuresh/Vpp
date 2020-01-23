@@ -15,9 +15,6 @@ import { Base64 } from "js-base64";
 import axios from "axios";
 import Power from '../dashboard/Power'
 
-const username = localStorage.getItem('username');
-const password = localStorage.getItem('password');
-
 class EditEvent extends Component {
     state = {
         completed: false,
@@ -32,7 +29,7 @@ class EditEvent extends Component {
     };
 
     componentDidMount() {
-        const { state } = this.props.location;
+        const { location: state, auth: { username, userpassword: password } } = this.props;
         if (state !== undefined) {
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,
@@ -98,8 +95,7 @@ class EditEvent extends Component {
 
     onEditEvent = event => {
         console.log("edit event");
-        const { state } = this.props.location;
-        const { username, userpassword } = this.props.auth;
+        const { location: state, auth: { username, userpassword: password } } = this.props;
         const { date, startTime, endTime, power } = this.state;
         this.setState({ loading: true });
         fetch(
@@ -108,7 +104,7 @@ class EditEvent extends Component {
                 method: "PATCH",
                 mode: 'cors',
                 headers: {
-                    "Authorization": "Basic " + Base64.encode(`${username}:${userpassword}`),
+                    "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({

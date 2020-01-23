@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -16,7 +15,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { connect } from "react-redux";
 import { getSessionUser, logout } from "../../actions/authActions";
-
 import {
   withStyles,
   Divider,
@@ -37,7 +35,8 @@ import stockMarketArrowUp from "../../assets/stock-market-arrow-up.svg";
 import { withRouter } from "react-router-dom";
 import { SESSION_USER } from "../../actions/types";
 import store from "../../store/store";
-import {Base64} from "js-base64";
+import { Base64 } from "js-base64";
+import Can from "../common/Can"
 
 const drawerWidth = 240;
 
@@ -366,25 +365,27 @@ const Layout = props => {
                     { icon: calendar, component: "Events", text: "Events", onClick: "/events" }
                     // { icon: cogWheel, component: "Settings", text: "Settings",onClick:"/settings" }
               ].map((item, index) => (
-                <ListItem
-                          button
-                          style={item.text==='Events'?{paddingLeft:'12%',display: "flex", alignItems: "center" }:{display: "flex", alignItems: "center"}}
-                          key={index}
-                          onClick={() => props.history.push(item.onClick)}
-                      >
-                        <ListItemIcon
+                <Can key={index} perform={`${item.component}:V`}
+                yes={() => (
+                  <ListItem
+                  button
+                  style={item.text==='Events'?{paddingLeft:'12%',display: "flex", alignItems: "center" }:{display: "flex", alignItems: "center"}}
+                  onClick={() => props.history.push(item.onClick)}
+              >
+                <ListItemIcon
 
-                        >
-                          <img src={item.icon} />
-                        </ListItemIcon>
-                        <ListItemText
-                            style={{ color: "#83C4C4" }}
-                            primary={item.text}
-                            classes={{
-                              root: classes.text
-                            }}
-                        />
-                      </ListItem>
+                >
+                  <img src={item.icon} />
+                </ListItemIcon>
+                <ListItemText
+                    style={{ color: "#83C4C4" }}
+                    primary={item.text}
+                    classes={{
+                      root: classes.text
+                    }}
+                />
+              </ListItem>
+                )} />
                   ))}
                 </List>
               </Drawer>
