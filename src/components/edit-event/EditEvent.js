@@ -32,12 +32,7 @@ class EditEvent extends Component {
     };
 
     componentDidMount() {
-        console.log("this.props", this.props);
         const { state } = this.props.location;
-        const { isAuthenticated, user } = this.props.auth;
-
-        console.log("user", user);
-        console.log("isAuthenticated", isAuthenticated);
         if (state !== undefined) {
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,

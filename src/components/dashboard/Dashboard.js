@@ -42,11 +42,6 @@ class Dashboard extends Component {
         loading: true,
         openAddEvent: false,
         location: null,
-        date: null,
-        from: "02:00",
-        to: "04:00",
-        status: null,
-        power: 45,
         windowHeight: window.innerHeight,
         windowWidth: window.innerWidth,
         validationText: ""
@@ -54,16 +49,7 @@ class Dashboard extends Component {
 
 
     componentDidMount() {
-        const { isAuthenticated, user, userid } = this.props.auth;
-        const { username, userpassword } = this.props.auth;
-        const password = userpassword;
-        const userID = userid;
-
-        console.log("isAuthenticated", isAuthenticated);
-        console.log("userid", userid);
-        console.log("username", username);
-        console.log("password", password);
-
+        const { username, userpassword: password } = this.props.auth;
         window.addEventListener("resize", this.onResizeWindow);
 
         fetch(
@@ -78,7 +64,6 @@ class Dashboard extends Component {
         )
             .then(chartData => chartData.json())
             .then(chartData => {
-                // console.log("isAuthenticated", isAuthenticated);
 
                 return fetch(
                     "https://vppspark.shinehub.com.au:8443/backend-service/group/",
@@ -104,9 +89,6 @@ class Dashboard extends Component {
                         )
                             .then(res => res.json())
                             .then(events => {
-                                // console.log("events", events);
-                                // console.log("locations".padEnd(30,'*'), locations);
-                                // console.log("chartData".padEnd(30,'*'), chartData);
 
                                 if (events.r === -2 || chartData.success != 1) {
                                     return this.props.history.push('/login');
@@ -133,10 +115,6 @@ class Dashboard extends Component {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResizeWindow);
-    }
-
-    componentDidUpdate() {
-        console.log("isAuthenticated", this.props.auth.isAuthenticated);
     }
 
     onClickSave = (eventData = [null]) => {
@@ -216,8 +194,7 @@ class Dashboard extends Component {
     };
 
     onChangeLocation = (e) => {
-        const { username, userpassword } = this.props.auth;
-        const password = userpassword;
+        const { username, userpassword: password } = this.props.auth;
         this.setState({ location: e, loading: true }, () => {
             console.log("e.id", e.id);
             fetch(
@@ -233,7 +210,6 @@ class Dashboard extends Component {
                 .then(res => res.json())
                 .then(events => {
                     fetch(
-                        // "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + e.id,
                         "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + e.id,
                         {
                             method: "GET",
@@ -258,8 +234,7 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { classes } = this.props;
-        const { isAuthenticated, user, error } = this.props.auth;
+        const { classes, auth: { user, error } } = this.props;
         const {
             events,
             chartData,
@@ -282,10 +257,7 @@ class Dashboard extends Component {
         }
 
         return (
-            <div
-                style={{
-                    paddingLeft: "4vw"
-                }}
+            <div style={{ paddingLeft: "4vw" }}
             >
                 {loading ? (
                     <Spinner />
@@ -342,10 +314,10 @@ class Dashboard extends Component {
                                 }}
                             >
                                 <div style={{
-                                        width: "41vw",
-                                        height: "20vw",
-                                        marginRight: "2vw"
-                                    }} >
+                                    width: "41vw",
+                                    height: "20vw",
+                                    marginRight: "2vw"
+                                }} >
                                     <BatteryContent chartData={chartData} />
                                 </div>
                                 <div

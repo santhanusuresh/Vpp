@@ -9,36 +9,21 @@ import List from "@material-ui/core/List";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
-import Select from "react-select";
 import { connect } from "react-redux";
 import { getSessionUser, logout } from "../../actions/authActions";
 
 import {
-  Card,
-  CardContent,
-  LinearProgress,
-  Icon,
   withStyles,
   Divider,
   Button,
   TextField
 } from "@material-ui/core";
-import {
-  CircularProgressbar,
-  buildStyles,
-  CircularProgressbarWithChildren
-} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import RadialSeparators from "../common/RadialSeparators";
-import ChartJS from "../common/Chart";
 import logo from "../../assets/shinehub-logo.svg";
 import greyAvatar from "../../assets/avatar-icon.png";
 import bell from "../../assets/Shape.svg";
@@ -50,7 +35,6 @@ import menuIcon from "../../assets/menu-icon.svg";
 import stockMarketArrowDown from "../../assets/stock-market-arrow.svg";
 import stockMarketArrowUp from "../../assets/stock-market-arrow-up.svg";
 import { withRouter } from "react-router-dom";
-import { SupervisedUserCircleOutlined } from "@material-ui/icons";
 import { SESSION_USER } from "../../actions/types";
 import store from "../../store/store";
 import {Base64} from "js-base64";
@@ -377,12 +361,12 @@ const Layout = props => {
                 >
                   {/*{console.log("window.innerHeight", window.innerHeight)}*/}
                   {[
-                    { icon: analytics, text: "Overview", onClick: "/" },
-                    { icon: fourRectangles, text: "Fleet",onClick:"/fleet" },
-                    { icon: calendar, text: "Events", onClick: "/events" }
-                    // { icon: cogWheel, text: "Settings",onClick:"/settings" }
-                  ].map((item, index) => (
-                      <ListItem
+                    { icon: analytics, component: "Dashboard", text: "Overview", onClick: "/" },
+                    { icon: fourRectangles, component: "Fleet", text: "Fleet",onClick:"/fleet" },
+                    { icon: calendar, component: "Events", text: "Events", onClick: "/events" }
+                    // { icon: cogWheel, component: "Settings", text: "Settings",onClick:"/settings" }
+              ].map((item, index) => (
+                <ListItem
                           button
                           style={item.text==='Events'?{paddingLeft:'12%',display: "flex", alignItems: "center" }:{display: "flex", alignItems: "center"}}
                           key={index}

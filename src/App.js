@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Dashboard from './components/dashboard/Dashboard';
@@ -16,19 +16,9 @@ if (localStorage.getItem('user') !== null) {
   const username = localStorage.getItem('username');
   const userpassword = localStorage.getItem('password');
   const expiretime = JSON.parse(localStorage.getItem('exp'));
-
-  console.log('time', new Date().getTime());
-  console.log('expiretime', expiretime);
-
   const checkExpireTime = () => {
 
-    if (!expiretime) {
-
-      return;
-    }
-
-    if (new Date(expiretime).getTime() < new Date().getTime()) {
-
+    if (!expiretime || new Date(expiretime).getTime() < new Date().getTime()) {
       return;
     }
 
@@ -47,28 +37,19 @@ if (localStorage.getItem('user') !== null) {
   checkExpireTime();
 }
 
-class App extends Component {
-
-  state = {
-    event: ''
-  }
-
-  render() {
-
-    const { event } = this.state;
-
-    return (
-      <Provider store={store}>
-        <Router>
-          <PrivateRoute exact path="/" component={Dashboard} />
-          <PrivateRoute exact path="/events" component={Events} />
-          <PrivateRoute exact path="/edit-event" component={EditEvent} />
-          <PrivateRoute exact path="/fleet" component={Fleet} />
-          <Route exact path="/login" component={Login} />
-        </Router>
-      </Provider>
-    );
-  }
+const App = () => {
+  return (
+    <Provider store={store}>
+    <Router>
+      <PrivateRoute exact path="/" component={Dashboard} />
+      <PrivateRoute exact path="/events" component={Events} />
+      <PrivateRoute exact path="/edit-event" component={EditEvent} />
+      <PrivateRoute exact path="/fleet" component={Fleet} />
+      <Route exact path="/login" component={Login} />
+    </Router>
+  </Provider>
+  )
 }
 
-export default App;
+export default App
+
