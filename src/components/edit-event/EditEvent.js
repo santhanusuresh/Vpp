@@ -29,8 +29,8 @@ class EditEvent extends Component {
     };
 
     componentDidMount() {
-        const { location: state, auth: { username, userpassword: password } } = this.props;
-        if (state !== undefined) {
+        const { location: { state = {} }, auth: { username, userpassword: password } } = this.props;
+        if (state) {
             fetch(
                 "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + state.event.groupId + "?date=" + state.event.sysReDDate,
                 {

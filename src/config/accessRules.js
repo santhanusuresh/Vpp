@@ -13,6 +13,13 @@ powerShop.components.dynamic = {
             [actions[1]]: [roles[0]] //write => only admin
         };
         return hasPermision(role, permissions[action]);
+    },
+    "LocationFilter": (role, action) => {
+        const permissions = {
+            [actions[0]]: [roles[0]], //read => only admin
+            [actions[1]]: [roles[0]] //write => only admin
+        };
+        return hasPermision(role, permissions[action]);
     }
 };
 powerShop.dynamicUIElement = {

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Typography from "@material-ui/core/Typography";
-import Select from "react-select";
 import { Base64 } from 'js-base64';
 import {
     Card,
@@ -19,8 +18,9 @@ import { LOGIN_ERROR } from "../../actions/types";
 import Power from "./Power";
 import BatteryContent from "./BatteryContent";
 import UpComingEvents from "./UpComingEvents";
-import AddEvent from "../dialog/AddEvent"
-import Can from "../common/Can"
+import AddEvent from "../dialog/AddEvent";
+import Can from "../common/Can";
+import LocationFilter from "./LocationFilter";
 
 
 const customStyles = {
@@ -42,7 +42,6 @@ class Dashboard extends Component {
         locations: [],
         loading: true,
         openAddEvent: false,
-        location: null,
         windowHeight: window.innerHeight,
         windowWidth: window.innerWidth,
         validationText: ""
@@ -258,55 +257,15 @@ class Dashboard extends Component {
         }
 
         return (
-            <div style={{ paddingLeft: "4vw" }}
-            >
-                {loading ? (
-                    <Spinner />
-                ) : (
+            <div style={{ paddingLeft: "4vw" }}>
+                {loading ? ( <Spinner /> ) : (
                         <div>
-                            {user.includes("admin") && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        padding: "1% 0 1% 5%",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            width: "30%",
-                                            paddingRight: "3%",
-                                            color: "#BDBDBD",
-                                            letterSpacing: "1.5px",
-                                            fontFamily: "Gotham Rounded Medium"
-                                        }}
-                                    >
-                                        <div style={{ fontSize: "1vw" }}>
-                                            {"Location".toUpperCase()}
-                                        </div>
-                                        <Select
-                                            onChange={this.onChangeLocation}
-                                            value={location}
-                                            styles={
-                                                customStyles
-                                            }
-                                            placeholder="All States"
-                                            options={
-                                                locations
-                                                    ? locations.map(location => {
-                                                        return {
-                                                            value: location.name,
-                                                            label: location.name,
-                                                            id: location.id
-                                                        };
-                                                    })
-                                                    : []
-                                            }
-                                        />
-                                    </div>
+                            <div style={{ display: "flex", padding: "1% 0 1% 5%",
+                                    justifyContent: "flex-start", alignItems: "center"
+                                }}>
+                                    <LocationFilter locations={locations} customStyles={customStyles}
+                                        onChangeLocation={e => this.onChangeLocation(e)} />
                                 </div>
-                            )}
                             <div
                                 style={{
                                     display: "flex",
