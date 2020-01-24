@@ -34,6 +34,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import { Base64 } from "js-base64";
 import EventsTable from "./EventsTable"
 import AddEvent from "../dialog/AddEvent"
+import Can from "../common/Can"
 
 
 const customStyles = {
@@ -1293,9 +1294,9 @@ class Events extends Component {
                                     </Card>
                                 </div>
                             </div>
-
-                            {user.includes("admin") ? (
-                                <div
+                            <Can show="AddEventButton" 
+                                yes={() => (
+                                    <div
                                     style={{
                                         position: "fixed",
                                         display: "flex",
@@ -1307,9 +1308,6 @@ class Events extends Component {
                                 >
                                     <Fab
                                         style={{
-                                            // position: "absolute",
-                                            // bottom: "3%",
-                                            // right: "3%",
                                             backgroundColor: "#25A8A8"
                                         }}
                                         onClick={() => this.setState({ openAddEvent: true })}
@@ -1317,9 +1315,8 @@ class Events extends Component {
                                         <Add style={{ color: "#fff" }} />
                                     </Fab>
                                 </div>
-                            ) : (
-                                    ""
-                                )}
+                                    )} />
+                            
                         </div>
                     )}
                 <AddEvent  { ...addEventProps } />

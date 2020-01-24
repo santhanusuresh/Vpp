@@ -14,6 +14,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { Base64 } from "js-base64";
 import axios from "axios";
 import Power from '../dashboard/Power'
+import Can from "../common/Can";
 
 class EditEvent extends Component {
     state = {
@@ -255,32 +256,9 @@ class EditEvent extends Component {
                                         {`#${event.sysReDId.split(/-/)[0]}`}
                                     </Typography>
                                 </div>
-                                {user.includes("admin") ? (
-                                    completed ? (
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                width: "20%"
-                                            }}
-                                        >
-                                            <Button
-                                                onClick={() => this.onExportEvent(event)}
-                                                variant="contained"
-                                                style={{
-                                                    color: "#fff",
-                                                    backgroundColor: "#25A8A8",
-                                                    width: "7vw",
-                                                    height: "2.3vw",
-                                                    fontSize: "0.8rem",
-                                                    textTransform: "none",
-                                                    fontFamily: "Gotham Rounded Medium"
-                                                }}
-                                            >
-                                                Export
-                                        </Button>
-                                        </div>
-                                    ) : (
+                                <Can show="ExportButton"
+                                    yes={() => (
+                                        completed ? (
                                             <div
                                                 style={{
                                                     display: "flex",
@@ -289,11 +267,7 @@ class EditEvent extends Component {
                                                 }}
                                             >
                                                 <Button
-                                                    onClick={() => {
-                                                        !editClicked
-                                                            ? this.setState({ editClicked: true })
-                                                            : this.onEditEvent(event);
-                                                    }}
+                                                    onClick={() => this.onExportEvent(event)}
                                                     variant="contained"
                                                     style={{
                                                         color: "#fff",
@@ -305,29 +279,55 @@ class EditEvent extends Component {
                                                         fontFamily: "Gotham Rounded Medium"
                                                     }}
                                                 >
-                                                    Edit
-                                        </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        this.setState({ editClicked: false });
-                                                    }}
-                                                    variant="outlined"
+                                                    Export
+                                            </Button>
+                                            </div>
+                                        ) : (
+                                                <div
                                                     style={{
-                                                        color: "#25A8A8",
-                                                        width: "7vw",
-                                                        height: "2.3vw",
-                                                        fontSize: "0.8rem",
-                                                        textTransform: "none",
-                                                        fontFamily: "Gotham Rounded Medium"
+                                                        display: "flex",
+                                                        justifyContent: "space-between",
+                                                        width: "20%"
                                                     }}
                                                 >
-                                                    Cancel
-                                        </Button>
-                                            </div>
-                                        )
-                                ) : (
-                                        ""
-                                    )}
+                                                    <Button
+                                                        onClick={() => {
+                                                            !editClicked
+                                                                ? this.setState({ editClicked: true })
+                                                                : this.onEditEvent(event);
+                                                        }}
+                                                        variant="contained"
+                                                        style={{
+                                                            color: "#fff",
+                                                            backgroundColor: "#25A8A8",
+                                                            width: "7vw",
+                                                            height: "2.3vw",
+                                                            fontSize: "0.8rem",
+                                                            textTransform: "none",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        Edit
+                                            </Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            this.setState({ editClicked: false });
+                                                        }}
+                                                        variant="outlined"
+                                                        style={{
+                                                            color: "#25A8A8",
+                                                            width: "7vw",
+                                                            height: "2.3vw",
+                                                            fontSize: "0.8rem",
+                                                            textTransform: "none",
+                                                            fontFamily: "Gotham Rounded Medium"
+                                                        }}
+                                                    >
+                                                        Cancel
+                                            </Button>
+                                                </div>
+                                            )
+                                    )}/>
                             </div>
                             <div
                                 style={{

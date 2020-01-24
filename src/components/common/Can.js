@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 const Can = (props) => {
     console.log("Can Component".padEnd(30,"*"), props,rules);
-    const { perform = "", show="", auth: {user: role="user", module: userModule=""} = {} } = props;
+    const { perform = "", show="", auth: { role= "" } = {} } = props;
     const [component = "", action = ""] = perform.split(":");
 
     const getAction = action => {
@@ -15,28 +15,36 @@ const Can = (props) => {
         }
     }
 
+    const getRole = role => {
+        switch (role) {
+            case 1: return "admin";
+            case 2: return "provider";
+            case 3: return "retailer";
+            default: return "endUser";
+        }
+    }
+
     const check = () => {
         let allow = false;
 
-        //check wheather module is defined in rules
-        const currentModule = userModule && rules.modules[userModule];
-
-        //check wheather component is defined in the current module
-        const isComponentPresent = (currentModule && (currentModule.components.static.includes(component)
-            || currentModule.components.dynamic[component])) || false;
+        //check wheather component is defined in the rule
+        const isComponentPresent = ( rules.components.static.includes(component)
+            || rules.components.dynamic[component]) || false;
         
-        //allow only if current module has requested component
+        const currentRole = getRole(role);
+        
+        //allow only if rule has the requested component
         allow = isComponentPresent; 
 
         //verify with role to allow access if the component is private
-        if (isComponentPresent && !currentModule.components.static.includes(component) && currentModule.components.dynamic[component]) {
+        if (isComponentPresent && !rules.components.static.includes(component) && rules.components.dynamic[component]) {
             const performAction = getAction(action);
-            allow = performAction && (performAction === "visit" || currentModule.components.dynamic[component](role , performAction));
+            allow = performAction && (performAction === "visit" || rules.components.dynamic[component](currentRole , performAction));
         }
 
         //verify that any of the defined UI element in rules has the aprropriate permision to display
         if (!!show) {
-            allow = !currentModule.dynamicUIElement[show] || currentModule.dynamicUIElement[show](role)
+            allow = !rules.dynamicUIElement[show] || rules.dynamicUIElement[show](currentRole)
         }
 
         return (allow && "yes") || "no";

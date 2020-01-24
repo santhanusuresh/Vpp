@@ -10,20 +10,19 @@ export const login = (email, password, history, md5) => dispatch => {
             "Content-Type": "application/json"
         },
     }).then(res => res.json()).then(res => {
-            // console.log("res",res);
-            if (typeof res.success === "undefined" || typeof res.data.id === "undefined") {
+            if (typeof res.success === "undefined" || typeof res.data.id === "undefined" || res.success !== 1) {
                 throw res;
             }
-        const user = res.success === 1 ? 'admin' : '';
-        const userid = res.success === 1 ? res.data.id : '';
-        const currentModule =res.success === 1 ? (res.data.module || 'powerShop') : '';
+        const user = res.data.name;
+        const userid = res.data.id || '';
+        const role = res.data.role;
         const localStorageData = {
             user,
             userid,
             exp: new Date().getTime() + 1000 * 3600 * 24,  //expireTime is added for 24 hour
             username: email,
             password,
-            module: currentModule
+            role
         }
         localStorage.setItem("tokens", JSON.stringify(localStorageData));
 
@@ -35,7 +34,7 @@ export const login = (email, password, history, md5) => dispatch => {
                     userid: userid,
                     username: email,
                     userpassword: password,
-                    module: currentModule
+                    role: role
                 }
             });
             history.push('/');
@@ -71,7 +70,7 @@ export const logout = (history) => dispatch => {
             userid: '',
             username: '',
             userpassword: '',
-            module: ''
+            role: ''
         }
     })
     history.push('/login');
@@ -89,7 +88,7 @@ export const setLoginDataAfterReload = (loginData) => dispatch => {
             userid: loginData.userid,
             username: loginData.username,
             userpassword: loginData.password,
-            module: loginData.module
+            role: loginData.role
         }
     })
 }

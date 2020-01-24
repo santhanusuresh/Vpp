@@ -1,52 +1,39 @@
 const actions = ["read", "write"];
-const roles = ["admin", "vendor", "user"];
+const roles = ["admin","provider", "retailer","endUser"];
 const hasPermision = (role = "", action = []) => action.includes(role);
-const createNewRule = (moduleName) => ({ [moduleName]: { components: { static: [], dynamic: {} }, dynamicUIElement: {} } });
+const ruleSkeleton = () => ({ components: { static: [], dynamic: {} }, dynamicUIElement: {} });
 
-//PowerShop Module
-const { powerShop } = createNewRule("powerShop");
-powerShop.components.static = ["Dashboard", "Login", "Events", "Fleet", "EditEvent"];
-powerShop.components.dynamic = {
+const rules = ruleSkeleton();
+rules.components.static = ["Dashboard", "Login", "Events", "Fleet", "EditEvent"];
+rules.components.dynamic = {
     "AddEvent": (role, action) => {
         const permissions = {
             [actions[0]]: [...roles], //read => all roles
-            [actions[1]]: [roles[0]] //write => only admin
+            [actions[1]]: [roles[0], roles[1]] //write => admin && provider (Ausgrid)
         };
+        console.log("******AddEvent Rule***********",role, permissions[action])
         return hasPermision(role, permissions[action]);
     },
     "LocationFilter": (role, action) => {
         const permissions = {
-            [actions[0]]: [roles[0]], //read => only admin
-            [actions[1]]: [roles[0]] //write => only admin
+            [actions[0]]: [roles[0], roles[1]], //read => admin && provider (Ausgrid)
+            [actions[1]]: [roles[0], roles[1]] //write => admin && provider (Ausgrid)
         };
+        console.log("******LocationFilter Rule***********",role, permissions[action])
         return hasPermision(role, permissions[action]);
     }
 };
-powerShop.dynamicUIElement = {
+rules.dynamicUIElement = {
     "AddEventButton": (role) => {
-        const permisions =  [roles[0]] //show => only admin
-        return permisions.includes(role);
+        const permissions = [roles[0], roles[1]] //show => admin && provider (Ausgrid)
+        console.log("******AddEventButton Rule***********",role, permissions)
+        return permissions.includes(role);
+    },
+    "ExportButton": (role) => {
+        const permissions = [roles[0], roles[1]] //show => admin && provider (Ausgrid)
+        console.log("******ExportButton Rule***********",role, permissions)
+        return permissions.includes(role);
     }
 }
 
-//Ausgrid Module
-const { ausgrid } = createNewRule("ausgrid");
-ausgrid.components.static = ["Dashboard", "Login", "Fleet", "EditEvent"];
-ausgrid.components.dynamic = {
-    "AddEvent": (role, action) => {
-        const permissions = {
-            [actions[0]]: [...roles], //read => all roles
-            [actions[1]]: [roles[0]] //write => only admin
-        };
-        return hasPermision(role, permissions[action]);
-    }
-};
-ausgrid.dynamicUIElement = {
-    "AddEventButton": (role) => {
-        const permisions =  [roles[0]] //show => only admin
-        return permisions.includes(role);
-    }
-}
-
-const rules = { modules: { powerShop, ausgrid } };
 export default rules;

@@ -4,7 +4,7 @@ import { setLoginDataAfterReload } from '../../actions/authActions';
 const Auth = (props) => {
     console.log("******Auth [Component]*****************8",props);
     const { auth: { isAuthenticated = false }, setLoginDataAfterReload } = props;
-    const localStorageData = JSON.parse(localStorage.getItem("tokens"));
+    const localStorageData = JSON.parse(localStorage.getItem("tokens")) || {};
     const { userid = null, exp: expiretime = null } = localStorageData;
     
     const authenticate = () => {
