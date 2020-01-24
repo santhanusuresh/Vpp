@@ -1,0 +1,30 @@
+.FourOhFour {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: linear-gradient(135deg, #B5D145 40%, #44B2E5 65%);;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.FourOhFour  .code {
+    font-size: 140px;
+    height: 100vh;
+    color: white;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.FourOhFour .subCode {
+    font-size: 40px;
+    height: 100vh;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

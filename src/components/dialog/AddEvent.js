@@ -16,6 +16,7 @@ import {
 import { ThemeProvider } from "@material-ui/styles";
 import Select from "react-select";
 import moment from "moment";
+import Can from "../common/Can"
 
 const AddEvent = ({ openAddEvent, locations, validationText, error, onClickSave, customStyles, classes, closeAddEvent }) => {
 
@@ -79,7 +80,8 @@ const AddEvent = ({ openAddEvent, locations, validationText, error, onClickSave,
         }
     });
 
-    return (
+    return <Can perform="AddEvent:W"
+    yes={() => (
         <Dialog
             fullWidth
             style={{ zIndex: 2 }}
@@ -308,8 +310,7 @@ const AddEvent = ({ openAddEvent, locations, validationText, error, onClickSave,
                     </div>
                 </div>
             </DialogContent>
-        </Dialog>
-    )
+        </Dialog>)}/>
 }
 
 export default AddEvent

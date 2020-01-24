@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Typography from "@material-ui/core/Typography";
-import Select from "react-select";
 import { Base64 } from 'js-base64';
 import {
     Card,
@@ -19,7 +18,9 @@ import { LOGIN_ERROR } from "../../actions/types";
 import Power from "./Power";
 import BatteryContent from "./BatteryContent";
 import UpComingEvents from "./UpComingEvents";
-import AddEvent from "../dialog/AddEvent"
+import AddEvent from "../dialog/AddEvent";
+import Can from "../common/Can";
+import LocationFilter from "./LocationFilter";
 
 
 const customStyles = {
@@ -41,12 +42,6 @@ class Dashboard extends Component {
         locations: [],
         loading: true,
         openAddEvent: false,
-        location: null,
-        date: null,
-        from: "02:00",
-        to: "04:00",
-        status: null,
-        power: 45,
         windowHeight: window.innerHeight,
         windowWidth: window.innerWidth,
         validationText: ""
@@ -54,16 +49,7 @@ class Dashboard extends Component {
 
 
     componentDidMount() {
-        const { isAuthenticated, user, userid } = this.props.auth;
-        const { username, userpassword } = this.props.auth;
-        const password = userpassword;
-        const userID = userid;
-
-        console.log("isAuthenticated", isAuthenticated);
-        console.log("userid", userid);
-        console.log("username", username);
-        console.log("password", password);
-
+        const { username, userpassword: password } = this.props.auth;
         window.addEventListener("resize", this.onResizeWindow);
 
         fetch(
@@ -78,7 +64,6 @@ class Dashboard extends Component {
         )
             .then(chartData => chartData.json())
             .then(chartData => {
-                // console.log("isAuthenticated", isAuthenticated);
 
                 return fetch(
                     "https://vppspark.shinehub.com.au:8443/backend-service/group/",
@@ -104,9 +89,6 @@ class Dashboard extends Component {
                         )
                             .then(res => res.json())
                             .then(events => {
-                                // console.log("events", events);
-                                // console.log("locations".padEnd(30,'*'), locations);
-                                // console.log("chartData".padEnd(30,'*'), chartData);
 
                                 if (events.r === -2 || chartData.success != 1) {
                                     return this.props.history.push('/login');
@@ -133,10 +115,6 @@ class Dashboard extends Component {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResizeWindow);
-    }
-
-    componentDidUpdate() {
-        console.log("isAuthenticated", this.props.auth.isAuthenticated);
     }
 
     onClickSave = (eventData = [null]) => {
@@ -216,8 +194,7 @@ class Dashboard extends Component {
     };
 
     onChangeLocation = (e) => {
-        const { username, userpassword } = this.props.auth;
-        const password = userpassword;
+        const { username, userpassword: password } = this.props.auth;
         this.setState({ location: e, loading: true }, () => {
             console.log("e.id", e.id);
             fetch(
@@ -233,7 +210,6 @@ class Dashboard extends Component {
                 .then(res => res.json())
                 .then(events => {
                     fetch(
-                        // "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + e.id,
                         "https://vppspark.shinehub.com.au:8443/backend-service/dashboard/data/group/" + e.id,
                         {
                             method: "GET",
@@ -258,8 +234,7 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { classes } = this.props;
-        const { isAuthenticated, user, error } = this.props.auth;
+        const { classes, auth: { user, error } } = this.props;
         const {
             events,
             chartData,
@@ -282,58 +257,15 @@ class Dashboard extends Component {
         }
 
         return (
-            <div
-                style={{
-                    paddingLeft: "4vw"
-                }}
-            >
-                {loading ? (
-                    <Spinner />
-                ) : (
+            <div style={{ paddingLeft: "4vw" }}>
+                {loading ? ( <Spinner /> ) : (
                         <div>
-                            {user.includes("admin") && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        padding: "1% 0 1% 5%",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            width: "30%",
-                                            paddingRight: "3%",
-                                            color: "#BDBDBD",
-                                            letterSpacing: "1.5px",
-                                            fontFamily: "Gotham Rounded Medium"
-                                        }}
-                                    >
-                                        <div style={{ fontSize: "1vw" }}>
-                                            {"Location".toUpperCase()}
-                                        </div>
-                                        <Select
-                                            onChange={this.onChangeLocation}
-                                            value={location}
-                                            styles={
-                                                customStyles
-                                            }
-                                            placeholder="All States"
-                                            options={
-                                                locations
-                                                    ? locations.map(location => {
-                                                        return {
-                                                            value: location.name,
-                                                            label: location.name,
-                                                            id: location.id
-                                                        };
-                                                    })
-                                                    : []
-                                            }
-                                        />
-                                    </div>
+                            <div style={{ display: "flex", padding: "1% 0 1% 5%",
+                                    justifyContent: "flex-start", alignItems: "center"
+                                }}>
+                                    <LocationFilter locations={locations} customStyles={customStyles}
+                                        onChangeLocation={e => this.onChangeLocation(e)} />
                                 </div>
-                            )}
                             <div
                                 style={{
                                     display: "flex",
@@ -342,10 +274,10 @@ class Dashboard extends Component {
                                 }}
                             >
                                 <div style={{
-                                        width: "41vw",
-                                        height: "20vw",
-                                        marginRight: "2vw"
-                                    }} >
+                                    width: "41vw",
+                                    height: "20vw",
+                                    marginRight: "2vw"
+                                }} >
                                     <BatteryContent chartData={chartData} />
                                 </div>
                                 <div
@@ -380,8 +312,9 @@ class Dashboard extends Component {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    {user.includes("admin") && (
-                                        <div
+                                    <Can show="AddEventButton"
+                                        yes={() => (
+                                            <div
                                             style={{
                                                 position: "fixed",
                                                 right: "4%",
@@ -403,7 +336,7 @@ class Dashboard extends Component {
                                                 <Add style={{ color: "#fff", fontSize: "2vw" }} />
                                             </Fab>
                                         </div>
-                                    )}
+                                        )} />
                                 </div>
                             </div>
                             <div style={{

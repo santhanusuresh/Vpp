@@ -10,27 +10,31 @@ export const login = (email, password, history, md5) => dispatch => {
             "Content-Type": "application/json"
         },
     }).then(res => res.json()).then(res => {
-            // console.log("res",res);
-            if (typeof res.success === "undefined" || typeof res.data.id === "undefined") {
+            if (typeof res.success === "undefined" || typeof res.data.id === "undefined" || res.success !== 1) {
                 throw res;
             }
-            const user = res.success === 1 ? 'admin' : '';
-            const userId = res.success === 1 ? res.data.id : '';
-            localStorage.setItem('user', user);
-            localStorage.setItem('userID', userId);
-            //expireTime is added for 24 hour
-            localStorage.setItem('exp', new Date().getTime() + 1000 * 3600 * 24);
-            localStorage.setItem('username', email);
-            localStorage.setItem('password', password);
+        const user = res.data.name;
+        const userid = res.data.id || '';
+        const role = res.data.role;
+        const localStorageData = {
+            user,
+            userid,
+            exp: new Date().getTime() + 1000 * 3600 * 24,  //expireTime is added for 24 hour
+            username: email,
+            password,
+            role
+        }
+        localStorage.setItem("tokens", JSON.stringify(localStorageData));
 
             dispatch({
                 type: LOGIN,
                 payload: {
                     isAuthenticated: res.success === 1,
                     user: user,
-                    userid: userId,
+                    userid: userid,
                     username: email,
-                    userpassword: password
+                    userpassword: password,
+                    role: role
                 }
             });
             history.push('/');
@@ -53,14 +57,11 @@ export const getSessionUser = (username, password) => dispatch => {
             "Authorization": "Basic " + Base64.encode(`${username}:${password}`),
             "Content-Type": "application/json"
         },
-    }).then(res => {
-            localStorage.setItem('exp', new Date().getTime() + 1000 * 3600 * 24);
-            return res;
-    });
+    }).then(res => {return res;});
 }
 
 export const logout = (history) => dispatch => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('tokens');
     dispatch({
         type: LOGIN,
         payload: {
@@ -68,10 +69,26 @@ export const logout = (history) => dispatch => {
             user: '',
             userid: '',
             username: '',
-            userpassword: ''
+            userpassword: '',
+            role: ''
         }
     })
     history.push('/login');
 
     return;
+}
+
+export const setLoginDataAfterReload = (loginData) => dispatch => {
+
+    return dispatch({
+        type: LOGIN,
+        payload: {
+            isAuthenticated: (loginData.userid && true) || false,
+            user: loginData.user,
+            userid: loginData.userid,
+            username: loginData.username,
+            userpassword: loginData.password,
+            role: loginData.role
+        }
+    })
 }

@@ -7,7 +7,8 @@ const initialState={
     user:'',
     userid:'',
     username:'',
-    userpassword:'',
+    userpassword: '',
+    role: '',
     sessionUser:{},
     error:{}
 
@@ -24,7 +25,8 @@ const reducer=(state=initialState,action)=>{
                 user:action.payload.user,
                 userid:action.payload.userid,
                 username:action.payload.username,
-                userpassword:action.payload.userpassword
+                userpassword: action.payload.userpassword,
+                role: action.payload.role
             }
         case LOGIN_ERROR:
             return {
